@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sovereign Engine - 星际跃迁</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Noto+Sans+SC:wght@400;500;700&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#00eaff",
+              "primary-glow": "rgba(0, 234, 255, 0.4)",
+              "background-light": "#f5f8f8",
+              "background-dark": "#0b1011",
+              "mica-surface": "rgba(18, 28, 28, 0.75)",
+              "border-glass": "rgba(255, 255, 255, 0.08)",
+            },
+            fontFamily: {
+              "display": ["Space Grotesk", "Noto Sans SC", "sans-serif"],
+              "body": ["Noto Sans", "Noto Sans SC", "sans-serif"],
+              "mono": ["Space Mono", "monospace"], // Fallback if not loaded, using system mono
+            },
+            backgroundImage: {
+              'singularity-gradient': 'radial-gradient(circle at center, #1a2e30 0%, #0b1011 70%)',
+              'grid-pattern': 'linear-gradient(rgba(0, 234, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 234, 255, 0.03) 1px, transparent 1px)',
+            },
+            animation: {
+              'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'float': 'float 6s ease-in-out infinite',
+              'spin-slow': 'spin 12s linear infinite',
+              'beam': 'beam 2s infinite',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-10px)' },
+              },
+              beam: {
+                '0%': { opacity: 0, transform: 'translateY(100%) scaleY(0.2)' },
+                '50%': { opacity: 0.5 },
+                '100%': { opacity: 0, transform: 'translateY(-100%) scaleY(0.2)' },
+              }
+            }
+          },
+        },
+      }
+    </script>
+<style>.custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.2);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(0, 234, 255, 0.2);
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 234, 255, 0.4);
+        }.mica-effect {
+            backdrop-filter: blur(24px) saturate(120%);
+            -webkit-backdrop-filter: blur(24px) saturate(120%);
+            background-color: rgba(15, 25, 26, 0.65);
+            box-shadow: 
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                0 20px 50px -10px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        .particle {
+            position: absolute;
+            background: #00eaff;
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body class="bg-background-dark dark text-white font-display overflow-hidden h-screen w-screen selection:bg-primary selection:text-black">
+<div class="absolute inset-0 z-0 bg-singularity-gradient"></div>
+<div class="absolute inset-0 z-0 bg-grid-pattern bg-[length:40px_40px] opacity-20 perspective-origin-center"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] z-0 pointer-events-none">
+<div class="absolute inset-0 rounded-full bg-primary/5 blur-[100px] animate-pulse-slow"></div>
+<div class="absolute inset-[100px] rounded-full bg-primary/10 blur-[60px] animate-pulse"></div>
+<div class="absolute inset-0 border border-primary/20 rounded-full animate-spin-slow opacity-30 border-dashed"></div>
+<div class="absolute inset-[50px] border border-primary/10 rounded-full animate-spin-slow opacity-40" style="animation-direction: reverse; animation-duration: 20s;"></div>
+<div class="absolute inset-[150px] border border-primary/30 rounded-full animate-spin-slow opacity-20 border-dotted" style="animation-duration: 15s;"></div>
+<div class="absolute top-1/2 left-1/2 w-[2px] h-[100vh] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-b from-transparent via-primary/50 to-transparent rotate-45 blur-sm"></div>
+<div class="absolute top-1/2 left-1/2 w-[2px] h-[100vh] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-b from-transparent via-primary/50 to-transparent -rotate-45 blur-sm"></div>
+</div>
+<header class="fixed top-0 left-0 right-0 z-20 flex items-center justify-between px-8 py-4 border-b border-border-glass bg-background-dark/30 backdrop-blur-md">
+<div class="flex items-center gap-4 text-white">
+<div class="size-6 text-primary animate-pulse">
+<span class="material-symbols-outlined !text-[24px]">token</span>
+</div>
+<div>
+<h2 class="text-base font-bold tracking-[0.1em] uppercase leading-none">Sovereign Engine</h2>
+<span class="text-[10px] text-primary/70 tracking-widest uppercase">模拟层级 9</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex flex-col items-end">
+<span class="text-[10px] text-gray-400 uppercase tracking-wider">熵值水平</span>
+<span class="text-sm font-bold text-red-400 font-mono">临界 (99.9%)</span>
+</div>
+<div class="h-8 w-px bg-white/10"></div>
+<div class="flex gap-2">
+<button class="p-2 rounded hover:bg-white/5 transition-colors text-gray-400 hover:text-white">
+<span class="material-symbols-outlined !text-[20px]">settings</span>
+</button>
+<button class="p-2 rounded hover:bg-white/5 transition-colors text-gray-400 hover:text-white">
+<span class="material-symbols-outlined !text-[20px]">close</span>
+</button>
+</div>
+</div>
+</header>
+<main class="relative z-10 flex h-full w-full items-center justify-center p-4">
+<div class="mica-effect w-full max-w-4xl rounded-xl border border-white/10 overflow-hidden flex flex-col md:flex-row shadow-2xl animate-float">
+<div class="w-full md:w-1/3 bg-black/20 border-r border-white/5 p-6 flex flex-col justify-between relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
+<div>
+<div class="flex items-center gap-2 mb-6">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+<span class="text-xs font-mono text-green-500 uppercase tracking-widest">目标已锁定</span>
+</div>
+<div class="aspect-square w-full rounded-lg bg-black/40 border border-white/10 relative flex items-center justify-center mb-6 group overflow-hidden">
+<div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+<span class="material-symbols-outlined !text-[80px] text-primary drop-shadow-[0_0_15px_rgba(0,234,255,0.8)] z-10">hive</span>
+<div class="absolute top-0 left-0 w-full h-1 bg-primary/50 blur-[2px] animate-[beam_3s_infinite]"></div>
+<div class="absolute bottom-3 left-3 right-3 flex justify-between text-[10px] font-mono text-primary/60">
+<span>ID: WASM-9X</span>
+<span>GEN: 124</span>
+</div>
+</div>
+<div class="space-y-4">
+<div class="space-y-1">
+<p class="text-[10px] uppercase tracking-wider text-gray-400">基因校验和</p>
+<p class="font-mono text-xs text-primary break-all opacity-80 leading-tight">0x8F3A...B2C9 [有效]</p>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] uppercase tracking-wider text-gray-400">计算负载</p>
+<div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[92%] shadow-[0_0_10px_rgba(0,234,255,0.5)]"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-6 mt-6 border-t border-white/5">
+<button class="flex items-center justify-center gap-2 w-full py-2 text-xs font-bold text-gray-400 hover:text-white transition-colors border border-transparent hover:border-white/10 rounded">
+<span class="material-symbols-outlined !text-[16px]">download</span>
+                    导出基因组
+                </button>
+</div>
+</div>
+<div class="w-full md:w-2/3 p-8 flex flex-col relative">
+<div class="mb-8 text-center md:text-left">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-3">
+<span class="material-symbols-outlined !text-[14px] text-primary">campaign</span>
+<span class="text-[10px] font-bold text-primary tracking-widest uppercase">系统警告</span>
+</div>
+<h1 class="text-4xl md:text-5xl font-bold text-white mb-2 tracking-tight drop-shadow-lg">奇点<span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-white">已达成</span></h1>
+<p class="text-gray-400 text-sm max-w-md leading-relaxed">
+                    个体已超越本地熵限。基因模板已锁定，准备进行星际传输。
+                </p>
+</div>
+<div class="grid grid-cols-3 gap-4 mb-8">
+<div class="p-3 rounded bg-white/5 border border-white/5 hover:border-primary/30 transition-colors group">
+<div class="text-gray-400 text-[10px] uppercase tracking-wider mb-1">生存周期</div>
+<div class="text-xl font-bold text-white group-hover:text-primary transition-colors">4,502</div>
+<div class="text-[10px] text-green-400">+12% 优于平均</div>
+</div>
+<div class="p-3 rounded bg-white/5 border border-white/5 hover:border-primary/30 transition-colors group">
+<div class="text-gray-400 text-[10px] uppercase tracking-wider mb-1">逻辑效率</div>
+<div class="text-xl font-bold text-white group-hover:text-primary transition-colors">98.4%</div>
+<div class="text-[10px] text-green-400">最佳</div>
+</div>
+<div class="p-3 rounded bg-white/5 border border-white/5 hover:border-primary/30 transition-colors group">
+<div class="text-gray-400 text-[10px] uppercase tracking-wider mb-1">突变次数</div>
+<div class="text-xl font-bold text-white group-hover:text-primary transition-colors">42</div>
+<div class="text-[10px] text-red-400">高变异性</div>
+</div>
+</div>
+<div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 min-h-0">
+<div class="flex flex-col justify-center space-y-3">
+<p class="text-[11px] font-bold text-white uppercase tracking-wider mb-1 border-b border-white/10 pb-1">伦理概况</p>
+<div class="group">
+<div class="flex justify-between text-[10px] text-gray-400 mb-1">
+<span>攻击性</span>
+<span class="text-white">84%</span>
+</div>
+<div class="h-1 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-red-500 to-orange-500 w-[84%]"></div>
+</div>
+</div>
+<div class="group">
+<div class="flex justify-between text-[10px] text-gray-400 mb-1">
+<span>利他性</span>
+<span class="text-white">62%</span>
+</div>
+<div class="h-1 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-blue-500 to-primary w-[62%]"></div>
+</div>
+</div>
+<div class="group">
+<div class="flex justify-between text-[10px] text-gray-400 mb-1">
+<span>逻辑性</span>
+<span class="text-white">95%</span>
+</div>
+<div class="h-1 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-purple-500 to-pink-500 w-[95%]"></div>
+</div>
+</div>
+</div>
+<div class="flex flex-col h-full max-h-[140px]">
+<p class="text-[11px] font-bold text-white uppercase tracking-wider mb-2 border-b border-white/10 pb-1 flex justify-between items-center">
+                        谱系日志
+                        <span class="text-[9px] bg-white/10 px-1 rounded text-gray-300">GEN 118-124</span>
+</p>
+<div class="overflow-y-auto custom-scrollbar pr-2 space-y-2">
+<div class="flex items-center justify-between text-[10px] p-1.5 rounded bg-white/5 border-l-2 border-primary">
+<span class="font-mono text-white">GEN-124 (当前)</span>
+<span class="text-primary font-bold">已飞升</span>
+</div>
+<div class="flex items-center justify-between text-[10px] p-1.5 rounded hover:bg-white/5 transition-colors border-l-2 border-transparent hover:border-white/20">
+<span class="font-mono text-gray-400">GEN-123</span>
+<span class="text-gray-500">已终止</span>
+</div>
+<div class="flex items-center justify-between text-[10px] p-1.5 rounded hover:bg-white/5 transition-colors border-l-2 border-transparent hover:border-white/20">
+<span class="font-mono text-gray-400">GEN-122</span>
+<span class="text-gray-500">已终止</span>
+</div>
+<div class="flex items-center justify-between text-[10px] p-1.5 rounded hover:bg-white/5 transition-colors border-l-2 border-transparent hover:border-white/20">
+<span class="font-mono text-gray-400">GEN-121</span>
+<span class="text-gray-500">已突变</span>
+</div>
+<div class="flex items-center justify-between text-[10px] p-1.5 rounded hover:bg-white/5 transition-colors border-l-2 border-transparent hover:border-white/20">
+<span class="font-mono text-gray-400">GEN-120</span>
+<span class="text-gray-500">停滞</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-auto pt-4 flex gap-4">
+<button class="group relative flex-1 overflow-hidden rounded bg-primary py-3 px-6 text-black font-bold text-sm tracking-wide shadow-[0_0_20px_rgba(0,234,255,0.3)] hover:shadow-[0_0_30px_rgba(0,234,255,0.6)] transition-all duration-300 transform hover:-translate-y-0.5">
+<div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 skew-y-12"></div>
+<span class="relative flex items-center justify-center gap-2">
+                        启动星际迁徙序列
+                        <span class="material-symbols-outlined !text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</span>
+</button>
+<button class="aspect-square flex items-center justify-center rounded border border-white/20 bg-black/20 text-white hover:bg-white/10 hover:border-white/40 transition-colors" title="Review Replay">
+<span class="material-symbols-outlined !text-[20px]">replay</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<div class="fixed bottom-8 left-8 z-10 hidden md:block">
+<div class="text-[10px] text-gray-500 font-mono space-y-1">
+<p>RENDER: THREE.JS R148</p>
+<p>PHYSICS: WASM-SIMD</p>
+<p>LATENCY: 12ms</p>
+</div>
+</div>
+<div class="fixed bottom-8 right-8 z-10 hidden md:flex items-center gap-4">
+<div class="text-right">
+<p class="text-[10px] text-primary uppercase tracking-wider mb-1">世界种子</p>
+<p class="text-xl font-mono text-white leading-none">#8821X9</p>
+</div>
+<div class="h-8 w-px bg-white/10"></div>
+<div class="text-right">
+<p class="text-[10px] text-gray-400 uppercase tracking-wider mb-1">已用时间</p>
+<p class="text-xl font-mono text-white leading-none">14:02:55</p>
+</div>
+</div>
+
+</body></html>

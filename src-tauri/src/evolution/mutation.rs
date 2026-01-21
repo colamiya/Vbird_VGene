@@ -1,0 +1,105 @@
+use crate::evolution::entity::Entity;
+use reqwest::Client;
+use serde_json::json;
+use rand::Rng;
+
+#[derive(Clone)]
+pub enum MutationMode {
+    LocalMock,
+    Ollama { url: String, model: String },
+}
+
+#[derive(Clone)]
+pub struct MutationEngine {
+    mode: MutationMode,
+    client: Client,
+}
+
+impl MutationEngine {
+    pub fn new(mode: MutationMode) -> Self {
+        Self {
+            mode,
+            client: Client::new(),
+        }
+    }
+
+    pub fn set_mode(&mut self, mode: MutationMode) {
+        self.mode = mode;
+    }
+
+    pub async fn mutate(&self, parent: &Entity) -> String {
+        match &self.mode {
+            MutationMode::LocalMock => self.mutate_local(parent),
+            MutationMode::Ollama { url, model } => self.mutate_ollama(parent, url, model).await,
+        }
+    }
+
+    fn mutate_local(&self, parent: &Entity) -> String {
+        let mut rng = rand::thread_rng();
+        if rng.gen_bool(0.1) {
+            return r#"(module
+  (func (export "calculate_fitness") (result i32)
+    i32.const 42
+  )
+)"#.to_string();
+        }
+        parent.dna.clone()
+    }
+
+    async fn mutate_ollama(&self, parent: &Entity, url: &str, model: &str) -> String {
+        let prompt = format!(
+            "Task: Mutate the following WebAssembly Text (WAT) code to improve its efficiency or logical complexity.\n\
+            Constraints:\n\
+            1. Output ONLY the valid (module ...) code block.\n\
+            2. Do NOT include any explanations, markdown code blocks, or preamble.\n\
+            3. The output must be valid WAT and must export a function named 'calculate_fitness' that returns an i32.\n\n\
+            Current DNA:\n\
+            {}",
+            parent.dna
+        );
+
+        let body = json!({
+            "model": model,
+            "prompt": prompt,
+            "stream": false
+        });
+
+        let api_url = format!("{}/api/generate", url);
+        
+        match self.client.post(&api_url).json(&body).send().await {
+            Ok(res) => {
+                if let Ok(json) = res.json::<serde_json::Value>().await {
+                    if let Some(response_text) = json["response"].as_str() {
+                        let cleaned = self.extract_wat(response_text);
+                        if !cleaned.is_empty() {
+                            return cleaned;
+                        }
+                    }
+                }
+            }
+            Err(e) => {
+                eprintln!("Ollama mutation failed: {}", e);
+            }
+        }
+        
+        parent.dna.clone()
+    }
+
+    fn extract_wat(&self, text: &str) -> String {
+        // 尝试寻找 (module ...) 结构
+        if let Some(start) = text.find("(module") {
+            if let Some(end) = text.rfind(')') {
+                if end > start {
+                    return text[start..=end].to_string();
+                }
+            }
+        }
+        
+        // 如果没找到，尝试清理常见的 Markdown 包裹
+        text.replace("```wat", "")
+            .replace("```wasm", "")
+            .replace("```", "")
+            .trim()
+            .to_string()
+    }
+}

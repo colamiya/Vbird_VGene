@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sovereign Engine - Planetary Ecology</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Noto+Sans+SC:wght@300;400;500;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#00eaff",
+                        "primary-dim": "rgba(0, 234, 255, 0.1)",
+                        "secondary": "#bf40bf", // Magenta
+                        "background-light": "#f5f8f8",
+                        "background-dark": "#0f1115", // Deep space dark
+                        "surface-glass": "rgba(22, 27, 34, 0.75)",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Space Grotesk", "Noto Sans SC", "sans-serif"],
+                    },
+                    backgroundImage: {
+                        'grid-pattern': "linear-gradient(to right, #232d36 1px, transparent 1px), linear-gradient(to bottom, #232d36 1px, transparent 1px)",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+            background-color: #0f1115;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        /* Custom Planet Glow */
+        .planet-glow {
+            box-shadow: inset -30px -30px 60px rgba(0,0,0,0.9), 0 0 40px rgba(0, 234, 255, 0.15);
+        }
+        
+        .glass-panel {
+            background: rgba(20, 24, 28, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .conic-gauge {
+            background: conic-gradient(#00eaff var(--progress, 0%), #1f2937 0);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scan-line {
+            background: linear-gradient(to bottom, transparent, #00eaff, transparent);
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: -10%; opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { top: 110%; opacity: 0; }
+        }
+
+        .animate-spin-slow {
+            animation: spin 120s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-background-dark min-h-screen flex flex-col relative selection:bg-primary selection:text-black">
+<!-- Subtle Starfield Background -->
+<div class="fixed inset-0 z-0 pointer-events-none opacity-40" style="background-image: radial-gradient(white 1px, transparent 0); background-size: 50px 50px;"></div>
+<div class="fixed inset-0 z-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-cyan-900/20 via-transparent to-transparent"></div>
+<!-- Top Navigation -->
+<header class="relative z-50 flex items-center justify-between whitespace-nowrap border-b border-white/10 px-8 py-4 glass-panel sticky top-0">
+<div class="flex items-center gap-4 text-white">
+<div class="size-6 text-primary animate-pulse">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475C21.8562 38.4054 22.4689 36.9657 23.5038 35.2817C24.7575 33.2417 26.5497 30.9744 28.7621 28.762C30.9744 26.5497 33.2417 24.7574 35.2817 23.5037C36.9657 22.4689 38.4054 21.8562 39.475 21.6262ZM4.41189 29.2403L18.7597 43.5881C19.8813 44.7097 21.4027 44.9179 22.7217 44.7893C24.0585 44.659 25.5148 44.1631 26.9723 43.4579C29.9052 42.0387 33.2618 39.5667 36.4142 36.4142C39.5667 33.2618 42.0387 29.9052 43.4579 26.9723C44.1631 25.5148 44.659 24.0585 44.7893 22.7217C44.9179 21.4027 44.7097 19.8813 43.5881 18.7597L29.2403 4.41187C27.8527 3.02428 25.8765 3.02573 24.2861 3.36776C22.6081 3.72863 20.7334 4.58419 18.8396 5.74801C16.4978 7.18716 13.9881 9.18353 11.5858 11.5858C9.18354 13.988 7.18717 16.4978 5.74802 18.8396C4.58421 20.7334 3.72865 22.6081 3.36778 24.2861C3.02574 25.8765 3.02429 27.8527 4.41189 29.2403Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-[0.1em] uppercase">Sovereign Engine</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<nav class="flex items-center gap-9 hidden md:flex">
+<a class="text-white/70 hover:text-primary transition-colors text-sm font-medium tracking-wider" href="#">星图 STARMCH</a>
+<a class="text-primary text-sm font-bold tracking-wider relative after:content-[''] after:absolute after:-bottom-6 after:left-0 after:w-full after:h-0.5 after:bg-primary" href="#">殖民 COLONIZE</a>
+<a class="text-white/70 hover:text-primary transition-colors text-sm font-medium tracking-wider" href="#">实体 ENTITIES</a>
+<a class="text-white/70 hover:text-primary transition-colors text-sm font-medium tracking-wider" href="#">研究 R&amp;D</a>
+</nav>
+<div class="flex items-center gap-3 pl-6 border-l border-white/10">
+<div class="text-right hidden sm:block">
+<div class="text-xs text-white/50">OPERATOR</div>
+<div class="text-sm font-bold text-white">CMD. REYNOLDS</div>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-sm size-10 ring-2 ring-white/10" data-alt="Commander profile picture avatar showing a stylized astronaut helmet" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCDAnFTD5omF_9dLy2I6nO2N8k6lC96NR2K2J9pBr36io9kGh-INs4DA1jx-T_h3ttG1h0dRwFIZkpX7YznDeeaU16W0mAjsxrJTNhYTNh-4M4oxJAlr2hoenixCZuAj1uG1RixIRhFdnmD-OJYJpBXzMmYKQBTkhbZg1Ov3tIeQXtDrlpnBzbG6jxZiOUGXi4CcJT9HUXaLcWkiw7pddDLkI_eKImVKm-Jj-4hC9d2-gOzu28_qhwNtI2CplIo7rBoOG8oBYyGrdc");'></div>
+</div>
+</div>
+</header>
+<!-- Main Content Grid -->
+<main class="relative z-10 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-0 overflow-hidden h-[calc(100vh-73px)]">
+<!-- Left: Planet Viewport -->
+<section class="lg:col-span-7 xl:col-span-8 relative flex items-center justify-center p-8 lg:p-12 overflow-hidden bg-black/20">
+<!-- Background Grid overlay -->
+<div class="absolute inset-0 bg-grid-pattern bg-[length:40px_40px] opacity-[0.05]"></div>
+<!-- Floating Data Points (Decorations) -->
+<div class="absolute top-10 left-10 flex flex-col gap-1 z-20">
+<span class="text-primary text-xs font-mono">COORD: 18.44.92</span>
+<span class="text-white/40 text-xs font-mono">SCANNING SECTOR 7G</span>
+</div>
+<!-- Planet Container -->
+<div class="relative w-full max-w-[600px] aspect-square flex items-center justify-center group">
+<!-- Orbital Ring 1 -->
+<div class="absolute inset-[-40px] border border-white/5 rounded-full animate-spin-slow duration-[60s]"></div>
+<!-- Orbital Ring 2 -->
+<div class="absolute inset-[-80px] border border-dashed border-white/10 rounded-full animate-spin-slow" style="animation-direction: reverse; animation-duration: 90s;"></div>
+<!-- 3D Planet Visualization -->
+<div class="relative w-full h-full rounded-full overflow-hidden shadow-[0_0_100px_rgba(0,234,255,0.15)] planet-glow z-10">
+<!-- Texture map -->
+<div class="absolute inset-0 bg-cover bg-center opacity-90 animate-spin-slow" data-alt="Detailed texture of planet Kepler-186f surface with blue and green terrain" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCA9vj31u8jkQHg6TUhmlPXkuqbBFagkQ-9CPBDeEspwwTBX94TMoIWqbdVr6kPZe5ULMiIloXpo7J7zQIWx7MlMywLjIsGEaEwjPqbKxQjAIvni-3pCIyzeEfsjytCnwwX-kuzav0GifXRnaoa_fL_qoLg8vmvMjHyZCirMDLd6HzYvYF-S6sHKb2v97asNgLqeBVNrMlI63SJyQWHdaDvAN1vQEfOLm28onk6CQNzH3gkgdBnmaayt765tmX6gDWAMVGp5zbJfBo'); animation-duration: 200s; background-size: 200% 100%;">
+</div>
+<!-- Atmosphere Overlay -->
+<div class="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-primary/20 mix-blend-overlay"></div>
+<!-- Shadow Side -->
+<div class="absolute inset-0 bg-gradient-to-br from-transparent via-black/40 to-black/90"></div>
+</div>
+<!-- Floating Tooltip 1 -->
+<div class="absolute top-[25%] right-[15%] z-20 flex items-center gap-3 animate-pulse">
+<div class="size-2 bg-primary rounded-full shadow-[0_0_10px_#00eaff]"></div>
+<div class="glass-panel px-3 py-1 rounded-sm border-l-2 border-primary">
+<div class="text-[10px] text-white/60 font-mono tracking-widest uppercase">Biome Detected</div>
+<div class="text-sm font-bold text-white">Cryo-Volcanic Plains</div>
+</div>
+</div>
+<!-- Floating Tooltip 2 -->
+<div class="absolute bottom-[30%] left-[20%] z-20 flex items-center gap-3 flex-row-reverse">
+<div class="size-2 bg-secondary rounded-full shadow-[0_0_10px_#bf40bf]"></div>
+<div class="glass-panel px-3 py-1 rounded-sm border-r-2 border-secondary text-right">
+<div class="text-[10px] text-white/60 font-mono tracking-widest uppercase">Hazard</div>
+<div class="text-sm font-bold text-secondary">Magnetic Storms</div>
+</div>
+</div>
+<!-- Scanning Grid Overlay -->
+<div class="absolute inset-0 rounded-full border border-white/5 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDQwIDQwIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6IiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMCwgMjM0LCAyNTUsIDAuMSkiIHN0cm9rZS13aWR0aD0iMC41Ii8+PC9zdmc+')] bg-center opacity-30 mix-blend-screen pointer-events-none"></div>
+</div>
+<!-- Bottom Left Planet Info -->
+<div class="absolute bottom-12 left-12 max-w-sm">
+<h1 class="text-5xl md:text-6xl font-bold text-white mb-2 tracking-tighter">KEPLER-186F</h1>
+<div class="flex items-center gap-3 text-primary/80 font-mono text-sm">
+<span class="px-1.5 py-0.5 border border-primary/30 rounded bg-primary/10">CLASS M</span>
+<span>DISTANCE: 582 LY</span>
+<span>GRAVITY: 1.12 G</span>
+</div>
+</div>
+</section>
+<!-- Right: Data Dashboard -->
+<aside class="lg:col-span-5 xl:col-span-4 relative flex flex-col border-l border-white/5 bg-[#12151a]/80 backdrop-blur-xl p-6 lg:p-8 overflow-y-auto">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
+<div class="mb-8">
+<div class="flex items-center justify-between mb-2">
+<h3 class="text-primary font-mono text-xs tracking-[0.2em] uppercase">Target Analysis</h3>
+<span class="flex h-2 w-2 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+</div>
+<h2 class="text-3xl font-bold text-white mb-1">星球生态概览</h2>
+<p class="text-gray-400 text-sm">Planetary Ecology Overview</p>
+</div>
+<!-- Compatibility Report Card -->
+<div class="glass-panel p-5 rounded-lg mb-6 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-40 transition-opacity">
+<span class="material-symbols-outlined text-4xl">science</span>
+</div>
+<h4 class="text-lg font-bold text-white mb-6 border-b border-white/10 pb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">dataset</span>
+                    环境兼容性报告
+                </h4>
+<div class="space-y-6">
+<!-- Item 1 -->
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<span class="text-gray-300 text-sm">大气密度 (Atmospheric Density)</span>
+<span class="text-white font-mono font-bold">4.5 atm</span>
+</div>
+<div class="h-1.5 w-full bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-blue-500 to-cyan-400 w-[85%] rounded-full shadow-[0_0_10px_#00eaff]"></div>
+</div>
+<div class="flex justify-between text-[10px] text-gray-500 font-mono">
+<span>LOW</span>
+<span>CRITICAL</span>
+</div>
+</div>
+<!-- Item 2 (Hazard) -->
+<div class="space-y-2 p-3 bg-secondary/10 border border-secondary/30 rounded">
+<div class="flex justify-between items-start">
+<div class="flex flex-col">
+<span class="text-gray-200 text-sm font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-sm">warning</span>
+                                    液态金属海洋
+                                </span>
+<span class="text-[10px] text-secondary/80 font-mono uppercase">Liquid Metal Ocean</span>
+</div>
+<span class="text-secondary font-mono font-bold">62% COVERAGE</span>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<span class="text-gray-300 text-sm">极端温差 (Temp Diff)</span>
+<span class="text-secondary font-mono font-bold">-120°C / +450°C</span>
+</div>
+<div class="relative h-2 w-full bg-gray-700 rounded-full mt-2">
+<!-- Min Range -->
+<div class="absolute left-[10%] w-[10%] h-full bg-blue-500/50 rounded-l-full"></div>
+<!-- Max Range -->
+<div class="absolute right-[20%] w-[15%] h-full bg-red-500/50 rounded-r-full"></div>
+<!-- Safe Zone -->
+<div class="absolute left-[30%] right-[40%] h-full bg-green-500/30"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Survival Prediction -->
+<div class="glass-panel p-5 rounded-lg mb-6 flex flex-col items-center justify-center relative">
+<div class="scan-line absolute w-full h-1"></div>
+<h4 class="text-sm font-bold text-gray-400 w-full text-left mb-4 uppercase tracking-wider">Survival Probability Prediction</h4>
+<div class="relative size-40 flex items-center justify-center mb-4">
+<!-- Gauge Background -->
+<div class="absolute inset-0 rounded-full border-8 border-gray-800"></div>
+<!-- Gauge Fill (CSS Conic) -->
+<div class="conic-gauge size-40" style="--progress: 78.4%;">
+<div class="bg-[#12151a] size-32 rounded-full flex flex-col items-center justify-center z-10 shadow-inner">
+<span class="text-4xl font-bold text-white tracking-tighter shadow-black drop-shadow-lg">78.4<span class="text-lg text-gray-500">%</span></span>
+<span class="text-[10px] text-primary font-mono mt-1">AI CONFIDENCE</span>
+</div>
+</div>
+<!-- Decorative ticks -->
+<div class="absolute inset-[-10px] border border-dashed border-white/10 rounded-full"></div>
+</div>
+<div class="w-full grid grid-cols-2 gap-2 text-center">
+<div class="bg-white/5 p-2 rounded">
+<div class="text-[10px] text-gray-500 mb-1">RESOURCE AVAILABILITY</div>
+<div class="text-sm font-mono text-white">HIGH</div>
+</div>
+<div class="bg-white/5 p-2 rounded">
+<div class="text-[10px] text-gray-500 mb-1">TERRAFORMING COST</div>
+<div class="text-sm font-mono text-white">EST. 4.2T</div>
+</div>
+</div>
+</div>
+<!-- Footer Action -->
+<div class="mt-auto pt-4">
+<button class="w-full relative overflow-hidden group bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-bold py-4 px-6 rounded shadow-[0_0_20px_rgba(0,234,255,0.4)] transition-all transform hover:scale-[1.02] active:scale-[0.98]">
+<div class="absolute top-0 left-[-100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12 group-hover:animate-[shine_1s_ease-in-out]"></div>
+<span class="relative z-10 flex items-center justify-center gap-2 tracking-widest uppercase text-sm">
+<span class="material-symbols-outlined">rocket_launch</span>
+                        初始化殖民程序
+                    </span>
+</button>
+<div class="text-center mt-3 text-[10px] text-gray-600 font-mono">
+                    SOVEREIGN ENGINE v4.0.2 // AWAITING AUTHORIZATION
+                </div>
+</div>
+</aside>
+</main>
+<style>
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+    </style>
+</body></html>
