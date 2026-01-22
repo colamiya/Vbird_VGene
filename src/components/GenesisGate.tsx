@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
-import { Settings, Play, Cpu, Activity, Info, Terminal } from 'lucide-react';
+import { getCurrentWindow } from '@tauri-apps/api/window';
+import { Settings, Play, Cpu, Activity, Info, Terminal, Power } from 'lucide-react';
 import SettingsModal from './SettingsModal';
 
 // 系统信息接口
 interface SysInfo {
-  cpu_brand: String;
+  cpu_brand: string;
   cpu_cores: number;
-  os_info: String;
+  os_info: string;
 }
 
 // 创世纪门属性接口
@@ -25,6 +26,11 @@ const GenesisGate: React.FC<GenesisGateProps> = ({ onStart }) => {
     modelName: 'llama3',
     mode: 'LocalMock'
   });
+
+  const handleExit = async () => {
+    const appWindow = getCurrentWindow();
+    await appWindow.close();
+  };
 
   useEffect(() => {
     // 获取系统信息
@@ -77,6 +83,14 @@ const GenesisGate: React.FC<GenesisGateProps> = ({ onStart }) => {
           >
             <Settings size={14} />
             系统配置
+          </button>
+
+          <button 
+            onClick={handleExit}
+            className="flex items-center gap-3 px-8 py-3 text-red-500/60 hover:text-red-500 transition-all font-mono text-xs uppercase tracking-widest"
+          >
+            <Power size={14} />
+            退出协议
           </button>
         </div>
 
