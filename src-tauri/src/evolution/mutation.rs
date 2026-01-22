@@ -103,12 +103,26 @@ impl MutationEngine {
     }
 
     fn extract_wat(&self, text: &str) -> String {
-        // 尝试寻找 (module ...) 结构
+        // 🔒 增强的 WAT 提取逻辑：支持括号计数以处理嵌套 (Law #14)
         if let Some(start) = text.find("(module") {
-            if let Some(end) = text.rfind(')') {
-                if end > start {
-                    return text[start..=end].to_string();
+            let mut count = 0;
+            let mut end = 0;
+            let bytes = text.as_bytes();
+            
+            for i in start..bytes.len() {
+                if bytes[i] == b'(' {
+                    count += 1;
+                } else if bytes[i] == b')' {
+                    count -= 1;
+                    if count == 0 {
+                        end = i;
+                        break;
+                    }
                 }
+            }
+            
+            if end > start {
+                return text[start..=end].to_string();
             }
         }
         

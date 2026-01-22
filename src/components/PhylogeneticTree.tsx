@@ -44,9 +44,13 @@ const EvolutionGalaxy = ({ nodes, onNodeClick }: { nodes: Node[], onNodeClick: (
 
   const lines = useMemo(() => {
     const l: any[] = [];
+    // 🔒 优化：使用 Map 索引加速父节点查找 (O(N))
+    const nodeMap = new Map<number, Node>();
+    processedNodes.forEach(node => nodeMap.set(node.id, node));
+
     processedNodes.forEach(node => {
       if (node.parent_id !== null) {
-        const parent = processedNodes.find(n => n.id === node.parent_id);
+        const parent = nodeMap.get(node.parent_id);
         if (parent && parent.position && node.position) {
           l.push([new THREE.Vector3(...parent.position), new THREE.Vector3(...node.position)]);
         }

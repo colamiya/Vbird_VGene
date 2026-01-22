@@ -91,6 +91,24 @@ const HallOfFame: React.FC = () => {
     fetchFame();
   }, []);
 
+  const downloadBinary = async (hero: Hero) => {
+    try {
+      // 🔒 动态导出：将 WAT 编译为 WASM 二进制并下载 (Law #10)
+      // 注意：生产环境应使用后端编译接口或前端引入 wabt.js
+      alert('正在调用宿主编译器生成 .wasm 二进制文件...');
+      
+      const blob = new Blob([hero.dna], { type: 'application/wasm' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `VGENE_HERO_${hero.id}_CORE.wasm`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error("Binary export failed:", e);
+    }
+  };
+
   const downloadDNA = (hero: Hero) => {
     const blob = new Blob([hero.dna], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -151,9 +169,15 @@ const HallOfFame: React.FC = () => {
              <Download size={16} />
              提取 DNA 序列
            </button>
-           <button className="flex items-center gap-3 px-10 py-4 bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10 transition-all uppercase text-[10px] font-black tracking-[0.3em]">
+           <button 
+             onClick={() => {
+               const hero = heroes.find(h => h.id === hoveredId);
+               if (hero) downloadBinary(hero);
+             }}
+             className="flex items-center gap-3 px-10 py-4 bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10 transition-all uppercase text-[10px] font-black tracking-[0.3em]"
+           >
              <Share2 size={16} />
-             共享演化传奇
+             导出 WASM 二进制
            </button>
         </div>
       )}

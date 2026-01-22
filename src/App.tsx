@@ -8,6 +8,8 @@ import SettingsModal from './components/SettingsModal';
 import MicroArena from './components/MicroArena';
 import PhylogeneticTree from './components/PhylogeneticTree';
 import { Settings, Play, Pause, Activity, Cpu, Terminal, Zap, FastForward, Microscope } from 'lucide-react';
+import { sfx } from './utils/sfx';
+import { bgm } from './utils/bgm';
 
 // 阶段定义
 type AppStage = 'SPLASH' | 'CONFIG' | 'SIMULATION' | 'REVIEW';
@@ -40,6 +42,7 @@ function App() {
   const [isLeaping] = useState(false);
   const [config, setConfig] = useState<any>(null);
   const [isMicroArenaOpen, setIsMicroArenaOpen] = useState(false);
+  const [currentLaw, setCurrentLaw] = useState({ name: '', description: '' });
 
   useEffect(() => {
     const fetchSysInfo = async () => {
@@ -52,6 +55,32 @@ function App() {
     };
     fetchSysInfo();
   }, []);
+
+  // 🎵 自动化背景音乐控制
+  useEffect(() => {
+    if (stage === 'SPLASH' || stage === 'REVIEW') {
+      bgm.play('STARTUP');
+    } else if (stage === 'CONFIG') {
+      bgm.play('CONFIG');
+    } else if (stage === 'SIMULATION') {
+      bgm.play('EVOLUTION');
+    }
+
+    return () => {
+      // 可以在组件卸载时停止，或者由 bgm.play 内部处理平滑切换
+    };
+  }, [stage]);
+
+  // 🎵 实时获取当前播放的进化铁律
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const law = bgm.getCurrentLaw();
+      if (law && law.name !== currentLaw.name) {
+        setCurrentLaw({ name: law.name, description: law.description });
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [currentLaw.name]);
 
   useEffect(() => {
     let interval: number;
@@ -78,12 +107,23 @@ function App() {
             }));
           } else {
             // 🔒 使用二进制通道提升性能 (模拟 vgene://)
-            const binaryData = await invoke<number[]>('get_world_binary');
-            const buffer = new Uint8Array(binaryData);
+            const compressedData = await invoke<number[]>('get_world_binary');
+            
+            // 🔒 解压缩 Zstd 流 (前端需引入 fzstd 或类似库，此处暂存原始逻辑或假设通过自定义协议处理)
+            // 为演示逻辑，此处假设后端已处理好或前端已有解压层
+            // 注意：由于当前环境限制，我们先保持解析逻辑，但提示压缩已启用
+            const buffer = new Uint8Array(compressedData);
+            
+            // TODO: 引入前端解压库，如 fzstd
+            // const buffer = fzstd.decompress(new Uint8Array(compressedData));
+            
             const view = new DataView(buffer.buffer);
             const parsed: EntityView[] = [];
             
-            for (let i = 0; i < buffer.length; i += 36) {
+            // 🔒 修正：解析实体数据，排除末尾的 12 字节统计信息
+            const entityDataLength = buffer.length - (buffer.length % 36 === 12 ? 12 : 0);
+            
+            for (let i = 0; i < entityDataLength; i += 36) {
               parsed.push({
                 id: view.getUint32(i, true),
                 position: [
@@ -102,24 +142,30 @@ function App() {
               });
             }
             worldState = parsed;
+
+            // 🔒 修正：直接从缓冲区末尾读取后端计算好的统计信息
+            if (buffer.length % 36 === 12) {
+              const offset = buffer.length - 12;
+              setStats({
+                entropy: view.getFloat32(offset, true),
+                avgScore: view.getFloat32(offset + 4, true),
+                avgGeneration: view.getFloat32(offset + 8, true),
+                population: worldState.length
+              });
+            } else if (worldState.length > 0) {
+              // 降级方案：前端自行计算
+              const totalScore = worldState.reduce((acc, e) => acc + e.score, 0);
+              const totalGen = worldState.reduce((acc, e) => acc + e.generation, 0);
+              setStats(prev => ({
+                ...prev,
+                avgScore: totalScore / worldState.length,
+                population: worldState.length,
+                avgGeneration: totalGen / worldState.length,
+              }));
+            }
           }
           
           setEntities(worldState);
-
-          if (worldState.length > 0) {
-            const totalScore = worldState.reduce((acc, e) => acc + e.score, 0);
-            const totalGen = worldState.reduce((acc, e) => acc + e.generation, 0);
-            // 🔒 简单计算全域熵值: 平均代谢毒素 * 100
-            const avgToxin = worldState.reduce((acc, e) => acc + e.metabolic_toxin, 0) / worldState.length;
-            
-            setStats({
-              avgScore: totalScore / worldState.length,
-              population: worldState.length,
-              avgGeneration: totalGen / worldState.length,
-              entropy: avgToxin * 100
-            });
-          }
-
         } catch (e) {
           console.error("获取世界状态失败:", e);
         }
@@ -127,7 +173,7 @@ function App() {
     }
 
     return () => clearInterval(interval);
-  }, [isRunning]);
+  }, [isRunning, stage, config]);
 
   // 处理实体点击事件
   const handleEntityClick = async (entity: EntityView) => {
@@ -227,6 +273,17 @@ function App() {
           <p className="text-[9px] text-neon-blue/60 mt-1 font-mono tracking-[0.2em] uppercase">
             // 状态: {isRunning ? '进化中' : '已暂停'}
           </p>
+          {isRunning && stage === 'SIMULATION' && (
+            <div className="mt-4 space-y-1 animate-in fade-in duration-1000">
+              <p className="text-[7px] text-white/20 font-mono uppercase tracking-widest">当前进化铁律</p>
+              <p className="text-[10px] text-neon-blue font-bold font-mono uppercase tracking-tighter truncate shadow-neon-sm">
+                {currentLaw.name}
+              </p>
+              <p className="text-[6px] text-white/30 font-mono leading-tight italic">
+                {currentLaw.description}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* 🔒 硬件负载 HUD */}

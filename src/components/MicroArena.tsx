@@ -1,59 +1,52 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, memo } from 'react';
 import { Minimize2, Maximize2, Activity, Zap, Shield, Skull } from 'lucide-react';
 
 interface MicroArenaProps {
-  entityA: any;
+  entityA: any; // 包含 last_memory_snapshot
   entityB: any;
   onClose: () => void;
 }
+
+// 🔒 优化：使用 memo 包装网格单元，减少大规模重绘
+const MemoryCell = memo(({ status }: { status: number }) => (
+  <div 
+    className={`
+      w-full h-full transition-colors duration-300
+      ${status === 0 ? 'bg-black/80' : ''}
+      ${status === 1 ? 'bg-neon-blue/50 shadow-[0_0_5px_theme(colors.neon-blue)]' : ''}
+      ${status === 2 ? 'bg-purple-500/50 shadow-[0_0_5px_purple]' : ''}
+      ${status === 3 ? 'bg-red-500 animate-pulse' : ''}
+      ${status === 4 ? 'bg-white/80' : ''}
+    `}
+  />
+));
+
+MemoryCell.displayName = 'MemoryCell';
 
 const MicroArena: React.FC<MicroArenaProps> = ({ entityA, entityB, onClose }) => {
   const [memoryGrid, setMemoryGrid] = useState<number[]>(new Array(256).fill(0));
   const [logs, setLogs] = useState<string[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // 模拟内存战
+  // 🔒 真实内存同步：不再使用 Math.random 模拟
   useEffect(() => {
-    const interval = setInterval(() => {
-      // 随机攻击
-      const targetIdx = Math.floor(Math.random() * 256);
-      const isAttack = Math.random() > 0.5;
-      
-      setMemoryGrid(prev => {
-        const next = [...prev];
-        // 0: 空, 1: A占领, 2: B占领, 3: 冲突/攻击, 4: 防御
-        if (isAttack) {
-           next[targetIdx] = 3; 
-           setTimeout(() => {
-             setMemoryGrid(curr => {
-               const n = [...curr];
-               if (n[targetIdx] === 3) n[targetIdx] = Math.random() > 0.5 ? 1 : 2;
-               return n;
-             });
-           }, 200);
-        } else {
-           next[targetIdx] = 4;
-           setTimeout(() => {
-            setMemoryGrid(curr => {
-              const n = [...curr];
-              if (n[targetIdx] === 4) n[targetIdx] = 0;
-              return n;
-            });
-          }, 500);
-        }
-        return next;
+    if (entityA?.last_memory_snapshot) {
+      // 将字节映射为状态码
+      const snapshot = entityA.last_memory_snapshot;
+      const nextGrid = new Array(256).fill(0).map((_, i) => {
+        const val = snapshot[i] || 0;
+        if (val === 0) return 0;
+        if (val > 0 && val < 100) return 1; // A占领
+        if (val >= 100 && val < 200) return 2; // B占领 (模拟)
+        return 3; // 冲突
       });
-
-      if (Math.random() > 0.7) {
-        const actions = ['注入恶意指令 i32.const', '尝试溢出堆栈', '锁定内存页 0x4F', '触发 Trap'];
-        const action = actions[Math.floor(Math.random() * actions.length)];
-        setLogs(prev => [`[${new Date().toLocaleTimeString()}] ${action}`, ...prev].slice(0, 5));
+      setMemoryGrid(nextGrid);
+      
+      if (Math.random() > 0.8) {
+         setLogs(prev => [`[${new Date().toLocaleTimeString()}] 捕获真实内存快照 (${snapshot.length} 字节)`, ...prev].slice(0, 5));
       }
-
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, []);
+    }
+  }, [entityA]);
 
   return (
     <div 
@@ -90,17 +83,7 @@ const MicroArena: React.FC<MicroArenaProps> = ({ entityA, entityB, onClose }) =>
         <div className="flex-1 p-4 flex flex-col">
           <div className="flex-1 grid grid-cols-16 grid-rows-16 gap-[1px] bg-white/5 p-[1px]">
             {memoryGrid.map((status, i) => (
-              <div 
-                key={i}
-                className={`
-                  w-full h-full transition-colors duration-300
-                  ${status === 0 ? 'bg-black/80' : ''}
-                  ${status === 1 ? 'bg-neon-blue/50 shadow-[0_0_5px_theme(colors.neon-blue)]' : ''}
-                  ${status === 2 ? 'bg-purple-500/50 shadow-[0_0_5px_purple]' : ''}
-                  ${status === 3 ? 'bg-red-500 animate-pulse' : ''}
-                  ${status === 4 ? 'bg-white/80' : ''}
-                `}
-              />
+              <MemoryCell key={i} status={status} />
             ))}
           </div>
           

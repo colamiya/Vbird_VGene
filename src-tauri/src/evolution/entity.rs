@@ -1,6 +1,7 @@
 use serde::{Serialize, Deserialize};
+use std::hash::{Hash, Hasher};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Entity {
     pub id: u32,
     pub parent_id: Option<u32>, // 父代 ID (谱系追踪)
@@ -14,9 +15,18 @@ pub struct Entity {
     pub energy: f32, // 当前能量
     pub fuel_consumed: u64, // 累计燃料消耗 (熵增记录)
     pub fuel_efficiency: f32, // 燃料效率 (得分/消耗)
+    pub last_memory_snapshot: Vec<u8>, // 🔒 真实 WASM 内存快照
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+impl Eq for Entity {}
+
+impl Hash for Entity {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.id.hash(state);
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Stats {
     pub attack: u32,
     pub defense: u32,
@@ -25,7 +35,7 @@ pub struct Stats {
     pub efficiency: f32, // 代码效率
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Ethics {
     pub altruism: f32, // 0.0到1.0（邪恶到善良）
     pub collaboration: f32,
@@ -59,6 +69,7 @@ impl Entity {
             energy: 100.0,
             fuel_consumed: 0,
             fuel_efficiency: 1.0,
+            last_memory_snapshot: Vec::new(),
         }
     }
 }

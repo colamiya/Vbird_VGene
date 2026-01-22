@@ -68,8 +68,8 @@ const EntitySwarm: React.FC<{ entities: Entity[], onEntityClick?: (entity: Entit
     }
   };
 
-  // 🔒 只在实体列表变化时更新
-  const prevEntitiesRef = useRef<Entity[]>([]);
+  // 🔒 优化后的状态追踪，减少内存压力
+  const lastStateRef = useRef<Map<number, { energy: number, x: number, y: number, z: number }>>(new Map());
 
   useFrame((state) => {
     if (!meshRef.current) return;
@@ -81,19 +81,35 @@ const EntitySwarm: React.FC<{ entities: Entity[], onEntityClick?: (entity: Entit
     // 🔒 识别变化的实体索引 (脏检查)
     const changedIndices: number[] = [];
     entities.forEach((e, i) => {
-      const prev = prevEntitiesRef.current[i];
+      const prev = lastStateRef.current.get(e.id);
       if (
         !prev || 
-        e.id !== prev.id || 
         e.energy !== prev.energy || 
-        e.position[0] !== prev.position[0] ||
+        e.position[0] !== prev.x ||
+        e.position[1] !== prev.y ||
+        e.position[2] !== prev.z ||
         isLeaping
       ) {
         changedIndices.push(i);
+        // 更新记录
+        lastStateRef.current.set(e.id, { 
+          energy: e.energy, 
+          x: e.position[0], 
+          y: e.position[1], 
+          z: e.position[2] 
+        });
       }
     });
 
     if (changedIndices.length === 0 && !isLeaping) return; 
+
+    // 清理已不存在的实体记录
+    if (lastStateRef.current.size > entities.length * 2) {
+      const currentIds = new Set(entities.map(e => e.id));
+      for (const id of lastStateRef.current.keys()) {
+        if (!currentIds.has(id)) lastStateRef.current.delete(id);
+      }
+    }
 
     changedIndices.forEach(i => {
       const entity = entities[i];
@@ -136,8 +152,6 @@ const EntitySwarm: React.FC<{ entities: Entity[], onEntityClick?: (entity: Entit
 
     meshRef.current.instanceMatrix.needsUpdate = true;
     if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
-    
-    prevEntitiesRef.current = [...entities.map(e => ({...e}))]; // 深度复制以进行比较
   });
 
   return (

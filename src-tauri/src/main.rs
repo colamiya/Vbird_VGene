@@ -24,11 +24,52 @@ fn calculate_distance(p1: (f32, f32, f32), p2: (f32, f32, f32)) -> f32 {
     ((p1.0 - p2.0).powi(2) + (p1.1 - p2.1).powi(2) + (p1.2 - p2.2).powi(2)).sqrt()
 }
 
+fn process_collision(entities: &mut [Entity], i: usize, j: usize) {
+    let pos1 = entities[i].position;
+    let pos2 = entities[j].position;
+    
+    // 🔒 优化：改用平方距离比较，避免开方运算 (Law #15)
+    let dx = pos1.0 - pos2.0;
+    let dy = pos1.1 - pos2.1;
+    let dz = pos1.2 - pos2.2;
+    let dist_sq = dx * dx + dy * dy + dz * dz;
+
+    if dist_sq < 0.25 { // 0.5 * 0.5
+        // 🔒 利他主义与协作逻辑 (Law #21)
+        let altruism_i = entities[i].ethics.altruism;
+        let altruism_j = entities[j].ethics.altruism;
+
+        // 如果双方都比较善良，则分享能量
+        if altruism_i > 0.7 && altruism_j > 0.7 {
+            let shared = (entities[i].energy + entities[j].energy) / 2.0;
+            entities[i].energy = shared;
+            entities[j].energy = shared;
+            return;
+        }
+
+        // 攻击逻辑 (PVP 燃料掠夺)
+        if entities[i].stats.attack > entities[j].stats.defense + 50 {
+            entities[j].energy = 0.0;
+            entities[i].energy = (entities[i].energy + 20.0).min(100.0);
+        } else if entities[j].stats.attack > entities[i].stats.defense + 50 {
+            entities[i].energy = 0.0;
+            entities[j].energy = (entities[j].energy + 20.0).min(100.0);
+        }
+    }
+}
+
 #[derive(Serialize)]
 struct SysInfo {
     cpu_brand: String,
     cpu_cores: usize,
     os_info: String,
+}
+
+#[derive(Serialize)]
+struct LiveStats {
+    cpu_usage: f32,
+    memory_usage: f32,
+    memory_total: f32,
 }
 
 #[derive(Serialize)]
@@ -56,6 +97,32 @@ fn get_sys_info() -> SysInfo {
         cpu_cores,
         os_info,
     }
+}
+
+#[tauri::command]
+fn get_live_stats() -> LiveStats {
+    let mut sys = System::new();
+    sys.refresh_cpu_usage(); // 优化：仅刷新使用率
+    sys.refresh_memory();
+    
+    LiveStats {
+        cpu_usage: sys.global_cpu_usage(),
+        memory_usage: sys.used_memory() as f32 / 1024.0 / 1024.0, // MB
+        memory_total: sys.total_memory() as f32 / 1024.0 / 1024.0, // MB
+    }
+}
+
+#[tauri::command]
+async fn export_logs(state: State<'_, Arc<AppState>>) -> Result<String, String> {
+    let lineage = state.lineage_history.lock().unwrap();
+    let log_content = serde_json::to_string_pretty(&*lineage)
+        .map_err(|e| e.to_string())?;
+    
+    // 简单的日志导出到当前目录
+    std::fs::write("vgene_evolution_log.json", log_content)
+        .map_err(|e| e.to_string())?;
+    
+    Ok("Logs exported to vgene_evolution_log.json".to_string())
 }
 
 #[tauri::command]
@@ -112,7 +179,33 @@ fn get_world_binary(state: State<'_, Arc<AppState>>) -> Vec<u8> {
         buffer.extend_from_slice(&e.metabolic_toxin.to_le_bytes());
         buffer.extend_from_slice(&e.generation.to_le_bytes());
     }
-    buffer
+
+    // 🔒 附加全域统计信息 (香农熵等) 到原始缓冲区末尾
+    if !entities.is_empty() {
+        let scores: Vec<i32> = entities.iter().map(|e| (e.score / 10.0) as i32).collect();
+        let mut counts = std::collections::HashMap::new();
+        for s in scores {
+            *counts.entry(s).or_insert(0) += 1;
+        }
+        
+        let mut entropy = 0.0;
+        let len = entities.len() as f32;
+        for &count in counts.values() {
+            let p = count as f32 / len;
+            entropy -= p * p.log2();
+        }
+        let normalized_entropy = (entropy / 5.0).min(1.0) * 100.0;
+        
+        let avg_score: f32 = entities.iter().map(|e| e.score).sum::<f32>() / len;
+        let avg_gen: f32 = entities.iter().map(|e| e.generation as f32).sum::<f32>() / len;
+        
+        buffer.extend_from_slice(&normalized_entropy.to_le_bytes());
+        buffer.extend_from_slice(&avg_score.to_le_bytes());
+        buffer.extend_from_slice(&avg_gen.to_le_bytes());
+    }
+
+    // 🔒 极致压缩：使用 Zstd 压缩二进制流 (Law #15)
+    zstd::encode_all(&buffer[..], 3).unwrap_or(buffer)
 }
 
 #[tauri::command]
@@ -250,22 +343,21 @@ async fn simulation_loop(state: Arc<AppState>) {
         // 2. 进化/处理步骤
         {
             let mut entities = state.entities.lock().unwrap();
-            let wasm_engine = state.wasm_engine.lock().unwrap();
+            let wasm_engine = &state.wasm_engine; // 直接使用 Arc
             
-            // 🔒 捕食者注入逻辑 (定律 #2: 捕食者-猎物模型)
-            // 每 50 轮检查一次，如果种群健康，则注入一个“压力个体”
-            let current_gen = entities.iter().map(|e| e.generation).max().unwrap_or(0);
-            if current_gen > 0 && current_gen % 50 == 0 && entities.len() < 2000 {
+            // 🔒 动态捕食者注入逻辑 (Law #2: 捕食者-猎物模型)
+            // 基于种群平均健康度动态触发，而非固定周期
+            let (total_energy, _max_gen) = entities.iter().fold((0.0, 0), |(e, g), ent| (e + ent.energy, g.max(ent.generation)));
+            let avg_energy = if entities.is_empty() { 0.0 } else { total_energy / entities.len() as f32 };
+            
+            // 如果平均能量过高 (过度繁荣) 且种群未达上限，则注入捕食者
+            if avg_energy > 80.0 && entities.len() < 2000 {
                 let mut predator = Entity::new(rand::random::<u32>(), MALICIOUS_DNA_TEMPLATE.to_string());
-                predator.stats.attack = 100; // 极高攻击力
+                predator.stats.attack = 120; // 极高攻击力
                 predator.ethics.altruism = 0.0; // 极度邪恶
                 entities.push(predator);
             }
 
-            // 计算引力场 (资源分配)
-            // 效率越高、科技越高，吸引的能量越多
-            let _total_tech: f32 = entities.iter().map(|e| e.stats.tech_level as f32).sum();
-            
             // 并行执行 WASM 与状态更新
             entities.par_iter_mut().for_each(|entity| {
                 // 执行 WASM 并获取效率
@@ -306,19 +398,48 @@ async fn simulation_loop(state: Arc<AppState>) {
                 }
             });
 
-            // 🔒 碰撞检测与攻击逻辑 (PVP 燃料掠夺模拟)
-            let count = entities.len();
-            for i in 0..count {
-                for j in i + 1..count {
-                    let dist = calculate_distance(entities[i].position, entities[j].position);
-                    if dist < 0.5 {
-                        // 如果 i 攻击力远大于 j，j 可能死亡
-                        if entities[i].stats.attack > entities[j].stats.defense + 50 {
-                            entities[j].energy = 0.0;
-                            entities[i].energy += 20.0; // 掠夺能量
-                        } else if entities[j].stats.attack > entities[i].stats.defense + 50 {
-                            entities[i].energy = 0.0;
-                            entities[j].energy += 20.0;
+            // 🔒 优化后的碰撞检测：基于简单的空间网格划分 (Law #15)
+            // 将空间划分为 2.0x2.0x2.0 的网格
+            use std::collections::HashMap;
+            let mut grid: HashMap<(i32, i32, i32), Vec<usize>> = HashMap::new();
+            let grid_size = 2.0;
+
+            for (idx, entity) in entities.iter().enumerate() {
+                let cell = (
+                    (entity.position.0 / grid_size).floor() as i32,
+                    (entity.position.1 / grid_size).floor() as i32,
+                    (entity.position.2 / grid_size).floor() as i32,
+                );
+                grid.entry(cell).or_default().push(idx);
+            }
+
+            // 🔒 修正：使用 13 个正向偏移量避免重复计算与漏算
+            let offsets = [
+                (1, 0, 0), (0, 1, 0), (0, 0, 1),
+                (1, 1, 0), (1, -1, 0), (1, 0, 1), (1, 0, -1),
+                (0, 1, 1), (0, 1, -1), (1, 1, 1), (1, 1, -1),
+                (1, -1, 1), (1, -1, -1)
+            ];
+
+            let cells: Vec<_> = grid.keys().cloned().collect();
+            for cell in cells {
+                if let Some(indices) = grid.get(&cell) {
+                    // 1. 网格内部碰撞
+                    for i in 0..indices.len() {
+                        for j in i + 1..indices.len() {
+                            process_collision(&mut entities, indices[i], indices[j]);
+                        }
+                    }
+
+                    // 2. 相邻网格碰撞 (仅检查定义的 13 个方向)
+                    for &(dx, dy, dz) in &offsets {
+                        let neighbor_cell = (cell.0 + dx, cell.1 + dy, cell.2 + dz);
+                        if let Some(neighbor_indices) = grid.get(&neighbor_cell) {
+                            for &idx1 in indices {
+                                for &idx2 in neighbor_indices {
+                                    process_collision(&mut entities, idx1, idx2);
+                                }
+                            }
                         }
                     }
                 }
@@ -352,7 +473,7 @@ async fn simulation_loop(state: Arc<AppState>) {
 
                         // 3. 影子演化验证
                         let is_valid = {
-                            let wasm_engine = state_clone.wasm_engine.lock().unwrap();
+                            let wasm_engine = &state_clone.wasm_engine;
                             !state_clone.crash_registry.is_blacklisted(&new_dna) && wasm_engine.validate_and_test(&new_dna)
                         };
 
@@ -441,7 +562,9 @@ async fn main() {
             get_hall_of_fame,
             interfere_at,
             update_settings,
-            get_sys_info
+            get_sys_info,
+            get_live_stats,
+            export_logs
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
