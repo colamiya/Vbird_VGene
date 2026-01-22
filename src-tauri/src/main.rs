@@ -12,7 +12,10 @@ use rayon::prelude::*;
 use std::time::Duration;
 use tokio::sync::mpsc;
 use sysinfo::{System, RefreshKind, CpuRefreshKind, MemoryRefreshKind};
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
+use std::fs::{OpenOptions, read_to_string};
+use std::io::{Write as IoWrite};
+use chrono::Local;
 
 const MALICIOUS_DNA_TEMPLATE: &str = r#"(module
   (func (export "calculate_fitness") (result i32)
@@ -63,6 +66,16 @@ struct SysInfo {
     cpu_brand: String,
     cpu_cores: usize,
     os_info: String,
+    mem_speed: String,
+    mem_type: String,
+    gpu_info: Vec<GpuInfo>,
+}
+
+#[derive(Serialize, Clone)]
+struct GpuInfo {
+    name: String,
+    cuda_cores: u32,
+    memory_total: u64,
 }
 
 #[derive(Serialize)]
@@ -70,6 +83,64 @@ struct LiveStats {
     cpu_usage: f32,
     memory_usage: f32,
     memory_total: f32,
+    gpu_stats: Vec<GpuLiveStats>,
+}
+
+#[derive(Serialize, Clone)]
+struct GpuLiveStats {
+    load: u32,
+    memory_usage: u64,
+    temperature: u32,
+}
+
+// 日志函数：首行插入
+fn write_to_run_log(module: &str, content: &str) {
+    let now = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
+    let new_entry = format!("[{}] [{}] {}\n", now, module, content);
+    
+    let existing_content = read_to_string("run.log").unwrap_or_default();
+    let mut file = OpenOptions::new()
+        .create(true)
+        .write(true)
+        .truncate(true)
+        .open("run.log")
+        .unwrap();
+    
+    file.write_all(new_entry.as_bytes()).unwrap();
+    file.write_all(existing_content.as_bytes()).unwrap();
+}
+
+#[tauri::command]
+fn logger(module: String, content: String) {
+    write_to_run_log(&module, &content);
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+struct AppSettings {
+    mode: String,
+    ollama_url: String,
+    model_name: String,
+    max_entities: usize,
+    evolution_throttle: u64,
+    visual_fidelity: String,
+    resolution: String,
+    display_mode: String,
+}
+
+#[tauri::command]
+fn save_settings(settings: AppSettings) -> Result<(), String> {
+    write_to_run_log("Settings", "Saving user configuration to settings.json");
+    let json = serde_json::to_string_pretty(&settings).map_err(|e| e.to_string())?;
+    std::fs::write("settings.json", json).map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
+fn load_settings() -> Result<AppSettings, String> {
+    write_to_run_log("Settings", "Loading configuration from settings.json");
+    let content = read_to_string("settings.json").map_err(|e| e.to_string())?;
+    let settings: AppSettings = serde_json::from_str(&content).map_err(|e| e.to_string())?;
+    Ok(settings)
 }
 
 #[derive(Serialize)]
@@ -85,6 +156,7 @@ struct EntityView {
 
 #[tauri::command]
 fn get_sys_info() -> SysInfo {
+    write_to_run_log("System", "Fetching global system information");
     let mut sys = System::new_all();
     sys.refresh_specifics(RefreshKind::nothing().with_cpu(CpuRefreshKind::everything()).with_memory(MemoryRefreshKind::everything()));
     
@@ -92,23 +164,101 @@ fn get_sys_info() -> SysInfo {
     let cpu_cores = sys.cpus().len();
     let os_info = format!("{} v{}", System::name().unwrap_or_default(), System::os_version().unwrap_or_default());
 
+    // 获取内存速度和类型 (Windows 专用)
+    let (mem_speed, mem_type) = if cfg!(windows) {
+        use std::process::Command;
+        let output = Command::new("wmic")
+            .args(&["memorychip", "get", "speed,ConfiguredClockSpeed"])
+            .output()
+            .ok();
+        
+        let speed = if let Some(out) = output {
+            let s = String::from_utf8_lossy(&out.stdout);
+            s.lines()
+                .nth(1)
+                .map(|l| l.trim().to_string())
+                .unwrap_or_else(|| "Unknown".to_string())
+        } else {
+            "Unknown".to_string()
+        };
+
+        // 简单启发式判断 DDR 类型 (基于速度)
+        let m_type = if let Ok(s_val) = speed.parse::<u32>() {
+            if s_val >= 4800 { "DDR5" }
+            else if s_val >= 2133 { "DDR4" }
+            else if s_val >= 800 { "DDR3" }
+            else { "DDR" }
+        } else {
+            "DDR4" // 默认
+        };
+
+        (format!("{} MHz", speed), m_type.to_string())
+    } else {
+        ("Unknown".to_string(), "Unknown".to_string())
+    };
+
+    // 获取 GPU 信息
+    let mut gpu_info = Vec::new();
+    {
+        use nvml_wrapper::Nvml;
+        if let Ok(nvml) = Nvml::init() {
+            if let Ok(device_count) = nvml.device_count() {
+                for i in 0..device_count {
+                    if let Ok(device) = nvml.device_by_index(i) {
+                        gpu_info.push(GpuInfo {
+                            name: device.name().unwrap_or_else(|_| "NVIDIA GPU".to_string()),
+                            cuda_cores: device.num_cores().unwrap_or(0),
+                            memory_total: device.memory_info().map(|m| m.total).unwrap_or(0),
+                        });
+                    }
+                }
+            }
+        }
+    }
+    // 如果没有 NVIDIA GPU 或 NVML 失败，尝试简单占位或后续扩展
+    if gpu_info.is_empty() {
+        // 可以添加 Intel/AMD 的获取逻辑，暂用占位
+    }
+
     SysInfo {
         cpu_brand,
         cpu_cores,
         os_info,
+        mem_speed,
+        mem_type,
+        gpu_info,
     }
 }
 
 #[tauri::command]
 fn get_live_stats() -> LiveStats {
     let mut sys = System::new();
-    sys.refresh_cpu_usage(); // 优化：仅刷新使用率
+    sys.refresh_cpu_usage();
     sys.refresh_memory();
     
+    let mut gpu_stats = Vec::new();
+    {
+        use nvml_wrapper::Nvml;
+        if let Ok(nvml) = Nvml::init() {
+            if let Ok(device_count) = nvml.device_count() {
+                for i in 0..device_count {
+                    if let Ok(device) = nvml.device_by_index(i) {
+                        gpu_stats.push(GpuLiveStats {
+                            load: device.utilization_rates().map(|u| u.gpu).unwrap_or(0),
+                            memory_usage: device.memory_info().map(|m| m.used).unwrap_or(0),
+                            temperature: device.temperature(nvml_wrapper::enum_wrappers::device::TemperatureSensor::Gpu).unwrap_or(0),
+                        });
+                    }
+                }
+            }
+        }
+    }
+
     LiveStats {
         cpu_usage: sys.global_cpu_usage(),
         memory_usage: sys.used_memory() as f32 / 1024.0 / 1024.0, // MB
         memory_total: sys.total_memory() as f32 / 1024.0 / 1024.0, // MB
+        gpu_stats,
     }
 }
 
@@ -127,6 +277,7 @@ async fn export_logs(state: State<'_, Arc<AppState>>) -> Result<String, String> 
 
 #[tauri::command]
 async fn start_sim(state: State<'_, Arc<AppState>>) -> Result<String, String> {
+    write_to_run_log("Simulation", "Attempting to start simulation engine");
     let mut is_running = state.is_running.lock().unwrap();
     if *is_running {
         return Ok("Already running".to_string());
@@ -158,6 +309,7 @@ async fn start_sim(state: State<'_, Arc<AppState>>) -> Result<String, String> {
 
 #[tauri::command]
 async fn stop_sim(state: State<'_, Arc<AppState>>) -> Result<String, String> {
+    write_to_run_log("Simulation", "Stopping simulation engine");
     let mut is_running = state.is_running.lock().unwrap();
     *is_running = false;
     Ok("Simulation stopped".to_string())
@@ -236,6 +388,7 @@ async fn get_hall_of_fame(state: State<'_, Arc<AppState>>) -> Result<Vec<Entity>
 
 #[tauri::command]
 async fn interfere_at(state: State<'_, Arc<AppState>>, x: f32, y: f32, z: f32) -> Result<String, String> {
+    write_to_run_log("Simulation", &format!("Observer intervention at coordinates: ({}, {}, {})", x, y, z));
     let mut entities = state.entities.lock().unwrap();
     let mut count = 0;
     for entity in entities.iter_mut() {
@@ -269,6 +422,7 @@ async fn update_settings(
     evolution_throttle: Option<u64>,
     visual_fidelity: Option<String>
 ) -> Result<String, String> {
+    write_to_run_log("Settings", "Updating environment parameters");
     {
         let mut engine = state.mutation_engine.lock().unwrap();
         match mode.as_str() {
@@ -300,6 +454,7 @@ async fn update_settings(
 }
 
 async fn simulation_loop(state: Arc<AppState>) {
+    write_to_run_log("Simulation", "Core simulation loop initialized and running");
     let (tx, mut rx) = mpsc::channel::<(u32, String)>(100);
 
     loop {
@@ -564,7 +719,10 @@ async fn main() {
             update_settings,
             get_sys_info,
             get_live_stats,
-            export_logs
+            export_logs,
+            save_settings,
+            load_settings,
+            logger
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

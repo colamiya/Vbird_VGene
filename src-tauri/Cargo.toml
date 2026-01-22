@@ -26,6 +26,8 @@ wat = "1.0"
 dashmap = "6.1.0"
 sha2 = "0.10"
 zstd = "0.13"
+nvml-wrapper = "0.10.0"
+chrono = "0.4"
 
 [target.'cfg(windows)'.dependencies]
 windows = { version = "0.62.2", features = ["Win32_System_Threading"] }

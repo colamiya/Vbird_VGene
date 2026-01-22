@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { X, Settings as SettingsIcon, Monitor, Cpu, Database, Bug, Zap, Activity, Info, RefreshCw, CheckCircle, AlertCircle } from 'lucide-react';
 import { getCurrentWindow, LogicalSize } from '@tauri-apps/api/window';
+import { invoke } from '@tauri-apps/api/core';
 import { sfx } from '../utils/sfx';
 
 // 设置模态框属性接口
@@ -18,7 +19,7 @@ const DEFAULT_CONFIG = {
   evolutionThrottle: 100,
   visualFidelity: 'High',
   resolution: '1280x720',
-  isFullscreen: false
+  displayMode: 'Windowed' // Windowed, Fullscreen, Borderless
 };
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }) => {
@@ -29,7 +30,29 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
   const [evolutionThrottle, setEvolutionThrottle] = useState(DEFAULT_CONFIG.evolutionThrottle);
   const [visualFidelity, setVisualFidelity] = useState(DEFAULT_CONFIG.visualFidelity);
   const [resolution, setResolution] = useState(DEFAULT_CONFIG.resolution);
-  const [isFullscreen, setIsFullscreen] = useState(DEFAULT_CONFIG.isFullscreen);
+  const [displayMode, setDisplayMode] = useState(DEFAULT_CONFIG.displayMode);
+
+  // 加载持久化设置
+  useEffect(() => {
+    if (isOpen) {
+      const loadData = async () => {
+        try {
+          const saved = await invoke<any>('load_settings');
+          setMode(saved.mode);
+          setOllamaUrl(saved.ollama_url);
+          setModelName(saved.model_name);
+          setMaxEntities(saved.max_entities);
+          setEvolutionThrottle(saved.evolution_throttle);
+          setVisualFidelity(saved.visual_fidelity);
+          setResolution(saved.resolution);
+          setDisplayMode(saved.display_mode);
+        } catch (e) {
+          console.log('No saved settings found or error loading, using defaults');
+        }
+      };
+      loadData();
+    }
+  }, [isOpen]);
 
   // Ollama 状态
   const [ollamaStatus, setOllamaStatus] = useState<'idle' | 'checking' | 'connected' | 'error'>('idle');
@@ -75,25 +98,34 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
     }
   }, [isOpen, mode, ollamaUrl, checkOllama]);
 
-  // 分辨率防抖处理
-  const [resizeTimeout, setResizeTimeout] = useState<NodeJS.Timeout | null>(null);
-  const handleResolutionChange = async (res: string) => {
-    setResolution(res);
-    if (resizeTimeout) clearTimeout(resizeTimeout);
+  // 应用显示设置
+  const applyDisplaySettings = async () => {
+    const appWindow = getCurrentWindow();
     
-    const timeout = setTimeout(async () => {
-      const [width, height] = res.split('x').map(Number);
-      const appWindow = getCurrentWindow();
+    if (displayMode === 'Fullscreen') {
+      await appWindow.setFullscreen(true);
+    } else if (displayMode === 'Borderless') {
+      await appWindow.setFullscreen(false);
+      await appWindow.maximize();
+    } else {
+      await appWindow.setFullscreen(false);
+      await appWindow.unmaximize();
+      const [width, height] = resolution.split('x').map(Number);
       await appWindow.setSize(new LogicalSize(width, height));
-    }, 500);
-    setResizeTimeout(timeout);
+      await appWindow.center();
+    }
   };
 
-  const toggleFullscreen = async () => {
-    const next = !isFullscreen;
-    setIsFullscreen(next);
-    const appWindow = getCurrentWindow();
-    await appWindow.setFullscreen(next);
+  const handleResolutionChange = (res: string) => {
+    setResolution(res);
+    if (displayMode === 'Windowed') {
+      const [width, height] = res.split('x').map(Number);
+      getCurrentWindow().setSize(new LogicalSize(width, height));
+    }
+  };
+
+  const handleDisplayModeChange = (mode: string) => {
+    setDisplayMode(mode);
   };
 
   if (!isOpen) return null;
@@ -255,25 +287,33 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
               <Monitor size={12} />
               <span>显示与分辨率</span>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <select 
-                value={resolution}
-                onChange={(e) => handleResolutionChange(e.target.value)}
-                className="bg-black/40 border border-white/10 p-3 text-white text-[10px] font-mono focus:border-neon-blue focus:outline-none"
-              >
-                <option value="1280x720">1280 x 720 (16:9)</option>
-                <option value="1280x800">1280 x 800 (16:10)</option>
-                <option value="1600x900">1600 x 900 (16:9)</option>
-                <option value="1920x1080">1920 x 1080 (16:9)</option>
-                <option value="2560x1440">2560 x 1440 (2K)</option>
-              </select>
-              <button 
-                onMouseEnter={() => sfx.playHover()}
-                onClick={toggleFullscreen}
-                className={`py-3 px-4 border transition-all font-mono text-[10px] uppercase tracking-widest ${isFullscreen ? 'border-neon-blue text-neon-blue bg-neon-blue/10' : 'border-white/10 text-white/40'}`}
-              >
-                {isFullscreen ? '退出全屏' : '全屏模式'}
-              </button>
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                {['Windowed', 'Fullscreen', 'Borderless'].map(m => (
+                  <button
+                    key={m}
+                    onMouseEnter={() => sfx.playHover()}
+                    onClick={() => handleDisplayModeChange(m)}
+                    className={`flex-1 py-2 text-[9px] font-mono border transition-all ${displayMode === m ? 'border-neon-blue text-neon-blue bg-neon-blue/10' : 'border-white/5 text-white/20 hover:border-white/20'}`}
+                  >
+                    {m === 'Windowed' ? '窗口模式' : m === 'Fullscreen' ? '全屏模式' : '无边框全屏'}
+                  </button>
+                ))}
+              </div>
+              
+              {displayMode === 'Windowed' && (
+                <select 
+                  value={resolution}
+                  onChange={(e) => handleResolutionChange(e.target.value)}
+                  className="w-full bg-black/40 border border-white/10 p-3 text-white text-[10px] font-mono focus:border-neon-blue focus:outline-none"
+                >
+                  <option value="1280x720">1280 x 720 (16:9)</option>
+                  <option value="1280x800">1280 x 800 (16:10)</option>
+                  <option value="1600x900">1600 x 900 (16:9)</option>
+                  <option value="1920x1080">1920 x 1080 (16:9)</option>
+                  <option value="2560x1440">2560 x 1440 (2K)</option>
+                </select>
+              )}
             </div>
           </div>
 
@@ -312,16 +352,29 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
             </button>
             <button
               onMouseEnter={() => sfx.playHover()}
-              onClick={() => {
+              onClick={async () => {
                 sfx.playClick();
-                onSave({ 
+                await applyDisplaySettings();
+                
+                const settingsToSave = { 
                   mode, 
-                  ollamaUrl, 
-                  modelName, 
-                  maxEntities, 
-                  evolutionThrottle, 
-                  visualFidelity 
-                });
+                  ollama_url: ollamaUrl, 
+                  model_name: modelName, 
+                  max_entities: maxEntities, 
+                  evolution_throttle: evolutionThrottle, 
+                  visual_fidelity: visualFidelity,
+                  resolution,
+                  display_mode: displayMode
+                };
+
+                try {
+                  await invoke('save_settings', { settings: settingsToSave });
+                  await invoke('logger', { module: 'UI', content: 'User submitted settings successfully' });
+                } catch (e) {
+                  await invoke('logger', { module: 'UI', content: `Error saving settings: ${e}` });
+                }
+
+                onSave(settingsToSave);
                 onClose();
               }}
               className="flex-1 py-4 bg-white text-black font-black uppercase tracking-[0.3em] text-[10px] hover:scale-[1.02] active:scale-95 transition-all shadow-neon"

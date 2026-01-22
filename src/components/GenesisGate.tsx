@@ -8,16 +8,32 @@ import { sfx } from '../utils/sfx';
 import { bgm } from '../utils/bgm';
 
 // 系统信息接口
+interface GpuInfo {
+  name: string;
+  cuda_cores: number;
+  memory_total: number;
+}
+
 interface SysInfo {
   cpu_brand: string;
   cpu_cores: number;
   os_info: string;
+  mem_speed: string;
+  mem_type: string;
+  gpu_info: GpuInfo[];
+}
+
+interface GpuLiveStats {
+  load: number;
+  memory_usage: number;
+  temperature: number;
 }
 
 interface LiveStats {
-  cpu_usage: f32;
-  memory_usage: f32;
-  memory_total: f32;
+  cpu_usage: number;
+  memory_usage: number;
+  memory_total: number;
+  gpu_stats: GpuLiveStats[];
 }
 
 // 创世纪门属性接口
@@ -39,7 +55,7 @@ const GenesisGate: React.FC<GenesisGateProps> = ({ onStart }) => {
     mode: 'LocalMock'
   });
 
-  const fullIntro = "// 欢迎来到 V-GENE。这里是数字生命的终极角斗场。我们将模拟突变、竞争与消亡，在混沌中见证秩序的崛起。";
+  const fullIntro = "// 这里是数字生命的终极角斗场。VG 将模拟突变、竞争与消亡，在混沌中见证秩序的崛起。";
 
   // 打字机效果
   useEffect(() => {
@@ -54,8 +70,16 @@ const GenesisGate: React.FC<GenesisGateProps> = ({ onStart }) => {
 
   const handleExit = async () => {
     sfx.playClick();
-    const appWindow = getCurrentWindow();
-    await appWindow.close();
+    try {
+      await invoke('logger', { module: 'UI', content: 'User triggered exit protocol' });
+      const appWindow = getCurrentWindow();
+      await appWindow.close();
+      setTimeout(() => {
+        window.close();
+      }, 500);
+    } catch (e) {
+      console.error('退出失败:', e);
+    }
   };
 
   useEffect(() => {
@@ -90,6 +114,101 @@ const GenesisGate: React.FC<GenesisGateProps> = ({ onStart }) => {
     >
       {/* 3D 动态背景 */}
       <NeuralBackground />
+
+      {/* 硬件实时负载 HUD (左上 - 黑客流风格) - 绝对定位到屏幕边缘 */}
+      <div className="fixed left-6 top-12 w-80 z-[60] space-y-4 animate-in fade-in slide-in-from-left-8 duration-1000 delay-500">
+        <div className="glass-card p-4 rounded-sm border-l-2 border-l-neon-blue backdrop-blur-2xl bg-black/60 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+          <div className="flex items-center justify-between text-neon-blue mb-4 font-mono text-[10px] uppercase tracking-widest border-b border-neon-blue/20 pb-2">
+            <div className="flex items-center gap-2">
+              <Terminal size={14} />
+              <span>CORE_SIM_STATUS</span>
+            </div>
+            {liveStats && (
+              <span className="text-[9px] animate-pulse">● SYSTEM_LIVE</span>
+            )}
+          </div>
+          
+          {sysInfo ? (
+            <div className="space-y-4 font-mono text-[9px] text-white/60">
+              {/* CPU Section */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-end">
+                  <span className="text-neon-blue/80">CPU_INF:</span>
+                  <span className="text-[8px] text-white/40 truncate max-w-[180px]">{sysInfo.cpu_brand}</span>
+                </div>
+                <div className="flex justify-between text-[8px]">
+                  <span>CORES: {sysInfo.cpu_cores}</span>
+                  <span className="text-neon-blue">{liveStats ? liveStats.cpu_usage.toFixed(1) : '--'}% LOAD</span>
+                </div>
+                <div className="h-0.5 bg-white/5 w-full">
+                  <div 
+                    className="h-full bg-neon-blue shadow-neon transition-all duration-500" 
+                    style={{ width: `${liveStats?.cpu_usage || 0}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Memory Section */}
+              <div className="space-y-2 pt-2 border-t border-white/5">
+                <div className="flex justify-between">
+                  <span className="text-neon-purple/80">MEM_INF:</span>
+                  <span className="text-white/40">{sysInfo.mem_type} @ {sysInfo.mem_speed}</span>
+                </div>
+                <div className="flex justify-between text-[8px]">
+                  <span>{liveStats ? `${Math.round(liveStats.memory_usage)}MB / ${Math.round(liveStats.memory_total)}MB` : '--'}</span>
+                  <span className="text-neon-purple">{liveStats ? (liveStats.memory_usage / liveStats.memory_total * 100).toFixed(1) : '--'}%</span>
+                </div>
+                <div className="h-0.5 bg-white/5 w-full">
+                  <div 
+                    className="h-full bg-neon-purple shadow-neon transition-all duration-500" 
+                    style={{ width: `${liveStats ? (liveStats.memory_usage / liveStats.memory_total * 100) : 0}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* GPU Section */}
+              {sysInfo.gpu_info.length > 0 ? (
+                sysInfo.gpu_info.map((gpu, idx) => (
+                  <div key={idx} className="space-y-2 pt-2 border-t border-white/5">
+                    <div className="flex justify-between items-end">
+                      <span className="text-green-400/80">GPU_INF:</span>
+                      <span className="text-[8px] text-white/40 truncate max-w-[180px]">{gpu.name}</span>
+                    </div>
+                    <div className="flex justify-between text-[8px]">
+                      <span>CUDA_CORES: {gpu.cuda_cores}</span>
+                      <span className="text-green-400">{liveStats?.gpu_stats[idx]?.load || 0}% LOAD</span>
+                    </div>
+                    <div className="flex justify-between text-[8px]">
+                      <span>TEMP: {liveStats?.gpu_stats[idx]?.temperature || 0}°C</span>
+                      <span>VRAM: {liveStats ? `${Math.round(liveStats.gpu_stats[idx]?.memory_usage / 1024 / 1024)}MB / ${Math.round(gpu.memory_total / 1024 / 1024)}MB` : '--'}</span>
+                    </div>
+                    <div className="h-0.5 bg-white/5 w-full">
+                      <div 
+                        className="h-full bg-green-400 shadow-neon transition-all duration-500" 
+                        style={{ width: `${liveStats?.gpu_stats[idx]?.load || 0}%` }}
+                      />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="pt-2 border-t border-white/5 text-[8px] text-white/20 italic">
+                  NO_DISCRETE_GPU_DETECTED
+                </div>
+              )}
+
+              <div className="pt-2 border-t border-white/5 text-[7px] text-white/20 uppercase tracking-tighter flex justify-between">
+                <span>{sysInfo.os_info}</span>
+                <span>SECURE_BOOT_ENABLED</span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-white/20 font-mono text-[9px] py-8 justify-center">
+              <Activity size={12} className="animate-spin" />
+              <span>ANALYZING_HARDWARE_TOPOLOGY...</span>
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* 动态背景覆盖层 - 允许拖动 */}
       <div 
@@ -157,75 +276,18 @@ const GenesisGate: React.FC<GenesisGateProps> = ({ onStart }) => {
             </button>
           </div>
         </div>
+      </div>
 
-        {/* 硬件实时负载 HUD (左下) */}
-        <div className="absolute left-10 bottom-10 w-64 space-y-4 animate-in fade-in slide-in-from-left-8 duration-1000 delay-500">
-          <div className="glass-card p-5 rounded-sm border-l-2 border-l-neon-blue backdrop-blur-2xl">
-            <div className="flex items-center justify-between text-neon-blue mb-4 font-mono text-[10px] uppercase tracking-widest">
-              <div className="flex items-center gap-2">
-                <Cpu size={14} />
-                <span>计算核心状态</span>
-              </div>
-              {liveStats && (
-                <span className="text-[9px] animate-pulse">● LIVE</span>
-              )}
-            </div>
-            
-            {sysInfo ? (
-              <div className="space-y-4 font-mono text-[10px]">
-                <div className="space-y-1">
-                  <div className="flex justify-between text-white/40">
-                    <span>CPU 负载</span>
-                    <span className="text-white">{liveStats ? liveStats.cpu_usage.toFixed(1) : '--'}%</span>
-                  </div>
-                  <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-neon-blue transition-all duration-500" 
-                      style={{ width: `${liveStats?.cpu_usage || 0}%` }}
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <div className="flex justify-between text-white/40">
-                    <span>内存占用</span>
-                    <span className="text-white">
-                      {liveStats ? `${Math.round(liveStats.memory_usage)} / ${Math.round(liveStats.memory_total)} MB` : '--'}
-                    </span>
-                  </div>
-                  <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-neon-purple transition-all duration-500" 
-                      style={{ width: `${liveStats ? (liveStats.memory_usage / liveStats.memory_total * 100) : 0}%` }}
-                    />
-                  </div>
-                </div>
-
-                <div className="pt-2 border-t border-white/5 text-[9px] text-white/20 uppercase tracking-tighter truncate">
-                  {sysInfo.cpu_brand}
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 text-white/20 font-mono text-[10px]">
-                <Activity size={12} className="animate-spin" />
-                正在解析硬件拓扑...
-              </div>
-            )}
-          </div>
+      {/* 引擎版本 (右下) */}
+      <div className="absolute right-10 bottom-10 flex flex-col items-end gap-2 animate-in fade-in slide-in-from-right-8 duration-1000 delay-700">
+        <div className="flex items-center gap-3 text-[10px] font-mono text-white/20 uppercase tracking-[0.2em]">
+          <span>Neural Evolution Sandbox</span>
+          <span className="h-px w-8 bg-white/10" />
+          <span>V-GENE 0.1.2</span>
         </div>
-
-        {/* 引擎版本 (右下) */}
-        <div className="absolute right-10 bottom-10 flex flex-col items-end gap-2 animate-in fade-in slide-in-from-right-8 duration-1000 delay-700">
-           <div className="flex items-center gap-3 text-[10px] font-mono text-white/20 uppercase tracking-[0.2em]">
-             <span>Neural Evolution Sandbox</span>
-             <span className="h-px w-8 bg-white/10" />
-             <span>V-GENE 0.1.2</span>
-           </div>
-           <div className="text-[9px] font-mono text-white/10 uppercase tracking-widest">
-             Protocol: X-EVO-2026
-           </div>
+        <div className="text-[9px] font-mono text-white/10 uppercase tracking-widest">
+          Protocol: X-EVO-2026
         </div>
-
       </div>
 
       {/* 退出确认弹窗 */}

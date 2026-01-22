@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import Arena from './components/Arena';
+import { getCurrentWindow, LogicalSize } from '@tauri-apps/api/window';
 import GenesisGate from './components/GenesisGate';
 import MotherMachine from './components/MotherMachine';
 import PhoenixReview from './components/PhoenixReview';
 import SettingsModal from './components/SettingsModal';
 import MicroArena from './components/MicroArena';
 import PhylogeneticTree from './components/PhylogeneticTree';
+import TitleBar from './components/TitleBar';
 import { Settings, Play, Pause, Activity, Cpu, Terminal, Zap, FastForward, Microscope } from 'lucide-react';
 import { sfx } from './utils/sfx';
 import { bgm } from './utils/bgm';
@@ -38,7 +40,8 @@ function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
   const [stats, setStats] = useState({ avgScore: 0, population: 0, avgGeneration: 0, entropy: 0 });
-  const [sysInfo, setSysInfo] = useState({ cpu_brand: '', cpu_cores: 0, os_info: '' });
+  const [sysInfo, setSysInfo] = useState<any>({ cpu_brand: '', cpu_cores: 0, os_info: '', mem_speed: '', mem_type: '', gpu_info: [] });
+  const [liveStats, setLiveStats] = useState<any>(null);
   const [isLeaping] = useState(false);
   const [config, setConfig] = useState<any>(null);
   const [isMicroArenaOpen, setIsMicroArenaOpen] = useState(false);
@@ -54,6 +57,45 @@ function App() {
       }
     };
     fetchSysInfo();
+
+    // 加载并应用初始设置
+    const initSettings = async () => {
+      try {
+        const saved = await invoke<any>('load_settings');
+        if (saved) {
+          setConfig(saved);
+          // 应用显示模式
+          const { resolution, display_mode } = saved;
+          const appWindow = getCurrentWindow();
+          if (display_mode === 'Fullscreen') {
+            await appWindow.setFullscreen(true);
+          } else if (display_mode === 'Borderless') {
+            await appWindow.setFullscreen(false);
+            await appWindow.maximize();
+          } else if (resolution) {
+            const [width, height] = resolution.split('x').map(Number);
+            await appWindow.setFullscreen(false);
+            await appWindow.unmaximize();
+            await appWindow.setSize(new LogicalSize(width, height));
+            await appWindow.center();
+          }
+          await invoke('logger', { module: 'System', content: 'Initial settings applied successfully' });
+        }
+      } catch (e) {
+        await invoke('logger', { module: 'System', content: 'No initial settings to apply' });
+      }
+    };
+    initSettings();
+
+    // 实时数据轮询
+    const statsTimer = setInterval(async () => {
+      try {
+        const stats = await invoke<any>('get_live_stats');
+        setLiveStats(stats);
+      } catch (e) {}
+    }, 2000);
+
+    return () => clearInterval(statsTimer);
   }, []);
 
   // 🎵 自动化背景音乐控制
@@ -250,19 +292,35 @@ function App() {
   };
 
   if (stage === 'SPLASH') {
-    return <GenesisGate onStart={handleGoToConfig} />;
+    return (
+      <>
+        <TitleBar />
+        <GenesisGate onStart={handleGoToConfig} />
+      </>
+    );
   }
 
   if (stage === 'CONFIG') {
-    return <MotherMachine onStart={handleStart} onBack={() => setStage('SPLASH')} />;
+    return (
+      <>
+        <TitleBar />
+        <MotherMachine onStart={handleStart} onBack={() => setStage('SPLASH')} />
+      </>
+    );
   }
 
   if (stage === 'REVIEW') {
-    return <PhoenixReview stats={stats} onReset={() => setStage('SPLASH')} />;
+    return (
+      <>
+        <TitleBar />
+        <PhoenixReview stats={stats} onReset={() => setStage('SPLASH')} />
+      </>
+    );
   }
 
   return (
-    <div className="w-screen h-screen flex bg-black text-white overflow-hidden font-display">
+    <div className="w-screen h-screen flex bg-black text-white overflow-hidden font-display pt-8">
+      <TitleBar />
       
       {/* 统计面板（左侧） */}
       <aside className="w-72 border-r border-white/5 flex flex-col z-30 bg-black/40 backdrop-blur-xl animate-in fade-in slide-in-from-left-4 duration-700">
@@ -287,17 +345,38 @@ function App() {
         </div>
 
         {/* 🔒 硬件负载 HUD */}
-        <div className="px-6 py-4 border-b border-white/5 space-y-2">
-          <div className="flex items-center gap-2 text-[8px] font-mono text-white/30 uppercase tracking-widest">
-            <Cpu size={10} />
-            <span>计算节点负载</span>
+        <div className="px-6 py-4 border-b border-white/5 space-y-3">
+          <div className="flex items-center justify-between text-[8px] font-mono text-white/30 uppercase tracking-widest">
+            <div className="flex items-center gap-2">
+              <Cpu size={10} />
+              <span>计算节点负载</span>
+            </div>
+            <span className="text-neon-blue">{liveStats ? liveStats.cpu_usage.toFixed(1) : '--'}%</span>
           </div>
           <div className="text-[10px] font-mono text-white/60 truncate">
             {sysInfo.cpu_brand || '检测中...'}
           </div>
           <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-            <div className="h-full bg-neon-blue/40 animate-pulse" style={{ width: '65%' }} />
+            <div 
+              className="h-full bg-neon-blue/40 transition-all duration-500" 
+              style={{ width: `${liveStats?.cpu_usage || 0}%` }} 
+            />
           </div>
+          
+          {liveStats?.gpu_stats?.length > 0 && (
+            <div className="pt-2 space-y-2">
+               <div className="flex items-center justify-between text-[8px] font-mono text-white/30 uppercase tracking-widest">
+                <span>GPU 负载</span>
+                <span className="text-green-400">{liveStats.gpu_stats[0].load}%</span>
+              </div>
+              <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-green-400/40 transition-all duration-500" 
+                  style={{ width: `${liveStats.gpu_stats[0].load}%` }} 
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* 🔒 全域熵增监视器 */}
