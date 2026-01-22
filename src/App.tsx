@@ -5,7 +5,8 @@ import GenesisGate from './components/GenesisGate';
 import MotherMachine from './components/MotherMachine';
 import PhoenixReview from './components/PhoenixReview';
 import SettingsModal from './components/SettingsModal';
-import { Settings, Play, Pause, Activity, Cpu, Terminal, Zap, FastForward } from 'lucide-react';
+import MicroArena from './components/MicroArena';
+import { Settings, Play, Pause, Activity, Cpu, Terminal, Zap, FastForward, Microscope } from 'lucide-react';
 
 // 阶段定义
 type AppStage = 'SPLASH' | 'CONFIG' | 'SIMULATION' | 'REVIEW';
@@ -36,6 +37,7 @@ function App() {
   const [stats, setStats] = useState({ avgScore: 0, population: 0, avgGeneration: 0 });
   const [isLeaping] = useState(false);
   const [config, setConfig] = useState<any>(null);
+  const [isMicroArenaOpen, setIsMicroArenaOpen] = useState(false);
 
   useEffect(() => {
     let interval: number;
@@ -235,6 +237,15 @@ function App() {
       <main className="flex-1 relative flex flex-col min-w-0">
         <Arena entities={entities} onEntityClick={handleEntityClick} isLeaping={isLeaping} />
         
+        {/* 微观战场浮窗 */}
+        {isMicroArenaOpen && selectedEntity && (
+          <MicroArena 
+            entityA={selectedEntity} 
+            entityB={{ id: 999 }} // 模拟对手
+            onClose={() => setIsMicroArenaOpen(false)} 
+          />
+        )}
+        
         {/* 底部控制栏 */}
         <footer className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-6 z-30 animate-in fade-in slide-in-from-bottom-4 duration-700">
            <button 
@@ -314,16 +325,26 @@ function App() {
               </pre>
             </div>
 
-            <button 
-              onClick={() => {
-                alert('已向该实体下达“神谕”：强制突变开始...');
-                // 这里可以调用后端的突变接口
-              }}
-              className="w-full py-4 border border-neon-blue/20 text-neon-blue hover:bg-neon-blue/5 transition-all font-mono text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-2 group"
-            >
-              <Zap size={14} className="group-hover:animate-pulse" />
-              下达突变神谕
-            </button>
+            <div className="space-y-3">
+              <button 
+                onClick={() => setIsMicroArenaOpen(true)}
+                className="w-full py-4 border border-neon-blue/20 text-neon-blue hover:bg-neon-blue/5 transition-all font-mono text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-2 group"
+              >
+                <Microscope size={14} />
+                进入微观视界
+              </button>
+
+              <button 
+                onClick={() => {
+                  alert('已向该实体下达“神谕”：强制突变开始...');
+                  // 这里可以调用后端的突变接口
+                }}
+                className="w-full py-4 border border-red-500/20 text-red-500 hover:bg-red-500/5 transition-all font-mono text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-2 group"
+              >
+                <Zap size={14} className="group-hover:animate-pulse" />
+                下达突变神谕
+              </button>
+            </div>
           </div>
         </aside>
       ) : (
