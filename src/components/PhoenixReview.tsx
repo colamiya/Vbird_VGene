@@ -66,21 +66,21 @@ const PhoenixReview: React.FC<PhoenixReviewProps> = ({ stats, onReset }) => {
                 <div className="glass-card p-6 border-t-2 border-t-neon-blue">
                   <div className="flex items-center gap-2 text-white/40 text-[9px] uppercase font-mono mb-2">
                     <TrendingUp size={14} />
-                    <span>最高适应度</span>
+                    <span>最高信息丰度</span>
                   </div>
                   <div className="text-3xl font-black font-mono">{stats.avgScore.toFixed(2)}</div>
                 </div>
                 <div className="glass-card p-6 border-t-2 border-t-red-500">
                   <div className="flex items-center gap-2 text-white/40 text-[9px] uppercase font-mono mb-2">
                     <Skull size={14} />
-                    <span>逻辑灭绝率</span>
+                    <span>热寂崩溃率</span>
                   </div>
                   <div className="text-3xl font-black font-mono">14.2%</div>
                 </div>
                 <div className="glass-card p-6 border-t-2 border-t-neon-purple">
                   <div className="flex items-center gap-2 text-white/40 text-[9px] uppercase font-mono mb-2">
                     <Zap size={14} />
-                    <span>变异总频次</span>
+                    <span>量子突变频次</span>
                   </div>
                   <div className="text-3xl font-black font-mono">1,248</div>
                 </div>

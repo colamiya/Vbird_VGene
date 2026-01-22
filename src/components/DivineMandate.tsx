@@ -38,22 +38,59 @@ const DivineMandate: React.FC<DivineMandateProps> = ({ onMandateIssued }) => {
     // 模拟系统解析过程
     addLog(`> ${userCmd}`);
     await wait(500);
-    addLog(`[SYSTEM] 正在解析语义...`);
-    await wait(800);
-    addLog(`[NLP] 提取关键词: "${userCmd.slice(0, 5)}..."`);
-    addLog(`[GENESIS] 构建基因约束矩阵...`);
-    await wait(600);
+    addLog(`[SYSTEM] 正在建立神谕连接 (Ollama)...`);
     
-    // 模拟根据输入生成配置
-    const mockConfig = generateMockConfig(userCmd);
-    
-    addLog(`[OK] 协议生成完毕。`);
-    addLog(`[CONFIG] 内存限制: ${mockConfig.memoryLimit}`);
-    addLog(`[CONFIG] 进化目标: ${mockConfig.objective}`);
-    
-    await wait(1000);
-    onMandateIssued(mockConfig);
-    setIsProcessing(false);
+    try {
+      const response = await fetch('http://localhost:11434/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'qwen2.5-coder', // 默认使用编码增强模型
+          prompt: `Task: Translate the following natural language command into a VGene environment configuration JSON.
+          Command: "${userCmd}"
+          
+          Constraints:
+          1. Output ONLY the JSON object.
+          2. No markdown, no explanations.
+          3. JSON schema: 
+          {
+            "maxEntities": number (10-1000),
+            "mutationRate": number (0.01-0.5),
+            "entropyFactor": number (0.0-1.0),
+            "winningRule": "SURVIVAL" | "PREDATION" | "CODE_SIZE",
+            "memoryLimit": string (e.g. "64KB", "1MB"),
+            "objective": string (short description)
+          }`,
+          stream: false
+        })
+      });
+
+      if (!response.ok) throw new Error('Ollama connection failed');
+      
+      const data = await response.json();
+      const configText = data.response;
+      
+      // 提取 JSON
+      const jsonMatch = configText.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error('Invalid AI response format');
+      
+      const config = JSON.parse(jsonMatch[0]);
+      
+      addLog(`[OK] 神谕解析成功。`);
+      addLog(`[CONFIG] 进化目标: ${config.objective}`);
+      addLog(`[CONFIG] 胜出规则: ${config.winningRule}`);
+      
+      await wait(500);
+      onMandateIssued(config);
+    } catch (error) {
+      addLog(`[ERROR] 神谕中断: ${error instanceof Error ? error.message : '未知错误'}`);
+      addLog(`[FALLBACK] 启动本地启发式解析...`);
+      await wait(1000);
+      const fallbackConfig = generateMockConfig(userCmd);
+      onMandateIssued(fallbackConfig);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const addLog = (text: string) => {

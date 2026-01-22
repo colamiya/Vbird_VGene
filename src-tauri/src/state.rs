@@ -1,3 +1,4 @@
+use serde::Serialize;
 use std::sync::Mutex;
 use crate::evolution::{
     entity::Entity, 
@@ -7,6 +8,15 @@ use crate::evolution::{
 };
 use crate::evolution::wasm_runtime::WasmEngine;
 
+#[derive(Serialize, Clone)]
+pub struct LineageRecord {
+    pub id: u32,
+    pub parent_id: Option<u32>,
+    pub generation: u32,
+    pub score: f32,
+    pub dna_preview: String,
+}
+
 pub struct AppState {
     pub entities: Mutex<Vec<Entity>>,
     pub env_config: Mutex<EnvConfig>,
@@ -14,6 +24,8 @@ pub struct AppState {
     pub wasm_engine: Mutex<WasmEngine>,
     pub crash_registry: CrashRegistry,
     pub is_running: Mutex<bool>,
+    pub lineage_history: Mutex<Vec<LineageRecord>>,
+    pub hall_of_fame: Mutex<Vec<Entity>>,
 }
 
 impl AppState {
@@ -32,6 +44,8 @@ impl AppState {
             wasm_engine: Mutex::new(wasm_engine),
             crash_registry,
             is_running: Mutex::new(false),
+            lineage_history: Mutex::new(Vec::new()),
+            hall_of_fame: Mutex::new(Vec::new()),
         }
     }
 }

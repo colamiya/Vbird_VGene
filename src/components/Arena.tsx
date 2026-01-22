@@ -2,6 +2,7 @@ import React, { useRef, useMemo, useState } from 'react';
 import { Canvas, useFrame, ThreeEvent } from '@react-three/fiber';
 import { OrbitControls, Stars, PerspectiveCamera } from '@react-three/drei';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
+import { invoke } from '@tauri-apps/api/core';
 import * as THREE from 'three';
 
 interface Entity {
@@ -22,12 +23,46 @@ interface ArenaProps {
   isLeaping?: boolean;
 }
 
+const InterferenceRipple = ({ position }: { position: THREE.Vector3 }) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const [opacity, setOpacity] = useState(1);
+
+  useFrame(() => {
+    if (meshRef.current) {
+      meshRef.current.scale.addScalar(0.2);
+      setOpacity(prev => Math.max(0, prev - 0.02));
+    }
+  });
+
+  if (opacity <= 0) return null;
+
+  return (
+    <mesh position={position} ref={meshRef} rotation={[-Math.PI / 2, 0, 0]}>
+      <ringGeometry args={[0.1, 0.2, 32]} />
+      <meshBasicMaterial color="#00f3ff" transparent opacity={opacity} />
+    </mesh>
+  );
+};
+
 const EntitySwarm: React.FC<{ entities: Entity[], onEntityClick?: (entity: Entity) => void, isLeaping?: boolean }> = ({ entities, onEntityClick, isLeaping }) => {
   const meshRef = useRef<THREE.InstancedMesh>(null);
+  const [ripples, setRipples] = useState<{ id: number, pos: THREE.Vector3 }[]>([]);
   const tempObject = useMemo(() => new THREE.Object3D(), []);
   const tempColor = useMemo(() => new THREE.Color(), []);
 
-  const handleClick = (e: ThreeEvent<MouseEvent>) => {
+  const handleClick = async (e: ThreeEvent<MouseEvent>) => {
+    e.stopPropagation();
+    
+    // 🔒 观察者干扰 (Law #18)
+    const clickPos = e.point;
+    setRipples(prev => [...prev, { id: Date.now(), pos: clickPos.clone() }].slice(-5));
+    
+    try {
+      await invoke('interfere_at', { x: clickPos.x, y: clickPos.y, z: clickPos.z });
+    } catch (err) {
+      console.error("Interference failed:", err);
+    }
+
     if (e.instanceId !== undefined && onEntityClick) {
       onEntityClick(entities[e.instanceId]);
     }
@@ -43,15 +78,27 @@ const EntitySwarm: React.FC<{ entities: Entity[], onEntityClick?: (entity: Entit
     const frameCount = Math.floor(state.clock.elapsedTime * 60);
     if (frameCount % 3 !== 0 && !isLeaping) return;
 
-    const hasChanged = entities.length !== prevEntitiesRef.current.length
-      || entities.some((e, i) => {
-        const prev = prevEntitiesRef.current[i];
-        return !prev || e.id !== prev.id || e.energy !== prev.energy;
-      });
+    // 🔒 识别变化的实体索引 (脏检查)
+    const changedIndices: number[] = [];
+    entities.forEach((e, i) => {
+      const prev = prevEntitiesRef.current[i];
+      if (
+        !prev || 
+        e.id !== prev.id || 
+        e.energy !== prev.energy || 
+        e.position[0] !== prev.position[0] ||
+        isLeaping
+      ) {
+        changedIndices.push(i);
+      }
+    });
 
-    if (!hasChanged && !isLeaping) return; // 🔒 无变化时跳过更新
+    if (changedIndices.length === 0 && !isLeaping) return; 
 
-    entities.forEach((entity, i) => {
+    changedIndices.forEach(i => {
+      const entity = entities[i];
+      if (!entity) return;
+
       // 位置
       let [x, y, z] = entity.position;
       
@@ -66,20 +113,20 @@ const EntitySwarm: React.FC<{ entities: Entity[], onEntityClick?: (entity: Entit
       tempObject.position.set(x, y, z);
       
       let scale = entity.energy / 100 * 1.5 + 0.5;
-      if (isLeaping) scale *= 2.0; // 坍缩时变亮变大
+      if (isLeaping) scale *= 2.0; 
       
       tempObject.scale.setScalar(scale);
       tempObject.updateMatrix();
       meshRef.current!.setMatrixAt(i, tempObject.matrix);
 
-      // 基于道德值的颜色（红色 = 邪恶，蓝色 = 善良）
-      const colorA = new THREE.Color('#ff4d4d'); // 邪恶 (Red)
-      const colorB = new THREE.Color('#00eaff'); // 善良 (Neon Blue)
+      // 基于道德值的颜色
+      const colorA = new THREE.Color('#ff4d4d'); 
+      const colorB = new THREE.Color('#00eaff'); 
       
       tempColor.copy(colorA).lerp(colorB, entity.ethics.altruism);
       
       if (isLeaping) {
-        tempColor.lerp(new THREE.Color('#ffffff'), 0.5); // 跃迁时变白
+        tempColor.lerp(new THREE.Color('#ffffff'), 0.5); 
       } else if (entity.score > 50) {
         tempColor.multiplyScalar(1.5);
       }
@@ -90,15 +137,16 @@ const EntitySwarm: React.FC<{ entities: Entity[], onEntityClick?: (entity: Entit
     meshRef.current.instanceMatrix.needsUpdate = true;
     if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
     
-    prevEntitiesRef.current = entities;
+    prevEntitiesRef.current = [...entities.map(e => ({...e}))]; // 深度复制以进行比较
   });
 
   return (
-    <instancedMesh
-      ref={meshRef}
-      args={[undefined, undefined, 2000]}
-      onClick={handleClick}
-    >
+    <group onClick={handleClick}>
+      {ripples.map(r => <InterferenceRipple key={r.id} position={r.pos} />)}
+      <instancedMesh
+        ref={meshRef}
+        args={[undefined, undefined, 2000]}
+      >
       <icosahedronGeometry args={[0.12, 1]} />
       <meshStandardMaterial 
         toneMapped={false} 
@@ -106,6 +154,7 @@ const EntitySwarm: React.FC<{ entities: Entity[], onEntityClick?: (entity: Entit
         emissiveIntensity={0.5} 
       />
     </instancedMesh>
+    </group>
   );
 };
 

@@ -6,6 +6,7 @@ import MotherMachine from './components/MotherMachine';
 import PhoenixReview from './components/PhoenixReview';
 import SettingsModal from './components/SettingsModal';
 import MicroArena from './components/MicroArena';
+import PhylogeneticTree from './components/PhylogeneticTree';
 import { Settings, Play, Pause, Activity, Cpu, Terminal, Zap, FastForward, Microscope } from 'lucide-react';
 
 // 阶段定义
@@ -34,10 +35,23 @@ function App() {
   const [isRunning, setIsRunning] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
-  const [stats, setStats] = useState({ avgScore: 0, population: 0, avgGeneration: 0 });
+  const [stats, setStats] = useState({ avgScore: 0, population: 0, avgGeneration: 0, entropy: 0 });
+  const [sysInfo, setSysInfo] = useState({ cpu_brand: '', cpu_cores: 0, os_info: '' });
   const [isLeaping] = useState(false);
   const [config, setConfig] = useState<any>(null);
   const [isMicroArenaOpen, setIsMicroArenaOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchSysInfo = async () => {
+      try {
+        const info = await invoke<any>('get_sys_info');
+        setSysInfo(info);
+      } catch (e) {
+        console.error("获取系统信息失败:", e);
+      }
+    };
+    fetchSysInfo();
+  }, []);
 
   useEffect(() => {
     let interval: number;
@@ -63,7 +77,31 @@ function App() {
               generation: Math.floor(Math.random() * 10)
             }));
           } else {
-            worldState = await invoke<EntityView[]>('get_world_state');
+            // 🔒 使用二进制通道提升性能 (模拟 vgene://)
+            const binaryData = await invoke<number[]>('get_world_binary');
+            const buffer = new Uint8Array(binaryData);
+            const view = new DataView(buffer.buffer);
+            const parsed: EntityView[] = [];
+            
+            for (let i = 0; i < buffer.length; i += 36) {
+              parsed.push({
+                id: view.getUint32(i, true),
+                position: [
+                  view.getFloat32(i + 4, true),
+                  view.getFloat32(i + 8, true),
+                  view.getFloat32(i + 12, true)
+                ],
+                ethics: { 
+                  altruism: view.getFloat32(i + 16, true),
+                  collaboration: 0.5 // 二进制通道简化字段
+                },
+                score: view.getFloat32(i + 20, true),
+                energy: view.getFloat32(i + 24, true),
+                metabolic_toxin: view.getFloat32(i + 28, true),
+                generation: view.getUint32(i + 32, true)
+              });
+            }
+            worldState = parsed;
           }
           
           setEntities(worldState);
@@ -71,11 +109,14 @@ function App() {
           if (worldState.length > 0) {
             const totalScore = worldState.reduce((acc, e) => acc + e.score, 0);
             const totalGen = worldState.reduce((acc, e) => acc + e.generation, 0);
+            // 🔒 简单计算全域熵值: 平均代谢毒素 * 100
+            const avgToxin = worldState.reduce((acc, e) => acc + e.metabolic_toxin, 0) / worldState.length;
             
             setStats({
               avgScore: totalScore / worldState.length,
               population: worldState.length,
-              avgGeneration: totalGen / worldState.length
+              avgGeneration: totalGen / worldState.length,
+              entropy: avgToxin * 100
             });
           }
 
@@ -120,7 +161,9 @@ function App() {
         mode: mergedConfig.mode || 'LocalMock',
         ollamaUrl: mergedConfig.ollamaUrl || 'http://localhost:11434',
         modelName: mergedConfig.modelName || 'llama3',
-        maxEntities: mergedConfig.maxEntities
+        maxEntities: mergedConfig.maxEntities,
+        evolutionThrottle: mergedConfig.evolutionThrottle,
+        visualFidelity: mergedConfig.visualFidelity
       });
       await invoke('start_sim');
     }
@@ -137,7 +180,9 @@ function App() {
          mode: mergedConfig.mode,
          ollamaUrl: mergedConfig.ollamaUrl,
          modelName: mergedConfig.modelName,
-         maxEntities: mergedConfig.maxEntities
+         maxEntities: mergedConfig.maxEntities,
+         evolutionThrottle: mergedConfig.evolutionThrottle,
+         visualFidelity: mergedConfig.visualFidelity
        });
      }
      setConfig(mergedConfig);
@@ -184,6 +229,39 @@ function App() {
           </p>
         </div>
 
+        {/* 🔒 硬件负载 HUD */}
+        <div className="px-6 py-4 border-b border-white/5 space-y-2">
+          <div className="flex items-center gap-2 text-[8px] font-mono text-white/30 uppercase tracking-widest">
+            <Cpu size={10} />
+            <span>计算节点负载</span>
+          </div>
+          <div className="text-[10px] font-mono text-white/60 truncate">
+            {sysInfo.cpu_brand || '检测中...'}
+          </div>
+          <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+            <div className="h-full bg-neon-blue/40 animate-pulse" style={{ width: '65%' }} />
+          </div>
+        </div>
+
+        {/* 🔒 全域熵增监视器 */}
+        <div className="px-6 py-4 border-b border-white/5 space-y-3">
+          <div className="flex justify-between text-[8px] font-mono text-white/30 uppercase tracking-widest">
+            <span>全域信息熵梯度</span>
+            <span className={stats.entropy > 70 ? 'text-red-500' : 'text-neon-blue'}>
+              {stats.entropy.toFixed(1)}%
+            </span>
+          </div>
+          <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+            <div 
+              className={`h-full transition-all duration-1000 ${stats.entropy > 70 ? 'bg-red-500' : 'bg-neon-blue'}`} 
+              style={{ width: `${stats.entropy}%` }} 
+            />
+          </div>
+          <p className="text-[7px] text-white/20 font-mono leading-tight">
+            // 热寂阈值临近，逻辑冗余正在增加...
+          </p>
+        </div>
+
         <div className="p-6 border-b border-white/5 space-y-4">
           <h3 className="text-[10px] font-mono text-white/20 uppercase tracking-[0.3em]">文明跃迁阶梯</h3>
           <div className="space-y-2">
@@ -204,9 +282,9 @@ function App() {
           <h3 className="text-[10px] font-mono text-white/20 uppercase tracking-[0.3em] mb-4">种群概况</h3>
           {
             [
-              { label: '个体数量', value: stats.population, icon: <Activity size={14}/> },
-              { label: '平均适应度', value: stats.avgScore.toFixed(2), icon: <Cpu size={14}/> },
-              { label: '平均世代', value: `世代 ${stats.avgGeneration.toFixed(1)}`, icon: <Zap size={14}/> },
+              { label: '种群丰度', value: stats.population, icon: <Activity size={14}/> },
+              { label: '平均适应度梯度', value: stats.avgScore.toFixed(2), icon: <Cpu size={14}/> },
+              { label: '演化深度', value: `第 ${stats.avgGeneration.toFixed(1)} 纪元`, icon: <Zap size={14}/> },
             ].map((stat, i) => (
               <div 
                 key={i} 
@@ -275,83 +353,91 @@ function App() {
         </footer>
       </main>
 
-      {/* 实体检查器（右侧） */}
-      {selectedEntity ? (
-        <aside className="w-80 border-l border-white/5 flex flex-col z-30 bg-black/40 backdrop-blur-xl animate-in fade-in slide-in-from-right-4 duration-500">
-          <div className="p-8 border-b border-white/5 flex justify-between items-center">
-            <h3 className="text-[10px] font-mono text-neon-blue uppercase tracking-[0.3em]">实体检查器</h3>
-            <button onClick={() => setSelectedEntity(null)} className="text-white/20 hover:text-white transition-colors">×</button>
-          </div>
-          
-          <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
-            <div className="grid grid-cols-2 gap-6 font-mono text-[10px]">
-              <div>
-                <span className="text-white/20 block uppercase mb-1">唯一标识</span>
-                <span className="text-white/80"># {selectedEntity.id}</span>
-              </div>
-              <div>
-                <span className="text-white/20 block uppercase mb-1">当前世代</span>
-                <span className="text-white/80">{selectedEntity.generation}</span>
-              </div>
+      {/* 实体检查器与进化星图（右侧） */}
+      <aside className="w-96 border-l border-white/5 flex flex-col z-30 bg-black/40 backdrop-blur-xl animate-in fade-in slide-in-from-right-4 duration-500 overflow-hidden">
+        {selectedEntity ? (
+          <>
+            <div className="p-8 border-b border-white/5 flex justify-between items-center">
+              <h3 className="text-[10px] font-mono text-neon-blue uppercase tracking-[0.3em]">实体检查器</h3>
+              <button onClick={() => setSelectedEntity(null)} className="text-white/20 hover:text-white transition-colors">×</button>
             </div>
             
-            <div className="space-y-3">
-              <div className="flex justify-between text-[9px] font-mono text-white/40 uppercase tracking-widest">
-                <span>核心能量</span>
-                <span className="text-neon-blue">{selectedEntity.energy.toFixed(1)}%</span>
+            <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
+              <div className="grid grid-cols-2 gap-6 font-mono text-[10px]">
+                <div>
+                  <span className="text-white/20 block uppercase mb-1">唯一标识</span>
+                  <span className="text-white/80"># {selectedEntity.id}</span>
+                </div>
+                <div>
+                  <span className="text-white/20 block uppercase mb-1">当前世代</span>
+                  <span className="text-white/80">{selectedEntity.generation}</span>
+                </div>
               </div>
-              <div className="h-0.5 bg-white/5 overflow-hidden">
-                <div className="h-full bg-neon-blue shadow-neon transition-all duration-500" style={{ width: `${selectedEntity.energy}%` }} />
+              
+              <div className="space-y-3">
+                <div className="flex justify-between text-[9px] font-mono text-white/40 uppercase tracking-widest">
+                  <span>核心能量</span>
+                  <span className="text-neon-blue">{selectedEntity.energy.toFixed(1)}%</span>
+                </div>
+                <div className="h-0.5 bg-white/5 overflow-hidden">
+                  <div className="h-full bg-neon-blue shadow-neon transition-all duration-500" style={{ width: `${selectedEntity.energy}%` }} />
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex justify-between text-[9px] font-mono text-white/40 uppercase tracking-widest">
+                  <span>代谢毒素</span>
+                  <span className="text-red-500">{(selectedEntity.metabolic_toxin * 100).toFixed(1)}%</span>
+                </div>
+                <div className="h-0.5 bg-white/5 overflow-hidden">
+                  <div className="h-full bg-red-500 transition-all duration-500" style={{ width: `${selectedEntity.metabolic_toxin * 100}%` }} />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center gap-2 text-[9px] font-mono text-neon-blue uppercase mb-4 tracking-widest">
+                  <Terminal size={12} />
+                  <span>主权 DNA (WAT)</span>
+                </div>
+                <pre className="bg-black/60 p-4 text-[9px] font-mono text-white/40 overflow-x-auto max-h-64 custom-scrollbar border border-white/5 rounded-sm">
+                  {selectedEntity.dna}
+                </pre>
+              </div>
+
+              <div className="space-y-3">
+                <button 
+                  onClick={() => setIsMicroArenaOpen(true)}
+                  className="w-full py-4 border border-neon-blue/20 text-neon-blue hover:bg-neon-blue/5 transition-all font-mono text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-2 group"
+                >
+                  <Microscope size={14} />
+                  进入微观视界
+                </button>
+
+                <button 
+                  onClick={() => {
+                    alert('已向该实体下达“神谕”：强制突变开始...');
+                    // 这里可以调用后端的突变接口
+                  }}
+                  className="w-full py-4 border border-red-500/20 text-red-500 hover:bg-red-500/5 transition-all font-mono text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-2 group"
+                >
+                  <Zap size={14} className="group-hover:animate-pulse" />
+                  下达突变神谕
+                </button>
               </div>
             </div>
-
-            <div className="space-y-3">
-              <div className="flex justify-between text-[9px] font-mono text-white/40 uppercase tracking-widest">
-                <span>代谢毒素</span>
-                <span className="text-red-500">{(selectedEntity.metabolic_toxin * 100).toFixed(1)}%</span>
-              </div>
-              <div className="h-0.5 bg-white/5 overflow-hidden">
-                <div className="h-full bg-red-500 transition-all duration-500" style={{ width: `${selectedEntity.metabolic_toxin * 100}%` }} />
-              </div>
+          </>
+        ) : (
+          <div className="flex-1 flex flex-col min-h-0">
+            <div className="p-8 border-b border-white/5">
+              <h3 className="text-[10px] font-mono text-neon-blue uppercase tracking-[0.3em]">全域进化星图</h3>
+              <p className="text-[8px] text-white/20 font-mono mt-1 uppercase tracking-widest">// 观测全域生命演化谱系</p>
             </div>
-
-            <div>
-              <div className="flex items-center gap-2 text-[9px] font-mono text-neon-blue uppercase mb-4 tracking-widest">
-                <Terminal size={12} />
-                <span>主权 DNA (WAT)</span>
-              </div>
-              <pre className="bg-black/60 p-4 text-[9px] font-mono text-white/40 overflow-x-auto max-h-64 custom-scrollbar border border-white/5 rounded-sm">
-                {selectedEntity.dna}
-              </pre>
-            </div>
-
-            <div className="space-y-3">
-              <button 
-                onClick={() => setIsMicroArenaOpen(true)}
-                className="w-full py-4 border border-neon-blue/20 text-neon-blue hover:bg-neon-blue/5 transition-all font-mono text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-2 group"
-              >
-                <Microscope size={14} />
-                进入微观视界
-              </button>
-
-              <button 
-                onClick={() => {
-                  alert('已向该实体下达“神谕”：强制突变开始...');
-                  // 这里可以调用后端的突变接口
-                }}
-                className="w-full py-4 border border-red-500/20 text-red-500 hover:bg-red-500/5 transition-all font-mono text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-2 group"
-              >
-                <Zap size={14} className="group-hover:animate-pulse" />
-                下达突变神谕
-              </button>
+            <div className="flex-1 relative">
+              <PhylogeneticTree />
             </div>
           </div>
-        </aside>
-      ) : (
-        <div className="w-12 border-l border-white/5 flex flex-col items-center py-8 text-white/10 group hover:text-white/30 transition-colors cursor-help">
-          <span className="rotate-90 whitespace-nowrap text-[9px] font-mono uppercase tracking-[0.5em]">等待选中实体...</span>
-        </div>
-      )}
+        )}
+      </aside>
 
       {/* 设置模态框 */}
       <SettingsModal 

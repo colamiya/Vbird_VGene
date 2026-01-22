@@ -97,10 +97,16 @@ impl WasmEngine {
             match func.call(&mut store, ()) {
                 Ok(val) => {
                     let consumed = fuel_limit.saturating_sub(store.get_fuel().unwrap_or(0));
-                    // 熵增损耗：代码越臃肿（执行指令越多），得分系数越低
-                    let efficiency = (fuel_limit as f32 - consumed as f32) / fuel_limit as f32;
-                    entity.stats.efficiency = efficiency.clamp(0.0, 1.0);
-                    (val as f32) * efficiency.max(0.1)
+                    
+                    // 🔒 记录燃料消耗统计
+                    entity.fuel_consumed += consumed;
+                    entity.fuel_efficiency = (val as f32) / (consumed as f32 + 1.0);
+                    
+                    // 熵增损耗系数：执行指令越多，得分惩罚越重
+                    let efficiency_factor = (fuel_limit as f32 - consumed as f32) / fuel_limit as f32;
+                    entity.stats.efficiency = efficiency_factor.clamp(0.0, 1.0);
+                    
+                    (val as f32) * efficiency_factor.max(0.1)
                 },
                 Err(e) => {
                     eprintln!("WASM execution failed for entity {}: {:?}", entity.id, e);

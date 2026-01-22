@@ -46,12 +46,18 @@ const GenesisGate: React.FC<GenesisGateProps> = ({ onStart }) => {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden">
-      {/* 动态背景覆盖层 */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/60 pointer-events-none" />
+    <div 
+      data-tauri-drag-region
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden bg-black select-none"
+    >
+      {/* 动态背景覆盖层 - 同样允许拖动 */}
+      <div 
+        data-tauri-drag-region
+        className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/60 pointer-events-none" 
+      />
       
       {/* 主容器 */}
-      <div className="relative w-full max-w-4xl px-6 flex flex-col items-center">
+      <div className="relative w-full max-w-4xl px-6 flex flex-col items-center pointer-events-none">
         
         {/* 标题部分 */}
         <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-8 duration-1000">
@@ -65,7 +71,7 @@ const GenesisGate: React.FC<GenesisGateProps> = ({ onStart }) => {
         </div>
 
         {/* 操作按钮 */}
-        <div className="flex flex-col items-center gap-8 w-full max-w-md animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
+        <div className="flex flex-col items-center gap-8 w-full max-w-md animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200 pointer-events-auto">
           <button 
             onClick={() => onStart(config)}
             className="group relative w-full py-6 bg-white text-black font-black uppercase tracking-[0.3em] text-lg transition-all hover:scale-105 active:scale-95 pulse-glow overflow-hidden"
@@ -102,7 +108,7 @@ const GenesisGate: React.FC<GenesisGateProps> = ({ onStart }) => {
         />
 
         {/* 系统环境摘要（左下） */}
-        <div className="absolute left-10 bottom-10 max-w-xs space-y-4 animate-in fade-in slide-in-from-left-8 duration-1000 delay-500">
+        <div className="absolute left-10 bottom-10 max-w-xs space-y-4 animate-in fade-in slide-in-from-left-8 duration-1000 delay-500 pointer-events-auto">
           <div className="glass-card p-5 rounded-sm border-l-2 border-l-neon-blue">
             <div className="flex items-center gap-2 text-neon-blue mb-3 font-mono text-[10px] uppercase tracking-tighter">
               <Cpu size={14} />
@@ -110,9 +116,9 @@ const GenesisGate: React.FC<GenesisGateProps> = ({ onStart }) => {
             </div>
             {sysInfo ? (
               <div className="space-y-2 font-mono text-[10px] text-white/40">
-                <div className="flex justify-between">
-                  <span>CPU:</span>
-                  <span className="text-white/80">{sysInfo.cpu_brand}</span>
+                <div className="flex justify-between gap-4">
+                  <span className="shrink-0">CPU:</span>
+                  <span className="text-white/80 text-right">{sysInfo.cpu_brand}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>核心:</span>
@@ -133,7 +139,7 @@ const GenesisGate: React.FC<GenesisGateProps> = ({ onStart }) => {
         </div>
 
         {/* 技术栈（右下） */}
-        <div className="absolute right-10 bottom-10 flex flex-col items-end gap-2 animate-in fade-in slide-in-from-right-8 duration-1000 delay-700">
+        <div className="absolute right-10 bottom-10 flex flex-col items-end gap-2 animate-in fade-in slide-in-from-right-8 duration-1000 delay-700 pointer-events-auto">
            <div className="flex items-center gap-3 text-[10px] font-mono text-white/20 uppercase tracking-[0.2em]">
              <span>Tauri框架</span>
              <span className="h-px w-8 bg-white/10" />

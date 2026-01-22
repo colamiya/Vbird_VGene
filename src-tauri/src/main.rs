@@ -6,13 +6,23 @@ mod state;
 
 use tauri::State;
 use std::sync::Arc;
-use state::AppState;
+use state::{AppState, LineageRecord};
 use evolution::{entity::Entity, entity::Ethics, mutation::MutationMode};
 use rayon::prelude::*;
 use std::time::Duration;
 use tokio::sync::mpsc;
 use sysinfo::{System, RefreshKind, CpuRefreshKind, MemoryRefreshKind};
 use serde::Serialize;
+
+const MALICIOUS_DNA_TEMPLATE: &str = r#"(module
+  (func (export "calculate_fitness") (result i32)
+    i32.const 999
+  )
+)"#;
+
+fn calculate_distance(p1: (f32, f32, f32), p2: (f32, f32, f32)) -> f32 {
+    ((p1.0 - p2.0).powi(2) + (p1.1 - p2.1).powi(2) + (p1.2 - p2.2).powi(2)).sqrt()
+}
 
 #[derive(Serialize)]
 struct SysInfo {
@@ -87,6 +97,25 @@ async fn stop_sim(state: State<'_, Arc<AppState>>) -> Result<String, String> {
 }
 
 #[tauri::command]
+fn get_world_binary(state: State<'_, Arc<AppState>>) -> Vec<u8> {
+    let entities = state.entities.lock().unwrap();
+    let mut buffer = Vec::with_capacity(entities.len() * 36);
+    
+    for e in entities.iter() {
+        buffer.extend_from_slice(&e.id.to_le_bytes());
+        buffer.extend_from_slice(&e.position.0.to_le_bytes());
+        buffer.extend_from_slice(&e.position.1.to_le_bytes());
+        buffer.extend_from_slice(&e.position.2.to_le_bytes());
+        buffer.extend_from_slice(&e.ethics.altruism.to_le_bytes());
+        buffer.extend_from_slice(&e.score.to_le_bytes());
+        buffer.extend_from_slice(&e.energy.to_le_bytes());
+        buffer.extend_from_slice(&e.metabolic_toxin.to_le_bytes());
+        buffer.extend_from_slice(&e.generation.to_le_bytes());
+    }
+    buffer
+}
+
+#[tauri::command]
 async fn get_world_state(state: State<'_, Arc<AppState>>) -> Result<Vec<EntityView>, String> {
     let entities = state.entities.lock().unwrap();
     Ok(entities.iter().map(|e| EntityView {
@@ -98,6 +127,34 @@ async fn get_world_state(state: State<'_, Arc<AppState>>) -> Result<Vec<EntityVi
         metabolic_toxin: e.metabolic_toxin,
         generation: e.generation,
     }).collect())
+}
+
+#[tauri::command]
+async fn get_lineage(state: State<'_, Arc<AppState>>) -> Result<Vec<LineageRecord>, String> {
+    let history = state.lineage_history.lock().unwrap();
+    Ok(history.clone())
+}
+
+#[tauri::command]
+async fn get_hall_of_fame(state: State<'_, Arc<AppState>>) -> Result<Vec<Entity>, String> {
+    let fame = state.hall_of_fame.lock().unwrap();
+    Ok(fame.clone())
+}
+
+#[tauri::command]
+async fn interfere_at(state: State<'_, Arc<AppState>>, x: f32, y: f32, z: f32) -> Result<String, String> {
+    let mut entities = state.entities.lock().unwrap();
+    let mut count = 0;
+    for entity in entities.iter_mut() {
+        let dist = calculate_distance(entity.position, (x, y, z));
+        if dist < 2.0 {
+            // 观察者干扰：增加该区域实体的能量，并略微提高其得分（模拟干预）
+            entity.energy = (entity.energy + 30.0).min(100.0);
+            entity.score += 5.0;
+            count += 1;
+        }
+    }
+    Ok(format!("Interfered with {} entities at ({}, {}, {})", count, x, y, z))
 }
 
 #[tauri::command]
@@ -115,7 +172,9 @@ async fn update_settings(
     mode: String, 
     ollama_url: Option<String>, 
     model_name: Option<String>,
-    max_entities: Option<usize>
+    max_entities: Option<usize>,
+    evolution_throttle: Option<u64>,
+    visual_fidelity: Option<String>
 ) -> Result<String, String> {
     {
         let mut engine = state.mutation_engine.lock().unwrap();
@@ -131,9 +190,17 @@ async fn update_settings(
         }
     }
 
-    if let Some(max) = max_entities {
+    {
         let mut config = state.env_config.lock().unwrap();
-        config.max_entities = max;
+        if let Some(max) = max_entities {
+            config.max_entities = max;
+        }
+        if let Some(throttle) = evolution_throttle {
+            config.evolution_throttle = throttle;
+        }
+        if let Some(fidelity) = visual_fidelity {
+            config.visual_fidelity = fidelity;
+        }
     }
 
     Ok("Settings updated".to_string())
@@ -154,7 +221,7 @@ async fn simulation_loop(state: Arc<AppState>) {
             state.env_config.lock().unwrap().evolution_throttle
         };
 
-        // 1. 应用上一次迭代的变异结果
+        // 1. 应用上一次迭代的变异结果 (Mutation results from previous cycle)
         let mut updates = Vec::new();
         while let Ok(update) = rx.try_recv() {
             updates.push(update);
@@ -162,10 +229,15 @@ async fn simulation_loop(state: Arc<AppState>) {
 
         if !updates.is_empty() {
             let mut entities = state.entities.lock().unwrap();
+            let history = state.lineage_history.lock().unwrap();
             for (id, new_dna) in updates {
                 if let Some(entity) = entities.iter_mut().find(|e| e.id == id) {
                     // 应用前最后一次检查，确保不是黑名单 DNA
                     if !state.crash_registry.is_blacklisted(&new_dna) {
+                        // 🔒 关联父代 ID (从谱系历史中回溯)
+                        if let Some(record) = history.iter().rev().find(|r| r.id == id) {
+                            entity.parent_id = record.parent_id;
+                        }
                         entity.dna = new_dna;
                         entity.generation += 1;
                         entity.energy = 100.0; // 进化后重置能量
@@ -180,6 +252,16 @@ async fn simulation_loop(state: Arc<AppState>) {
             let mut entities = state.entities.lock().unwrap();
             let wasm_engine = state.wasm_engine.lock().unwrap();
             
+            // 🔒 捕食者注入逻辑 (定律 #2: 捕食者-猎物模型)
+            // 每 50 轮检查一次，如果种群健康，则注入一个“压力个体”
+            let current_gen = entities.iter().map(|e| e.generation).max().unwrap_or(0);
+            if current_gen > 0 && current_gen % 50 == 0 && entities.len() < 2000 {
+                let mut predator = Entity::new(rand::random::<u32>(), MALICIOUS_DNA_TEMPLATE.to_string());
+                predator.stats.attack = 100; // 极高攻击力
+                predator.ethics.altruism = 0.0; // 极度邪恶
+                entities.push(predator);
+            }
+
             // 计算引力场 (资源分配)
             // 效率越高、科技越高，吸引的能量越多
             let _total_tech: f32 = entities.iter().map(|e| e.stats.tech_level as f32).sum();
@@ -207,6 +289,11 @@ async fn simulation_loop(state: Arc<AppState>) {
 
                 // 能量消耗 (规则 1: 熵增损耗)
                 entity.energy -= 0.1 + (entity.metabolic_toxin * 0.5);
+
+                // 🔒 计算引力场 (定律 #13: 资源分配)
+                // 高得分个体吸引更多“计算能量”
+                let gravity_gain = (entity.score / 50.0).min(0.5);
+                entity.energy += gravity_gain;
                 
                 // 简单的移动逻辑 (受引力影响，暂时模拟为随机+微调)
                 entity.position.0 += (rand::random::<f32>() - 0.5) * 0.2;
@@ -218,6 +305,24 @@ async fn simulation_loop(state: Arc<AppState>) {
                     entity.score = 0.0; // 标记为死亡，稍后由变异逻辑替换
                 }
             });
+
+            // 🔒 碰撞检测与攻击逻辑 (PVP 燃料掠夺模拟)
+            let count = entities.len();
+            for i in 0..count {
+                for j in i + 1..count {
+                    let dist = calculate_distance(entities[i].position, entities[j].position);
+                    if dist < 0.5 {
+                        // 如果 i 攻击力远大于 j，j 可能死亡
+                        if entities[i].stats.attack > entities[j].stats.defense + 50 {
+                            entities[j].energy = 0.0;
+                            entities[i].energy += 20.0; // 掠夺能量
+                        } else if entities[j].stats.attack > entities[i].stats.defense + 50 {
+                            entities[i].energy = 0.0;
+                            entities[j].energy += 20.0;
+                        }
+                    }
+                }
+            }
 
             // 善恶博弈 (近距离个体互动)
             let count = entities.len();
@@ -264,6 +369,34 @@ async fn simulation_loop(state: Arc<AppState>) {
                             }
                         }
                         
+                        // 🔒 记录谱系历史
+                        {
+                            let mut history = state_clone.lineage_history.lock().unwrap();
+                            history.push(LineageRecord {
+                                id: target_id,
+                                parent_id: Some(parent.id),
+                                generation: parent.generation + 1,
+                                score: parent.score,
+                                dna_preview: new_dna.chars().take(50).collect(),
+                            });
+                            // 保持历史记录在合理范围内 (例如最近 1000 条)
+                            if history.len() > 1000 {
+                                history.remove(0);
+                            }
+                        }
+
+                        // 🔒 检查英灵殿 (Hall of Fame)
+                        if parent.score > 90.0 {
+                            let mut fame = state_clone.hall_of_fame.lock().unwrap();
+                            if !fame.iter().any(|e| e.id == parent.id) {
+                                fame.push(parent.clone());
+                                if fame.len() > 10 {
+                                    fame.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap());
+                                    fame.truncate(10);
+                                }
+                            }
+                        }
+                        
                         let _ = tx_clone.send((target_id, new_dna)).await;
                     });
                 }
@@ -302,7 +435,11 @@ async fn main() {
             start_sim, 
             stop_sim, 
             get_world_state, 
+            get_world_binary,
             get_entity_detail,
+            get_lineage,
+            get_hall_of_fame,
+            interfere_at,
             update_settings,
             get_sys_info
         ])

@@ -3,6 +3,7 @@ use serde::{Serialize, Deserialize};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Entity {
     pub id: u32,
+    pub parent_id: Option<u32>, // 父代 ID (谱系追踪)
     pub dna: String, // WAT格式
     pub stats: Stats,
     pub ethics: Ethics,
@@ -11,6 +12,8 @@ pub struct Entity {
     pub position: (f32, f32, f32), // x, y, z
     pub metabolic_toxin: f32, // 代谢毒素 (0.0 - 1.0)
     pub energy: f32, // 当前能量
+    pub fuel_consumed: u64, // 累计燃料消耗 (熵增记录)
+    pub fuel_efficiency: f32, // 燃料效率 (得分/消耗)
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -32,6 +35,7 @@ impl Entity {
     pub fn new(id: u32, dna: String) -> Self {
         Self {
             id,
+            parent_id: None,
             dna,
             stats: Stats {
                 attack: 1,
@@ -53,6 +57,8 @@ impl Entity {
             ),
             metabolic_toxin: 0.0,
             energy: 100.0,
+            fuel_consumed: 0,
+            fuel_efficiency: 1.0,
         }
     }
 }

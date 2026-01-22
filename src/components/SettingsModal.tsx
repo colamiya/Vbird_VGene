@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { X, Settings as SettingsIcon, Monitor, Cpu, Database, Bug } from 'lucide-react';
+import { X, Settings as SettingsIcon, Monitor, Cpu, Database, Bug, Zap, Activity, Info } from 'lucide-react';
 import { getCurrentWindow, LogicalSize } from '@tauri-apps/api/window';
 
 // 设置模态框属性接口
@@ -14,6 +15,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
   const [ollamaUrl, setOllamaUrl] = useState('http://localhost:11434');
   const [modelName, setModelName] = useState('llama2');
   const [maxEntities, setMaxEntities] = useState(500);
+  const [evolutionThrottle, setEvolutionThrottle] = useState(100);
+  const [visualFidelity, setVisualFidelity] = useState('High');
   const [resolution, setResolution] = useState('1280x720');
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -50,6 +53,78 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
 
         <div className="space-y-8 overflow-y-auto max-h-[70vh] custom-scrollbar pr-2">
           
+          {/* 模式选择 */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-[10px] font-mono text-white/40 uppercase tracking-widest">
+              <Cpu size={12} />
+              <span>进化引擎 (Evolution Engine)</span>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setMode('Ollama')}
+                className={`flex-1 py-3 px-2 rounded-sm border transition-all font-mono text-[9px] uppercase tracking-widest flex items-center justify-center gap-1 ${
+                  mode === 'Ollama' 
+                    ? 'border-neon-purple text-neon-purple bg-neon-purple/10' 
+                    : 'border-white/10 text-white/40 hover:border-white/20'
+                }`}
+              >
+                <Zap size={10} />
+                AI 进化 (Ollama)
+              </button>
+              <button
+                onClick={() => setMode('Local')}
+                className={`flex-1 py-3 px-2 rounded-sm border transition-all font-mono text-[9px] uppercase tracking-widest ${
+                  mode === 'Local' 
+                    ? 'border-neon-green text-neon-green bg-neon-green/10' 
+                    : 'border-white/10 text-white/40 hover:border-white/20'
+                }`}
+              >
+                本地引擎
+              </button>
+              <button
+                onClick={() => setMode('LocalMock')}
+                className={`flex-1 py-3 px-2 rounded-sm border transition-all font-mono text-[9px] uppercase tracking-widest flex items-center justify-center gap-1 ${
+                  mode === 'LocalMock' 
+                    ? 'border-neon-blue text-neon-blue bg-neon-blue/10' 
+                    : 'border-white/10 text-white/40 hover:border-white/20'
+                }`}
+              >
+                <Bug size={10} />
+                模拟测试
+              </button>
+            </div>
+          </div>
+
+          {/* Ollama 设置 */}
+          {mode === 'Ollama' && (
+            <div className="space-y-5 p-4 bg-neon-purple/5 border border-neon-purple/20 rounded-sm animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="flex items-center gap-2 text-[9px] font-mono text-neon-purple uppercase tracking-widest mb-2">
+                <Info size={10} />
+                <span>Ollama 节点配置</span>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest block">API端点</label>
+                <input
+                  type="text"
+                  value={ollamaUrl}
+                  onChange={(e) => setOllamaUrl(e.target.value)}
+                  className="w-full bg-black/60 border border-white/10 p-3 text-white text-xs font-mono focus:border-neon-purple focus:outline-none transition-colors"
+                  placeholder="http://localhost:11434"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest block">模型名称</label>
+                <input
+                  type="text"
+                  value={modelName}
+                  onChange={(e) => setModelName(e.target.value)}
+                  className="w-full bg-black/60 border border-white/10 p-3 text-white text-xs font-mono focus:border-neon-purple focus:outline-none transition-colors"
+                  placeholder="llama3"
+                />
+              </div>
+            </div>
+          )}
+
           {/* 显示设置 */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-[10px] font-mono text-white/40 uppercase tracking-widest">
@@ -63,6 +138,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
                 className="bg-black/40 border border-white/10 p-3 text-white text-[10px] font-mono focus:border-neon-blue focus:outline-none"
               >
                 <option value="1280x720">1280 x 720 (16:9)</option>
+                <option value="1280x800">1280 x 800 (16:10)</option>
                 <option value="1920x1080">1920 x 1080 (16:9)</option>
                 <option value="2560x1440">2560 x 1440 (2K)</option>
               </select>
@@ -76,90 +152,63 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
           </div>
 
           {/* 模拟规模 */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-[10px] font-mono text-white/40 uppercase tracking-widest">
-              <Database size={12} />
-              <span>模拟规模 (最大实体数)</span>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-[10px] font-mono text-white/40 uppercase tracking-widest">
+                <Database size={12} />
+                <span>最大实体数</span>
+              </div>
+              <input
+                type="number"
+                value={maxEntities}
+                onChange={(e) => setMaxEntities(parseInt(e.target.value))}
+                className="w-full bg-black/40 border border-white/10 p-3 text-white text-xs font-mono focus:border-neon-blue focus:outline-none transition-colors"
+              />
             </div>
-            <input
-              type="number"
-              value={maxEntities}
-              onChange={(e) => setMaxEntities(parseInt(e.target.value))}
-              className="w-full bg-black/40 border border-white/10 p-3 text-white text-xs font-mono focus:border-neon-blue focus:outline-none transition-colors"
-            />
-          </div>
-
-          {/* 模式选择 */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-[10px] font-mono text-white/40 uppercase tracking-widest">
-              <Cpu size={12} />
-              <span>进化引擎</span>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setMode('LocalMock')}
-                className={`flex-1 py-3 px-2 rounded-sm border transition-all font-mono text-[9px] uppercase tracking-widest flex items-center justify-center gap-1 ${
-                  mode === 'LocalMock' 
-                    ? 'border-neon-blue text-neon-blue bg-neon-blue/10' 
-                    : 'border-white/10 text-white/40 hover:border-white/20'
-                }`}
-              >
-                <Bug size={10} />
-                模拟测试
-              </button>
-              <button
-                onClick={() => setMode('Local')}
-                className={`flex-1 py-3 px-2 rounded-sm border transition-all font-mono text-[9px] uppercase tracking-widest ${
-                  mode === 'Local' 
-                    ? 'border-neon-green text-neon-green bg-neon-green/10' 
-                    : 'border-white/10 text-white/40 hover:border-white/20'
-                }`}
-              >
-                本地引擎
-              </button>
-              <button
-                onClick={() => setMode('Ollama')}
-                className={`flex-1 py-3 px-2 rounded-sm border transition-all font-mono text-[9px] uppercase tracking-widest ${
-                  mode === 'Ollama' 
-                    ? 'border-neon-purple text-neon-purple bg-neon-purple/10' 
-                    : 'border-white/10 text-white/40 hover:border-white/20'
-                }`}
-              >
-                AI 进化
-              </button>
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-[10px] font-mono text-white/40 uppercase tracking-widest">
+                <Zap size={12} />
+                <span>进化频率 (ms)</span>
+              </div>
+              <input
+                type="number"
+                value={evolutionThrottle}
+                onChange={(e) => setEvolutionThrottle(parseInt(e.target.value))}
+                className="w-full bg-black/40 border border-white/10 p-3 text-white text-xs font-mono focus:border-neon-blue focus:outline-none transition-colors"
+              />
             </div>
           </div>
 
-          {/* Ollama 设置 */}
-          {mode === 'Ollama' && (
-            <div className="space-y-5 animate-in fade-in slide-in-from-top-4 duration-300">
-              <div className="space-y-2">
-                <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest block">API端点</label>
-                <input
-                  type="text"
-                  value={ollamaUrl}
-                  onChange={(e) => setOllamaUrl(e.target.value)}
-                  className="w-full bg-black/40 border border-white/10 p-3 text-white text-xs font-mono focus:border-neon-blue focus:outline-none transition-colors"
-                  placeholder="http://localhost:11434"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest block">模型名称</label>
-                <input
-                  type="text"
-                  value={modelName}
-                  onChange={(e) => setModelName(e.target.value)}
-                  className="w-full bg-black/40 border border-white/10 p-3 text-white text-xs font-mono focus:border-neon-blue focus:outline-none transition-colors"
-                  placeholder="llama2"
-                />
-              </div>
+          {/* 视觉质量 */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-[10px] font-mono text-white/40 uppercase tracking-widest">
+              <Activity size={12} />
+              <span>渲染质量 (Fidelity)</span>
             </div>
-          )}
+            <div className="flex gap-4">
+              {['Low', 'Medium', 'High', 'Ultra'].map(f => (
+                <button
+                  key={f}
+                  onClick={() => setVisualFidelity(f)}
+                  className={`flex-1 py-2 text-[9px] font-mono border transition-all ${visualFidelity === f ? 'border-neon-blue text-neon-blue bg-neon-blue/5' : 'border-white/5 text-white/20'}`}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+          </div>
 
           <div className="pt-6 border-t border-white/5">
             <button
               onClick={() => {
-                onSave({ mode, ollamaUrl, modelName, maxEntities });
+                onSave({ 
+                  mode, 
+                  ollamaUrl, 
+                  modelName, 
+                  maxEntities, 
+                  evolutionThrottle, 
+                  visualFidelity 
+                });
                 onClose();
               }}
               className="w-full py-4 bg-white text-black font-black uppercase tracking-[0.3em] text-[10px] hover:scale-[1.02] active:scale-95 transition-all shadow-neon"
