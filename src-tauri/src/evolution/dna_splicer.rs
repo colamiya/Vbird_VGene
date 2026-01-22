@@ -6,7 +6,7 @@ impl DnaSplicer {
     /// 规则 11: 水平基因转移 (Horizontal Gene Transfer)
     /// 将两个个体的 DNA 进行拼接，产生新的变异
     pub fn splice(dna_a: &str, dna_b: &str) -> String {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         
         // 1. 提取函数体内的完整语句块
         let blocks_a = Self::extract_blocks(dna_a);
@@ -17,12 +17,12 @@ impl DnaSplicer {
         }
         
         // 2. 随机选择一个块进行交换
-        let swap_count = rng.gen_range(1..=2.min(blocks_a.len()).min(blocks_b.len()));
+        let swap_count = rng.random_range(1..=2.min(blocks_a.len()).min(blocks_b.len()));
         let mut new_blocks = blocks_a.clone();
         
         for _ in 0..swap_count {
-            let idx_a = rng.gen_range(0..new_blocks.len());
-            let idx_b = rng.gen_range(0..blocks_b.len());
+            let idx_a = rng.random_range(0..new_blocks.len());
+            let idx_b = rng.random_range(0..blocks_b.len());
             new_blocks[idx_a] = blocks_b[idx_b].clone();
         }
         

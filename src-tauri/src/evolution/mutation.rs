@@ -35,8 +35,8 @@ impl MutationEngine {
     }
 
     fn mutate_local(&self, parent: &Entity) -> String {
-        let mut rng = rand::thread_rng();
-        if rng.gen_bool(0.1) {
+        let mut rng = rand::rng();
+        if rng.random_bool(0.1) {
             return r#"(module
   (func (export "calculate_fitness") (result i32)
     i32.const 42

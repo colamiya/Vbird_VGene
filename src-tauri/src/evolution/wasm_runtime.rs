@@ -3,9 +3,27 @@ use crate::evolution::entity::Entity;
 use std::sync::Mutex;
 use std::collections::HashMap;
 
+/// 🔒 适配 wasmtime v41.x 的资源限制器
+struct HostState {
+    limits: StoreLimits,
+}
+
+impl HostState {
+    fn new(max_memory: usize) -> Self {
+        Self {
+            limits: StoreLimitsBuilder::new()
+                .memory_size(max_memory)
+                .instances(1)
+                .tables(1)
+                .memories(1)
+                .build(),
+        }
+    }
+}
+
 pub struct WasmEngine {
     engine: Engine,
-    linker: Linker<()>,
+    linker: Linker<HostState>,
     module_cache: Mutex<HashMap<String, Module>>,
 }
 
@@ -13,22 +31,17 @@ impl WasmEngine {
     pub fn new() -> anyhow::Result<Self> {
         let mut config = Config::new();
         config.consume_fuel(true); // 启用燃料消耗 (熵增逻辑)
-        
-        // 🔒 关键：限制内存和栈空间 (防止内存炸弹)
-        let max_memory_size = 1024 * 1024; // 1MB
-        config.static_memory_maximum_size(max_memory_size);
-        config.dynamic_memory_maximum_size(max_memory_size);
-        config.max_wasm_stack(128 * 1024); // 128KB 栈
+        config.max_wasm_stack(128 * 1024); // 128KB 栈 (解决 v41 警告)
         
         let engine = Engine::new(&config)?;
         let mut linker = Linker::new(&engine);
 
         // 定义WASM可以调用的宿主函数（基因）
-        linker.func_wrap("env", "log_msg", |_caller: Caller<'_, ()>, _ptr: i32, _len: i32| {
+        linker.func_wrap("env", "log_msg", |_caller: Caller<'_, HostState>, _ptr: i32, _len: i32| {
             // 后续实现：从内存读取日志
         })?;
 
-        linker.func_wrap("env", "energy_check", |_caller: Caller<'_, ()>| -> i32 {
+        linker.func_wrap("env", "energy_check", |_caller: Caller<'_, HostState>| -> i32 {
             100
         })?;
 
@@ -64,7 +77,10 @@ impl WasmEngine {
             }
         };
 
-        let mut store = Store::new(&self.engine, ());
+        // 🔒 v41.x: 初始化 Store 并注入限制器
+        let mut store = Store::new(&self.engine, HostState::new(1024 * 1024));
+        store.limiter(|s| &mut s.limits);
+
         let fuel_limit = 500;
         store.set_fuel(fuel_limit)?; // 设置执行限额
         
@@ -113,7 +129,10 @@ impl WasmEngine {
 
         // 3. 影子演化（Shadow Evolution）：50轮快速试运行 (检测随机性 bug)
         for trial in 0..50 {
-            let mut store = Store::new(&self.engine, ());
+            // 🔒 v41.x: 初始化 Store 并注入限制器
+            let mut store = Store::new(&self.engine, HostState::new(1024 * 1024));
+            store.limiter(|s| &mut s.limits);
+
             // 🔒 降低测试时的 fuel 限额 (200 单位，比正式运行更严格)
             if store.set_fuel(200).is_err() { return false; }
 

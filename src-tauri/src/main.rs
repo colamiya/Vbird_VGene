@@ -11,7 +11,7 @@ use evolution::{entity::Entity, entity::Ethics, mutation::MutationMode};
 use rayon::prelude::*;
 use std::time::Duration;
 use tokio::sync::mpsc;
-use sysinfo::System;
+use sysinfo::{System, RefreshKind, CpuRefreshKind, MemoryRefreshKind};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -35,7 +35,7 @@ struct EntityView {
 #[tauri::command]
 fn get_sys_info() -> SysInfo {
     let mut sys = System::new_all();
-    sys.refresh_all();
+    sys.refresh_specifics(RefreshKind::nothing().with_cpu(CpuRefreshKind::everything()).with_memory(MemoryRefreshKind::everything()));
     
     let cpu_brand = sys.cpus().first().map(|cpu| cpu.brand().to_string()).unwrap_or_else(|| "Unknown".to_string());
     let cpu_cores = sys.cpus().len();
@@ -257,7 +257,7 @@ async fn simulation_loop(state: Arc<AppState>) {
                             // 如果 AI 突变失败，尝试规则 11: 水平基因转移 (基因拼接)
                             let entities = state_clone.entities.lock().unwrap();
                             if entities.len() > 2 {
-                                let other_parent = &entities[rand::random::<usize>() % entities.len()];
+                                let other_parent = &entities[rand::random_range(0..entities.len())];
                                 new_dna = evolution::dna_splicer::DnaSplicer::splice(&parent.dna, &other_parent.dna);
                             } else {
                                 new_dna = parent.dna.clone();
@@ -276,7 +276,7 @@ async fn simulation_loop(state: Arc<AppState>) {
 
 #[cfg(windows)]
 fn optimize_for_windows() {
-    use windows::Win32::System::Threading::*;
+    use windows::Win32::System::Threading::{SetPriorityClass, GetCurrentProcess, HIGH_PRIORITY_CLASS};
     unsafe {
         // 提高进程优先级 (需要管理员权限，若无权限则静默失败)
         let _ = SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);

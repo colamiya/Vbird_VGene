@@ -19,6 +19,9 @@
     "react-dom": "^18.2.0",
     "three": "^0.172.0"
   },
+  "overrides": {
+    "three-mesh-bvh": "^0.8.0"
+  },
   "devDependencies": {
     "@tauri-apps/cli": "^2.1.0",
     "@types/react": "^18.2.0",

@@ -1,4 +1,4 @@
-use sysinfo::System;
+use sysinfo::{System, RefreshKind, CpuRefreshKind, MemoryRefreshKind};
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -10,7 +10,7 @@ pub struct EnvConfig {
 
 pub fn detect_hardware() -> EnvConfig {
     let mut sys = System::new_all();
-    sys.refresh_all();
+    sys.refresh_specifics(RefreshKind::nothing().with_cpu(CpuRefreshKind::everything()).with_memory(MemoryRefreshKind::everything()));
 
     let total_memory_gb = sys.total_memory() / 1024 / 1024 / 1024;
     let cpus = sys.cpus().len();
