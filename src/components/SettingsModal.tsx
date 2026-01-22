@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Settings as SettingsIcon } from 'lucide-react';
 
+// 设置模态框属性接口
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -22,7 +23,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
           <div className="flex items-center gap-3">
             <SettingsIcon size={18} className="text-neon-blue" />
             <h2 className="text-sm font-bold text-white uppercase tracking-[0.3em] font-display">
-              System Configuration
+              系统配置
             </h2>
           </div>
           <button onClick={onClose} className="text-white/20 hover:text-white transition-colors">
@@ -33,7 +34,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
         <div className="space-y-8 overflow-y-auto max-h-[70vh] custom-scrollbar pr-2">
           {/* 模拟规模 */}
           <div className="space-y-3">
-            <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest block">Simulation Scale (Max Entities)</label>
+            <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest block">模拟规模 (最大实体数)</label>
             <input
               type="number"
               value={maxEntities}
@@ -44,7 +45,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
 
           {/* 模式选择 */}
           <div className="space-y-3">
-            <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest block">Evolution Engine</label>
+            <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest block">进化引擎</label>
             <div className="flex gap-4">
               <button
                 onClick={() => setMode('Local')}
@@ -54,7 +55,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
                     : 'border-white/10 text-white/40 hover:border-white/20 hover:text-white/60'
                 }`}
               >
-                Local Sim
+                本地模拟
               </button>
               <button
                 onClick={() => setMode('Ollama')}
@@ -64,7 +65,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
                     : 'border-white/10 text-white/40 hover:border-white/20 hover:text-white/60'
                 }`}
               >
-                AI Evolution
+                AI进化
               </button>
             </div>
           </div>
@@ -73,7 +74,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
           {mode === 'Ollama' && (
             <div className="space-y-5 animate-in fade-in slide-in-from-top-4 duration-300">
               <div className="space-y-2">
-                <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest block">API Endpoint</label>
+                <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest block">API端点</label>
                 <input
                   type="text"
                   value={ollamaUrl}
@@ -83,7 +84,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest block">Model Name</label>
+                <label className="text-[10px] font-mono text-white/40 uppercase tracking-widest block">模型名称</label>
                 <input
                   type="text"
                   value={modelName}
@@ -103,7 +104,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
               }}
               className="w-full py-4 bg-white text-black font-black uppercase tracking-[0.3em] text-[10px] hover:scale-[1.02] active:scale-95 transition-all shadow-neon"
             >
-              Commit Configuration
+              提交配置
             </button>
           </div>
         </div>

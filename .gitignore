@@ -1,0 +1,36 @@
+# 前端依赖和构建产物
+node_modules/
+dist/
+dist-ssr/
+*.local
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+yarn.lock
+Cargo.lock
+
+# Rust 后端依赖和构建产物
+src-tauri/target/
+
+# 编辑器和 IDE 相关文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 系统相关文件
+.DS_Store
+Thumbs.db
+
+# Tauri 相关文件
+src-tauri/.vscode/
+src-tauri/.idea/
+
+# 其他临时文件和构建产物
+*.tmp
+*.temp
+build/
+out/
+
