@@ -14,6 +14,12 @@ impl WasmEngine {
         let mut config = Config::new();
         config.consume_fuel(true); // 启用燃料消耗 (熵增逻辑)
         
+        // 🔒 关键：限制内存和栈空间 (防止内存炸弹)
+        let max_memory_size = 1024 * 1024; // 1MB
+        config.static_memory_maximum_size(max_memory_size);
+        config.dynamic_memory_maximum_size(max_memory_size);
+        config.max_wasm_stack(128 * 1024); // 128KB 栈
+        
         let engine = Engine::new(&config)?;
         let mut linker = Linker::new(&engine);
 
@@ -59,25 +65,31 @@ impl WasmEngine {
         };
 
         let mut store = Store::new(&self.engine, ());
-        let fuel_limit = 2000;
+        let fuel_limit = 500;
         store.set_fuel(fuel_limit)?; // 设置执行限额
         
         let instance = match self.linker.instantiate(&mut store, &module) {
             Ok(i) => i,
-            Err(_) => return Ok(0.0), // 运行时错误处理
+            Err(e) => {
+                eprintln!("WASM instantiation failed for entity {}: {:?}", entity.id, e);
+                return Ok(0.0); // 运行时错误处理
+            }
         };
 
         // 调用进化体核心逻辑
         let fitness = if let Ok(func) = instance.get_typed_func::<(), i32>(&mut store, "calculate_fitness") {
             match func.call(&mut store, ()) {
                 Ok(val) => {
-                    let consumed = fuel_limit - store.get_fuel().unwrap_or(0);
+                    let consumed = fuel_limit.saturating_sub(store.get_fuel().unwrap_or(0));
                     // 熵增损耗：代码越臃肿（执行指令越多），得分系数越低
                     let efficiency = (fuel_limit as f32 - consumed as f32) / fuel_limit as f32;
-                    entity.stats.efficiency = efficiency;
+                    entity.stats.efficiency = efficiency.clamp(0.0, 1.0);
                     (val as f32) * efficiency.max(0.1)
                 },
-                Err(_) => 0.0,
+                Err(e) => {
+                    eprintln!("WASM execution failed for entity {}: {:?}", entity.id, e);
+                    0.0
+                },
             }
         } else {
             0.0
@@ -99,10 +111,11 @@ impl WasmEngine {
             Err(_) => return false,
         };
 
-        // 3. 影子演化（Shadow Evolution）：10轮快速试运行
-        for _ in 0..10 {
+        // 3. 影子演化（Shadow Evolution）：50轮快速试运行 (检测随机性 bug)
+        for trial in 0..50 {
             let mut store = Store::new(&self.engine, ());
-            if store.set_fuel(500).is_err() { return false; } // 严格的测试限额
+            // 🔒 降低测试时的 fuel 限额 (200 单位，比正式运行更严格)
+            if store.set_fuel(200).is_err() { return false; }
 
             let instance = match self.linker.instantiate(&mut store, &module) {
                 Ok(i) => i,
@@ -110,8 +123,18 @@ impl WasmEngine {
             };
 
             if let Ok(func) = instance.get_typed_func::<(), i32>(&mut store, "calculate_fitness") {
-                if func.call(&mut store, ()).is_err() {
-                    return false; // 任何运行时错误都判定为失败
+                match func.call(&mut store, ()) {
+                    Ok(result) => {
+                        // 🔒 额外验证：结果必须在合理范围内
+                        if result < 0 || result > 1000 {
+                            eprintln!("Shadow test failed: invalid result {} on trial {}", result, trial);
+                            return false;
+                        }
+                    }
+                    Err(e) => {
+                        eprintln!("Shadow test failed on trial {}: {:?}", trial, e);
+                        return false;
+                    }
                 }
             } else {
                 return false; // 缺少关键函数

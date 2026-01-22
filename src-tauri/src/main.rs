@@ -7,7 +7,7 @@ mod state;
 use tauri::State;
 use std::sync::Arc;
 use state::AppState;
-use evolution::{entity::Entity, mutation::MutationMode};
+use evolution::{entity::Entity, entity::Ethics, mutation::MutationMode};
 use rayon::prelude::*;
 use std::time::Duration;
 use tokio::sync::mpsc;
@@ -19,6 +19,17 @@ struct SysInfo {
     cpu_brand: String,
     cpu_cores: usize,
     os_info: String,
+}
+
+#[derive(Serialize)]
+struct EntityView {
+    id: u32,
+    position: (f32, f32, f32),
+    ethics: Ethics,
+    score: f32,
+    energy: f32,
+    metabolic_toxin: f32,
+    generation: u32,
 }
 
 #[tauri::command]
@@ -76,9 +87,26 @@ async fn stop_sim(state: State<'_, Arc<AppState>>) -> Result<String, String> {
 }
 
 #[tauri::command]
-async fn get_world_state(state: State<'_, Arc<AppState>>) -> Result<Vec<Entity>, String> {
+async fn get_world_state(state: State<'_, Arc<AppState>>) -> Result<Vec<EntityView>, String> {
     let entities = state.entities.lock().unwrap();
-    Ok(entities.clone())
+    Ok(entities.iter().map(|e| EntityView {
+        id: e.id,
+        position: e.position,
+        ethics: e.ethics.clone(),
+        score: e.score,
+        energy: e.energy,
+        metabolic_toxin: e.metabolic_toxin,
+        generation: e.generation,
+    }).collect())
+}
+
+#[tauri::command]
+async fn get_entity_detail(state: State<'_, Arc<AppState>>, entity_id: u32) -> Result<Entity, String> {
+    let entities = state.entities.lock().unwrap();
+    entities.iter()
+        .find(|e| e.id == entity_id)
+        .cloned()
+        .ok_or_else(|| "Entity not found".to_string())
 }
 
 #[tauri::command]
@@ -127,15 +155,22 @@ async fn simulation_loop(state: Arc<AppState>) {
         };
 
         // 1. 应用上一次迭代的变异结果
-        while let Ok((id, new_dna)) = rx.try_recv() {
+        let mut updates = Vec::new();
+        while let Ok(update) = rx.try_recv() {
+            updates.push(update);
+        }
+
+        if !updates.is_empty() {
             let mut entities = state.entities.lock().unwrap();
-            if let Some(entity) = entities.iter_mut().find(|e| e.id == id) {
-                // 应用前最后一次检查，确保不是黑名单 DNA
-                if !state.crash_registry.is_blacklisted(&new_dna) {
-                    entity.dna = new_dna;
-                    entity.generation += 1;
-                    entity.energy = 100.0; // 进化后重置能量
-                    entity.metabolic_toxin = 0.0;
+            for (id, new_dna) in updates {
+                if let Some(entity) = entities.iter_mut().find(|e| e.id == id) {
+                    // 应用前最后一次检查，确保不是黑名单 DNA
+                    if !state.crash_registry.is_blacklisted(&new_dna) {
+                        entity.dna = new_dna;
+                        entity.generation += 1;
+                        entity.energy = 100.0; // 进化后重置能量
+                        entity.metabolic_toxin = 0.0;
+                    }
                 }
             }
         }
@@ -201,12 +236,16 @@ async fn simulation_loop(state: Arc<AppState>) {
                     let state_clone = state.clone();
 
                     tokio::spawn(async move {
-                        let mut new_dna = {
-                            let engine = state_clone.mutation_engine.lock().unwrap().clone();
-                            engine.mutate(&parent).await
-                        };
+                        // 1. 先克隆 engine (已经是 Clone 的了)
+                        let engine = {
+                            let guard = state_clone.mutation_engine.lock().unwrap();
+                            guard.clone()
+                        }; // 锁立即释放
 
-                        // 规则 12: 影子演化与规则 9: 免疫记忆
+                        // 2. 在锁外进行异步调用
+                        let mut new_dna = engine.mutate(&parent).await;
+
+                        // 3. 影子演化验证
                         let is_valid = {
                             let wasm_engine = state_clone.wasm_engine.lock().unwrap();
                             !state_clone.crash_registry.is_blacklisted(&new_dna) && wasm_engine.validate_and_test(&new_dna)
@@ -235,9 +274,27 @@ async fn simulation_loop(state: Arc<AppState>) {
     }
 }
 
+#[cfg(windows)]
+fn optimize_for_windows() {
+    use windows::Win32::System::Threading::*;
+    unsafe {
+        // 提高进程优先级 (需要管理员权限，若无权限则静默失败)
+        let _ = SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
+    }
+}
+
 #[tokio::main]
 async fn main() {
+    // 初始化日志
+    env_logger::init();
+    
+    // Windows 环境优化
+    #[cfg(windows)]
+    optimize_for_windows();
+
     let app_state = Arc::new(AppState::new());
+
+    log::info!("V-GENE Simulation System Started");
 
     tauri::Builder::default()
         .manage(app_state)
@@ -245,6 +302,7 @@ async fn main() {
             start_sim, 
             stop_sim, 
             get_world_state, 
+            get_entity_detail,
             update_settings,
             get_sys_info
         ])

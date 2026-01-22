@@ -5,25 +5,28 @@ import GenesisGate from './components/GenesisGate';
 import SettingsModal from './components/SettingsModal';
 import { Settings, Play, Pause, Activity, Cpu, Terminal, Zap } from 'lucide-react';
 
-interface Entity {
+interface EntityView {
   id: number;
   position: [number, number, number];
   ethics: { altruism: number; collaboration: number };
-  stats: { attack: number; defense: number; tech_level: number; efficiency: number };
   score: number;
-  dna: string;
   energy: number;
   metabolic_toxin: number;
   generation: number;
 }
 
+interface Entity extends EntityView {
+  dna: string;
+  stats: { attack: number; defense: number; tech_level: number; efficiency: number };
+}
+
 function App() {
-  const [entities, setEntities] = useState<Entity[]>([]);
+  const [entities, setEntities] = useState<EntityView[]>([]);
   const [isRunning, setIsRunning] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
-  const [stats, setStats] = useState({ avgScore: 0, population: 0, maxTech: 0, avgEfficiency: 0 });
+  const [stats, setStats] = useState({ avgScore: 0, population: 0, avgGeneration: 0 });
   const [isLeaping, setIsLeaping] = useState(false);
 
   useEffect(() => {
@@ -32,26 +35,18 @@ function App() {
     if (isRunning) {
       interval = setInterval(async () => {
         try {
-          const worldState = await invoke<Entity[]>('get_world_state');
+          const worldState = await invoke<EntityView[]>('get_world_state');
           
           setEntities(worldState);
 
           if (worldState.length > 0) {
             const totalScore = worldState.reduce((acc, e) => acc + e.score, 0);
-            const totalEff = worldState.reduce((acc, e) => acc + e.stats.efficiency, 0);
-            const maxTech = Math.max(...worldState.map(e => e.stats.tech_level));
+            const totalGen = worldState.reduce((acc, e) => acc + e.generation, 0);
             
-            // 跃迁检查
-            if (maxTech >= 10 && !isLeaping) {
-               setIsLeaping(true);
-               setTimeout(() => setIsLeaping(false), 5000); // 5秒后重置
-            }
-
             setStats({
               avgScore: totalScore / worldState.length,
               population: worldState.length,
-              maxTech,
-              avgEfficiency: totalEff / worldState.length
+              avgGeneration: totalGen / worldState.length
             });
           }
 
@@ -62,7 +57,16 @@ function App() {
     }
 
     return () => clearInterval(interval);
-  }, [isRunning, isLeaping]);
+  }, [isRunning]);
+
+  const handleEntityClick = async (entity: EntityView) => {
+    try {
+      const fullEntity = await invoke<Entity>('get_entity_detail', { entityId: entity.id });
+      setSelectedEntity(fullEntity);
+    } catch (e) {
+      console.error("Failed to fetch entity details:", e);
+    }
+  };
 
   const handleStart = async (config: any) => {
     await invoke('update_settings', {
@@ -102,7 +106,7 @@ function App() {
   return (
     <div className="w-screen h-screen relative bg-black text-white overflow-hidden font-display">
       {/* 3D Background */}
-      <Arena entities={entities} onEntityClick={setSelectedEntity} isLeaping={isLeaping} />
+      <Arena entities={entities} onEntityClick={handleEntityClick} isLeaping={isLeaping} />
 
       {/* UI Overlay */}
       <div className="absolute inset-0 pointer-events-none p-6 flex flex-col justify-between z-20">
@@ -124,8 +128,8 @@ function App() {
             {[
               { label: 'Population', value: stats.population, icon: <Activity size={14}/> },
               { label: 'Avg Fitness', value: stats.avgScore.toFixed(2), icon: <Cpu size={14}/> },
-              { label: 'Max Tech', value: `Lvl ${stats.maxTech}`, icon: <Settings size={14}/>, onClick: () => setIsSettingsOpen(true) },
-              { label: 'Efficiency', value: `${(stats.avgEfficiency * 100).toFixed(1)}%`, icon: <Zap size={14}/> }
+              { label: 'Avg Generation', value: `Gen ${stats.avgGeneration.toFixed(1)}`, icon: <Settings size={14}/>, onClick: () => setIsSettingsOpen(true) },
+              { label: 'Stability', value: 'Optimized', icon: <Zap size={14}/> }
             ].map((stat, i) => (
               <div 
                 key={i} 

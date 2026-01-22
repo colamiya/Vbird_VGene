@@ -47,6 +47,8 @@ impl MutationEngine {
     }
 
     async fn mutate_ollama(&self, parent: &Entity, url: &str, model: &str) -> String {
+        use tokio::time::{timeout, Duration};
+
         let prompt = format!(
             "Task: Mutate the following WebAssembly Text (WAT) code to improve its efficiency or logical complexity.\n\
             Constraints:\n\
@@ -66,22 +68,37 @@ impl MutationEngine {
 
         let api_url = format!("{}/api/generate", url);
         
-        match self.client.post(&api_url).json(&body).send().await {
-            Ok(res) => {
-                if let Ok(json) = res.json::<serde_json::Value>().await {
-                    if let Some(response_text) = json["response"].as_str() {
-                        let cleaned = self.extract_wat(response_text);
-                        if !cleaned.is_empty() {
-                            return cleaned;
+        // 🔒 最多重试 3 次，每次超时 10 秒
+        for attempt in 0..3 {
+            let request = self.client
+                .post(&api_url)
+                .json(&body)
+                .timeout(Duration::from_secs(10)); // reqwest 自带超时
+            
+            match timeout(Duration::from_secs(12), request.send()).await {
+                Ok(Ok(res)) => {
+                    if let Ok(json) = res.json::<serde_json::Value>().await {
+                        if let Some(response_text) = json["response"].as_str() {
+                            let cleaned = self.extract_wat(response_text);
+                            if !cleaned.is_empty() {
+                                return cleaned;
+                            }
                         }
                     }
                 }
+                Ok(Err(e)) => {
+                    eprintln!("Ollama request failed (attempt {}): {}", attempt + 1, e);
+                }
+                Err(_) => {
+                    eprintln!("Ollama request timeout (attempt {})", attempt + 1);
+                }
             }
-            Err(e) => {
-                eprintln!("Ollama mutation failed: {}", e);
-            }
+            
+            // 指数退避: 100ms, 200ms, 400ms
+            tokio::time::sleep(Duration::from_millis(100 * 2_u64.pow(attempt))).await;
         }
         
+        eprintln!("Ollama mutation failed after 3 attempts, using parent DNA");
         parent.dna.clone()
     }
 

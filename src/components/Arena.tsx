@@ -12,6 +12,8 @@ interface Entity {
   };
   score: number;
   energy: number;
+  metabolic_toxin: number;
+  generation: number;
 }
 
 interface ArenaProps {
@@ -31,9 +33,23 @@ const EntitySwarm: React.FC<{ entities: Entity[], onEntityClick?: (entity: Entit
     }
   };
 
-  // 当实体变化时更新实例
+  // 🔒 只在实体列表变化时更新
+  const prevEntitiesRef = useRef<Entity[]>([]);
+
   useFrame((state) => {
     if (!meshRef.current) return;
+
+    // 🔒 降频：每 3 帧更新一次 (20 FPS 对人眼足够)
+    const frameCount = Math.floor(state.clock.elapsedTime * 60);
+    if (frameCount % 3 !== 0 && !isLeaping) return;
+
+    const hasChanged = entities.length !== prevEntitiesRef.current.length
+      || entities.some((e, i) => {
+        const prev = prevEntitiesRef.current[i];
+        return !prev || e.id !== prev.id || e.energy !== prev.energy;
+      });
+
+    if (!hasChanged && !isLeaping) return; // 🔒 无变化时跳过更新
 
     entities.forEach((entity, i) => {
       // 位置
@@ -73,6 +89,8 @@ const EntitySwarm: React.FC<{ entities: Entity[], onEntityClick?: (entity: Entit
 
     meshRef.current.instanceMatrix.needsUpdate = true;
     if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
+    
+    prevEntitiesRef.current = entities;
   });
 
   return (
