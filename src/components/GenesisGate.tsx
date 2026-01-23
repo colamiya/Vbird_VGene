@@ -271,6 +271,7 @@ const GenesisGate: React.FC<GenesisGateProps> = ({ onStart }) => {
                 setShowExitConfirm(true);
               }}
               className="px-6 py-4 glass-card rounded-sm text-red-500/40 hover:text-red-500 hover:bg-red-500/10 transition-all font-mono text-xs uppercase tracking-widest border border-white/5 hover:border-red-500/50"
+              aria-label="Exit Application"
             >
               <Power size={14} />
             </button>
