@@ -54,18 +54,21 @@ const TitleBar: React.FC = () => {
         <button 
           onClick={handleMinimize}
           className="h-full px-3 text-white/40 hover:text-white hover:bg-white/5 transition-colors flex items-center"
+          aria-label="Minimize window"
         >
           <Minus size={14} />
         </button>
         <button 
           onClick={handleMaximize}
           className="h-full px-3 text-white/40 hover:text-white hover:bg-white/5 transition-colors flex items-center"
+          aria-label={isMaximized ? "Restore window" : "Maximize window"}
         >
           {isMaximized ? <Copy size={12} className="rotate-180" /> : <Square size={12} />}
         </button>
         <button 
           onClick={handleClose}
           className="h-full px-4 text-white/40 hover:text-red-500 hover:bg-red-500/10 transition-colors flex items-center"
+          aria-label="Close window"
         >
           <X size={16} />
         </button>

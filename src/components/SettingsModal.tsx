@@ -140,7 +140,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
               系统控制台 <span className="text-white/20 font-mono font-normal ml-2">/ SETTINGS</span>
             </h2>
           </div>
-          <button onClick={onClose} className="text-white/20 hover:text-white transition-colors">
+          <button onClick={onClose} className="text-white/20 hover:text-white transition-colors" aria-label="Close settings">
             <X size={20} />
           </button>
         </div>
@@ -160,6 +160,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
               <button
                 onMouseEnter={() => sfx.playHover()}
                 onClick={() => setMode('Ollama')}
+                aria-pressed={mode === 'Ollama'}
                 className={`flex-1 py-3 px-2 rounded-sm border transition-all font-mono text-[9px] uppercase tracking-widest flex items-center justify-center gap-1 ${
                   mode === 'Ollama' 
                     ? 'border-neon-purple text-neon-purple bg-neon-purple/10' 
@@ -172,6 +173,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
               <button
                 onMouseEnter={() => sfx.playHover()}
                 onClick={() => setMode('Local')}
+                aria-pressed={mode === 'Local'}
                 className={`flex-1 py-3 px-2 rounded-sm border transition-all font-mono text-[9px] uppercase tracking-widest ${
                   mode === 'Local' 
                     ? 'border-white text-white bg-white/10' 
@@ -183,6 +185,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
               <button
                 onMouseEnter={() => sfx.playHover()}
                 onClick={() => setMode('LocalMock')}
+                aria-pressed={mode === 'LocalMock'}
                 className={`flex-1 py-3 px-2 rounded-sm border transition-all font-mono text-[9px] uppercase tracking-widest flex items-center justify-center gap-1 ${
                   mode === 'LocalMock' 
                     ? 'border-neon-blue text-neon-blue bg-neon-blue/10' 
@@ -294,6 +297,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
                     key={m}
                     onMouseEnter={() => sfx.playHover()}
                     onClick={() => handleDisplayModeChange(m)}
+                    aria-pressed={displayMode === m}
                     className={`flex-1 py-2 text-[9px] font-mono border transition-all ${displayMode === m ? 'border-neon-blue text-neon-blue bg-neon-blue/10' : 'border-white/5 text-white/20 hover:border-white/20'}`}
                   >
                     {m === 'Windowed' ? '窗口模式' : m === 'Fullscreen' ? '全屏模式' : '无边框全屏'}
@@ -334,6 +338,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
                   key={f}
                   onMouseEnter={() => sfx.playHover()}
                   onClick={() => setVisualFidelity(f)}
+                  aria-pressed={visualFidelity === f}
                   className={`flex-1 py-2 text-[9px] font-mono border transition-all ${visualFidelity === f ? 'border-neon-blue text-neon-blue bg-neon-blue/5 shadow-[inset_0_0_10px_rgba(0,234,255,0.1)]' : 'border-white/5 text-white/20 hover:border-white/20'}`}
                 >
                   {f}
