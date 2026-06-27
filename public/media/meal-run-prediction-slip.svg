@@ -1,0 +1,40 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="prediction-bg" x1="118" y1="72" x2="1480" y2="820" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#020617"/>
+      <stop offset="0.36" stop-color="#0F2F3D"/>
+      <stop offset="0.68" stop-color="#33213F"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="prediction-line" x1="274" y1="230" x2="1326" y2="674" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8"/>
+      <stop offset="0.44" stop-color="#34D399"/>
+      <stop offset="0.75" stop-color="#FACC15"/>
+      <stop offset="1" stop-color="#FB7185"/>
+    </linearGradient>
+    <pattern id="prediction-grid" width="74" height="74" patternUnits="userSpaceOnUse">
+      <path d="M74 0H0V74" stroke="#F8FAFC" stroke-opacity="0.05"/>
+      <path d="M37 0V74M0 37H74" stroke="#F8FAFC" stroke-opacity="0.022"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#prediction-bg)"/>
+  <rect width="1600" height="900" fill="url(#prediction-grid)"/>
+  <path d="M190 146H1410V754H190V146Z" stroke="#F8FAFC" stroke-opacity="0.13" stroke-width="2"/>
+  <path d="M282 226H1318V682H282V226Z" stroke="url(#prediction-line)" stroke-opacity="0.48" stroke-width="2"/>
+  <g opacity="0.7">
+    <path d="M370 306H624L668 350V622H370V306Z" fill="#020617" fill-opacity="0.44" stroke="#38BDF8" stroke-opacity="0.54" stroke-width="2"/>
+    <path d="M674 276H928L972 320V622H674V276Z" fill="#020617" fill-opacity="0.48" stroke="#34D399" stroke-opacity="0.54" stroke-width="2"/>
+    <path d="M978 306H1232L1276 350V622H978V306Z" fill="#020617" fill-opacity="0.44" stroke="#FACC15" stroke-opacity="0.54" stroke-width="2"/>
+    <path d="M422 380H580M422 430H610M422 480H548M726 350H884M726 400H914M726 450H852M1030 380H1188M1030 430H1218M1030 480H1156" stroke="#F8FAFC" stroke-opacity="0.14" stroke-width="9" stroke-linecap="round"/>
+    <path d="M450 556L482 588L558 512M754 536L786 568L862 492M1058 556L1090 588L1166 512" stroke="url(#prediction-line)" stroke-opacity="0.72" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <path d="M318 674C470 604 560 646 704 568C842 494 904 352 1070 390C1166 412 1232 480 1300 430" stroke="url(#prediction-line)" stroke-opacity="0.48" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="318" cy="674" r="9" fill="#38BDF8"/>
+  <circle cx="704" cy="568" r="9" fill="#34D399"/>
+  <circle cx="1070" cy="390" r="9" fill="#FACC15"/>
+  <circle cx="1300" cy="430" r="9" fill="#FB7185"/>
+  <path d="M288 198H588" stroke="#38BDF8" stroke-opacity="0.58" stroke-width="3"/>
+  <path d="M1008 706H1310" stroke="#FACC15" stroke-opacity="0.58" stroke-width="3"/>
+  <text x="288" y="186" fill="#E2E8F0" fill-opacity="0.23" font-family="Arial, sans-serif" font-size="34" font-weight="900" letter-spacing="8">PREDICTION SLIP</text>
+  <text x="1008" y="742" fill="#E2E8F0" fill-opacity="0.18" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="6">PRE-RUN TARGET / REAL OUTCOME</text>
+</svg>

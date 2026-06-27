@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">V-GENE Meal Run Observatory</title>
+  <desc id="desc">A dark cybernetic observatory table with layered simulation grids, entity traces, and tactical intervention marks.</desc>
+  <defs>
+    <linearGradient id="tableGlow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#00eaff" stop-opacity="0.55"/>
+      <stop offset="0.46" stop-color="#2cf58a" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#bd00ff" stop-opacity="0.42"/>
+    </linearGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0v48" fill="none" stroke="#ffffff" stroke-opacity="0.055" stroke-width="1"/>
+      <path d="M24 0v48M0 24h48" fill="none" stroke="#00eaff" stroke-opacity="0.08" stroke-width="0.7"/>
+    </pattern>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="#020305"/>
+  <rect width="1600" height="900" fill="url(#grid)"/>
+  <path d="M120 724 C360 612 492 566 706 586 C938 608 1042 516 1240 404 C1372 330 1468 304 1530 294" fill="none" stroke="#00eaff" stroke-opacity="0.28" stroke-width="2"/>
+  <path d="M90 288 C320 362 500 418 690 386 C882 354 1008 238 1234 246 C1354 250 1458 284 1530 326" fill="none" stroke="#bd00ff" stroke-opacity="0.24" stroke-width="2"/>
+  <g transform="translate(232 130)" opacity="0.88">
+    <ellipse cx="568" cy="320" rx="514" ry="258" fill="#05080b" fill-opacity="0.72" stroke="url(#tableGlow)" stroke-width="3"/>
+    <ellipse cx="568" cy="320" rx="408" ry="188" fill="none" stroke="#ffffff" stroke-opacity="0.08" stroke-width="1"/>
+    <ellipse cx="568" cy="320" rx="304" ry="128" fill="none" stroke="#00eaff" stroke-opacity="0.14" stroke-width="1"/>
+    <path d="M58 320h1020M568 64v512" stroke="#ffffff" stroke-opacity="0.08" stroke-width="1"/>
+    <path d="M220 178h696M220 462h696" stroke="#00eaff" stroke-opacity="0.08" stroke-width="1"/>
+  </g>
+  <g filter="url(#softGlow)" opacity="0.95">
+    <circle cx="516" cy="394" r="5" fill="#00eaff"/>
+    <circle cx="616" cy="344" r="3" fill="#2cf58a"/>
+    <circle cx="760" cy="424" r="7" fill="#ffffff"/>
+    <circle cx="882" cy="336" r="4" fill="#00eaff"/>
+    <circle cx="980" cy="448" r="6" fill="#bd00ff"/>
+    <circle cx="1082" cy="382" r="4" fill="#ff426f"/>
+    <path d="M516 394l100-50 144 80 122-88 98 112 102-66" fill="none" stroke="#ffffff" stroke-opacity="0.28" stroke-width="1.4"/>
+  </g>
+  <g opacity="0.76">
+    <path d="M156 164h238v84H156z" fill="#020305" fill-opacity="0.72" stroke="#00eaff" stroke-opacity="0.28"/>
+    <path d="M1206 594h254v98h-254z" fill="#020305" fill-opacity="0.72" stroke="#bd00ff" stroke-opacity="0.24"/>
+    <path d="M216 196h116M216 218h78M1260 628h134M1260 652h82" stroke="#ffffff" stroke-opacity="0.35" stroke-width="2"/>
+    <path d="M184 196h16v16h-16zM1228 626h16v16h-16z" fill="#00eaff" fill-opacity="0.65"/>
+  </g>
+  <g opacity="0.38">
+    <path d="M90 820h1420" stroke="#ffffff" stroke-opacity="0.12"/>
+    <path d="M142 780h220M412 780h92M562 780h318M944 780h170M1180 780h270" stroke="#00eaff" stroke-opacity="0.28" stroke-width="2"/>
+  </g>
+</svg>

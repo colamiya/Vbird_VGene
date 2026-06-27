@@ -1,0 +1,47 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bundle-bg" x1="128" y1="80" x2="1460" y2="832" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#020617"/>
+      <stop offset="0.38" stop-color="#0F172A"/>
+      <stop offset="0.7" stop-color="#082F49"/>
+      <stop offset="1" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="bundle-line" x1="260" y1="188" x2="1320" y2="720" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8"/>
+      <stop offset="0.45" stop-color="#34D399"/>
+      <stop offset="1" stop-color="#FACC15"/>
+    </linearGradient>
+    <pattern id="bundle-grid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M64 0H0V64" stroke="#F8FAFC" stroke-opacity="0.055"/>
+      <path d="M32 0V64M0 32H64" stroke="#F8FAFC" stroke-opacity="0.026"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bundle-bg)"/>
+  <rect width="1600" height="900" fill="url(#bundle-grid)"/>
+  <path d="M190 164H1410V736H190V164Z" stroke="#F8FAFC" stroke-opacity="0.14" stroke-width="2"/>
+  <path d="M238 212H1362V688H238V212Z" stroke="url(#bundle-line)" stroke-opacity="0.48" stroke-width="2"/>
+  <path d="M338 300H1262V604H338V300Z" fill="#020617" fill-opacity="0.38" stroke="#F8FAFC" stroke-opacity="0.09"/>
+  <path d="M398 354H1202M398 450H1202M398 546H1202" stroke="#F8FAFC" stroke-opacity="0.08"/>
+  <path d="M514 300V604M686 300V604M858 300V604M1030 300V604" stroke="#F8FAFC" stroke-opacity="0.06"/>
+  <g opacity="0.56">
+    <rect x="430" y="338" width="116" height="68" fill="#38BDF8" fill-opacity="0.08" stroke="#38BDF8" stroke-opacity="0.55"/>
+    <rect x="600" y="338" width="116" height="68" fill="#34D399" fill-opacity="0.08" stroke="#34D399" stroke-opacity="0.55"/>
+    <rect x="770" y="338" width="116" height="68" fill="#FACC15" fill-opacity="0.08" stroke="#FACC15" stroke-opacity="0.55"/>
+    <rect x="940" y="338" width="116" height="68" fill="#FB7185" fill-opacity="0.08" stroke="#FB7185" stroke-opacity="0.55"/>
+    <rect x="1110" y="338" width="116" height="68" fill="#C084FC" fill-opacity="0.08" stroke="#C084FC" stroke-opacity="0.55"/>
+    <rect x="430" y="492" width="116" height="68" fill="#34D399" fill-opacity="0.08" stroke="#34D399" stroke-opacity="0.45"/>
+    <rect x="600" y="492" width="116" height="68" fill="#38BDF8" fill-opacity="0.08" stroke="#38BDF8" stroke-opacity="0.45"/>
+    <rect x="770" y="492" width="116" height="68" fill="#FACC15" fill-opacity="0.08" stroke="#FACC15" stroke-opacity="0.45"/>
+    <rect x="940" y="492" width="116" height="68" fill="#C084FC" fill-opacity="0.08" stroke="#C084FC" stroke-opacity="0.45"/>
+    <rect x="1110" y="492" width="116" height="68" fill="#FB7185" fill-opacity="0.08" stroke="#FB7185" stroke-opacity="0.45"/>
+  </g>
+  <path d="M350 454C466 394 542 434 642 454C748 476 812 398 926 430C1010 454 1088 536 1248 462" stroke="url(#bundle-line)" stroke-opacity="0.58" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="350" cy="454" r="8" fill="#38BDF8"/>
+  <circle cx="642" cy="454" r="8" fill="#34D399"/>
+  <circle cx="926" cy="430" r="8" fill="#FACC15"/>
+  <circle cx="1248" cy="462" r="8" fill="#FB7185"/>
+  <path d="M304 248H520" stroke="#38BDF8" stroke-opacity="0.55" stroke-width="3"/>
+  <path d="M1080 650H1296" stroke="#FACC15" stroke-opacity="0.55" stroke-width="3"/>
+  <text x="304" y="278" fill="#E2E8F0" fill-opacity="0.22" font-family="Arial, sans-serif" font-size="34" font-weight="900" letter-spacing="8">SHARE BUNDLE</text>
+  <text x="1080" y="626" fill="#E2E8F0" fill-opacity="0.18" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="6">POSTER / VOICE / CARDS / RECIPE</text>
+</svg>

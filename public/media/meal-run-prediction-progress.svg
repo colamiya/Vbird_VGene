@@ -1,0 +1,47 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="progress-bg" x1="164" y1="100" x2="1432" y2="804" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#020617"/>
+      <stop offset="0.35" stop-color="#062C34"/>
+      <stop offset="0.72" stop-color="#1E1B4B"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="progress-line" x1="308" y1="544" x2="1288" y2="328" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8"/>
+      <stop offset="0.45" stop-color="#34D399"/>
+      <stop offset="0.75" stop-color="#FACC15"/>
+      <stop offset="1" stop-color="#FB7185"/>
+    </linearGradient>
+    <radialGradient id="progress-pulse" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(820 450) rotate(90) scale(360 520)">
+      <stop stop-color="#38BDF8" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#38BDF8" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="progress-grid" width="82" height="82" patternUnits="userSpaceOnUse">
+      <path d="M82 0H0V82" stroke="#F8FAFC" stroke-opacity="0.048"/>
+      <path d="M41 0V82M0 41H82" stroke="#F8FAFC" stroke-opacity="0.02"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#progress-bg)"/>
+  <rect width="1600" height="900" fill="url(#progress-grid)"/>
+  <rect width="1600" height="900" fill="url(#progress-pulse)"/>
+  <path d="M218 164H1382V736H218V164Z" stroke="#F8FAFC" stroke-opacity="0.12" stroke-width="2"/>
+  <path d="M312 280H1288V620H312V280Z" stroke="#38BDF8" stroke-opacity="0.16" stroke-width="2"/>
+  <path d="M330 562H1270" stroke="#F8FAFC" stroke-opacity="0.13" stroke-width="20" stroke-linecap="round"/>
+  <path d="M330 562H930" stroke="url(#progress-line)" stroke-opacity="0.82" stroke-width="20" stroke-linecap="round"/>
+  <path d="M330 562C450 486 570 518 696 440C804 374 872 304 996 340C1090 368 1142 448 1270 394" stroke="url(#progress-line)" stroke-opacity="0.54" stroke-width="6" stroke-linecap="round"/>
+  <g opacity="0.76">
+    <circle cx="330" cy="562" r="18" fill="#38BDF8" fill-opacity="0.18" stroke="#38BDF8" stroke-opacity="0.72" stroke-width="4"/>
+    <circle cx="696" cy="440" r="18" fill="#34D399" fill-opacity="0.18" stroke="#34D399" stroke-opacity="0.72" stroke-width="4"/>
+    <circle cx="996" cy="340" r="18" fill="#FACC15" fill-opacity="0.18" stroke="#FACC15" stroke-opacity="0.72" stroke-width="4"/>
+    <circle cx="1270" cy="394" r="18" fill="#FB7185" fill-opacity="0.18" stroke="#FB7185" stroke-opacity="0.72" stroke-width="4"/>
+  </g>
+  <g opacity="0.42">
+    <path d="M388 330H606M388 374H548M388 418H664" stroke="#F8FAFC" stroke-opacity="0.22" stroke-width="10" stroke-linecap="round"/>
+    <path d="M946 498H1214M946 542H1122M946 586H1188" stroke="#F8FAFC" stroke-opacity="0.18" stroke-width="10" stroke-linecap="round"/>
+    <path d="M760 288L800 328L900 228" stroke="#34D399" stroke-opacity="0.52" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <path d="M314 234H642" stroke="#38BDF8" stroke-opacity="0.56" stroke-width="3"/>
+  <path d="M958 666H1288" stroke="#FACC15" stroke-opacity="0.56" stroke-width="3"/>
+  <text x="314" y="218" fill="#E2E8F0" fill-opacity="0.23" font-family="Arial, sans-serif" font-size="34" font-weight="900" letter-spacing="8">PREDICTION LIVE</text>
+  <text x="958" y="704" fill="#E2E8F0" fill-opacity="0.18" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="6">REAL SIGNALS / RUN PROGRESS</text>
+</svg>

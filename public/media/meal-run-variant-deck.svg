@@ -1,0 +1,40 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="variant-bg" x1="116" y1="70" x2="1492" y2="846" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#020617"/>
+      <stop offset="0.34" stop-color="#0F2A3A"/>
+      <stop offset="0.66" stop-color="#31233F"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="variant-route" x1="280" y1="302" x2="1320" y2="604" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8"/>
+      <stop offset="0.35" stop-color="#34D399"/>
+      <stop offset="0.7" stop-color="#FACC15"/>
+      <stop offset="1" stop-color="#FB7185"/>
+    </linearGradient>
+    <pattern id="variant-grid" width="76" height="76" patternUnits="userSpaceOnUse">
+      <path d="M76 0H0V76" stroke="#F8FAFC" stroke-opacity="0.05"/>
+      <path d="M38 0V76M0 38H76" stroke="#F8FAFC" stroke-opacity="0.022"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#variant-bg)"/>
+  <rect width="1600" height="900" fill="url(#variant-grid)"/>
+  <path d="M174 144H1426V756H174V144Z" stroke="#F8FAFC" stroke-opacity="0.13" stroke-width="2"/>
+  <path d="M238 220H1362V682H238V220Z" stroke="url(#variant-route)" stroke-opacity="0.42" stroke-width="2"/>
+  <g opacity="0.72">
+    <path d="M318 286H632L684 338V640H318V286Z" fill="#020617" fill-opacity="0.46" stroke="#38BDF8" stroke-opacity="0.58" stroke-width="2"/>
+    <path d="M646 250H960L1012 302V640H646V250Z" fill="#020617" fill-opacity="0.48" stroke="#34D399" stroke-opacity="0.58" stroke-width="2"/>
+    <path d="M974 286H1288L1340 338V640H974V286Z" fill="#020617" fill-opacity="0.46" stroke="#FB7185" stroke-opacity="0.58" stroke-width="2"/>
+    <path d="M366 356H574M366 408H610M366 460H538M694 324H906M694 376H936M694 428H870M1022 356H1230M1022 408H1258M1022 460H1196" stroke="#F8FAFC" stroke-opacity="0.16" stroke-width="10" stroke-linecap="round"/>
+    <path d="M414 546H544M742 526H870M1070 546H1202" stroke="url(#variant-route)" stroke-opacity="0.6" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <path d="M420 668C552 600 612 652 714 590C804 536 832 396 930 368C1036 336 1118 462 1260 390" stroke="url(#variant-route)" stroke-opacity="0.55" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="420" cy="668" r="10" fill="#38BDF8"/>
+  <circle cx="714" cy="590" r="10" fill="#34D399"/>
+  <circle cx="930" cy="368" r="10" fill="#FACC15"/>
+  <circle cx="1260" cy="390" r="10" fill="#FB7185"/>
+  <path d="M298 206H578" stroke="#38BDF8" stroke-opacity="0.58" stroke-width="3"/>
+  <path d="M1016 696H1306" stroke="#FACC15" stroke-opacity="0.58" stroke-width="3"/>
+  <text x="298" y="192" fill="#E2E8F0" fill-opacity="0.23" font-family="Arial, sans-serif" font-size="34" font-weight="900" letter-spacing="8">VARIANT DECK</text>
+  <text x="1016" y="734" fill="#E2E8F0" fill-opacity="0.18" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="6">REMATCH / COUNTERFACTUAL / HARDMODE</text>
+</svg>

@@ -1,0 +1,30 @@
+<svg width="960" height="360" viewBox="0 0 960 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="960" height="360" fill="#030507"/>
+  <g opacity="0.22">
+    <path d="M80 270C164 96 305 48 480 48C655 48 796 96 880 270" stroke="#42F5FF" stroke-width="2"/>
+    <path d="M132 270C207 132 321 88 480 88C639 88 753 132 828 270" stroke="#FF3C6A" stroke-width="1.5"/>
+    <path d="M190 270C251 172 347 132 480 132C613 132 709 172 770 270" stroke="#B6FF5A" stroke-width="1.2"/>
+  </g>
+  <g opacity="0.35">
+    <path d="M480 50V92" stroke="#42F5FF"/>
+    <path d="M343 75L359 114" stroke="#42F5FF"/>
+    <path d="M222 145L253 175" stroke="#42F5FF"/>
+    <path d="M738 145L707 175" stroke="#42F5FF"/>
+    <path d="M617 75L601 114" stroke="#42F5FF"/>
+  </g>
+  <g opacity="0.32">
+    <circle cx="480" cy="270" r="11" fill="#42F5FF"/>
+    <path d="M480 270L654 126" stroke="#42F5FF" stroke-width="3" stroke-linecap="round"/>
+    <path d="M456 270H504" stroke="#42F5FF" stroke-width="2"/>
+  </g>
+  <g opacity="0.18">
+    <rect x="78" y="300" width="804" height="1" fill="#42F5FF"/>
+    <rect x="160" y="318" width="640" height="1" fill="#FF3C6A"/>
+    <rect x="240" y="336" width="480" height="1" fill="#B6FF5A"/>
+  </g>
+  <g opacity="0.24" font-family="monospace" font-size="14" letter-spacing="4" fill="#42F5FF">
+    <text x="76" y="54">ORACLE CAPACITOR</text>
+    <text x="676" y="54">INTERVENTION COST</text>
+    <text x="392" y="326">DISCIPLINE GAUGE</text>
+  </g>
+</svg>

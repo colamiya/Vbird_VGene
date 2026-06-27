@@ -1,0 +1,50 @@
+<svg width="900" height="360" viewBox="0 0 900 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="theme-signal-bg" x1="40" y1="30" x2="860" y2="330" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0EA5E9" stop-opacity="0.28"/>
+      <stop offset="0.34" stop-color="#22C55E" stop-opacity="0.18"/>
+      <stop offset="0.67" stop-color="#F59E0B" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#A855F7" stop-opacity="0.24"/>
+    </linearGradient>
+    <radialGradient id="theme-signal-core" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(448 176) rotate(90) scale(132 340)">
+      <stop offset="0" stop-color="#F8FAFC" stop-opacity="0.42"/>
+      <stop offset="0.5" stop-color="#38BDF8" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#020617" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="theme-signal-glow" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.2 0 0 0 0 0.75 0 0 0 0 1 0 0 0 0.55 0"/>
+      <feBlend in2="SourceGraphic" mode="screen"/>
+    </filter>
+    <pattern id="theme-signal-grid" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M36 0H0V36" stroke="#F8FAFC" stroke-opacity="0.07" stroke-width="1"/>
+      <path d="M18 0V36M0 18H36" stroke="#F8FAFC" stroke-opacity="0.035" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="900" height="360" fill="#020617"/>
+  <rect width="900" height="360" fill="url(#theme-signal-bg)"/>
+  <rect width="900" height="360" fill="url(#theme-signal-grid)"/>
+  <rect width="900" height="360" fill="url(#theme-signal-core)"/>
+  <path d="M72 246C184 178 236 88 356 138C478 188 507 74 633 112C735 143 770 211 828 194" stroke="#38BDF8" stroke-opacity="0.45" stroke-width="2"/>
+  <path d="M70 252C188 230 272 210 360 238C476 275 566 178 670 212C736 233 777 261 830 242" stroke="#22C55E" stroke-opacity="0.35" stroke-width="2"/>
+  <path d="M88 111C177 143 248 176 351 118C457 58 537 92 624 151C706 207 761 138 819 104" stroke="#F59E0B" stroke-opacity="0.32" stroke-width="2"/>
+  <path d="M154 58L204 93L154 128L104 93L154 58Z" stroke="#38BDF8" stroke-opacity="0.45"/>
+  <path d="M746 76L796 111L746 146L696 111L746 76Z" stroke="#A855F7" stroke-opacity="0.45"/>
+  <path d="M448 86L530 144V216L448 274L366 216V144L448 86Z" stroke="#F8FAFC" stroke-opacity="0.18"/>
+  <path d="M448 116L492 148V210L448 242L404 210V148L448 116Z" stroke="#38BDF8" stroke-opacity="0.45" filter="url(#theme-signal-glow)"/>
+  <circle cx="448" cy="179" r="16" fill="#F8FAFC" fill-opacity="0.12" stroke="#F8FAFC" stroke-opacity="0.38"/>
+  <g stroke="#F8FAFC" stroke-opacity="0.16">
+    <path d="M448 36V84"/>
+    <path d="M448 276V324"/>
+    <path d="M306 180H358"/>
+    <path d="M538 180H594"/>
+  </g>
+  <g fill="#F8FAFC">
+    <circle cx="154" cy="93" r="3" fill-opacity="0.55"/>
+    <circle cx="746" cy="111" r="3" fill-opacity="0.55"/>
+    <circle cx="356" cy="138" r="2.5" fill-opacity="0.48"/>
+    <circle cx="633" cy="112" r="2.5" fill-opacity="0.48"/>
+    <circle cx="670" cy="212" r="2.5" fill-opacity="0.42"/>
+    <circle cx="351" cy="118" r="2.5" fill-opacity="0.42"/>
+  </g>
+</svg>

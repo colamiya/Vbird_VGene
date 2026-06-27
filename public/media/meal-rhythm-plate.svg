@@ -1,0 +1,28 @@
+<svg width="720" height="360" viewBox="0 0 720 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="720" height="360" fill="#020307"/>
+  <g opacity="0.32">
+    <path d="M96 60h528v240H96z" stroke="#4DEBFF" stroke-width="2"/>
+    <path d="M120 84h480v192H120z" stroke="#B56DFF" stroke-width="1"/>
+    <path d="M160 180h400" stroke="#4DEBFF" stroke-width="1" stroke-dasharray="8 12"/>
+    <path d="M360 96v168" stroke="#4DEBFF" stroke-width="1" stroke-dasharray="8 12"/>
+  </g>
+  <g opacity="0.55">
+    <circle cx="360" cy="180" r="94" stroke="#4DEBFF" stroke-width="2"/>
+    <circle cx="360" cy="180" r="62" stroke="#B56DFF" stroke-width="1"/>
+    <circle cx="360" cy="180" r="28" stroke="#F9D65C" stroke-width="1"/>
+  </g>
+  <g opacity="0.7">
+    <path d="M254 180c30-44 68-66 112-66 45 0 81 22 108 66-29 42-65 63-108 63-44 0-81-21-112-63Z" stroke="#4DEBFF" stroke-width="2"/>
+    <circle cx="366" cy="180" r="18" fill="#4DEBFF" fill-opacity="0.22" stroke="#4DEBFF"/>
+  </g>
+  <g opacity="0.45" stroke="#F9D65C">
+    <path d="M92 316c52-30 104-30 156 0s104 30 156 0 104-30 156 0 104 30 156 0"/>
+    <path d="M92 332c52-30 104-30 156 0s104 30 156 0 104-30 156 0 104 30 156 0"/>
+  </g>
+  <g opacity="0.72">
+    <path d="M112 54h62v12h-62z" fill="#4DEBFF" fill-opacity="0.32"/>
+    <path d="M546 294h62v12h-62z" fill="#B56DFF" fill-opacity="0.36"/>
+    <path d="M620 66h32v32h-32z" stroke="#F9D65C"/>
+    <path d="M68 258h32v32H68z" stroke="#4DEBFF"/>
+  </g>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 220" fill="none">
+  <rect width="900" height="220" fill="#030607"/>
+  <defs>
+    <linearGradient id="omen" x1="70" y1="112" x2="830" y2="112" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00eaff"/>
+      <stop offset="0.4" stop-color="#9cff78"/>
+      <stop offset="0.7" stop-color="#ffd65c"/>
+      <stop offset="1" stop-color="#ff5d74"/>
+    </linearGradient>
+  </defs>
+  <g opacity="0.18">
+    <path d="M42 44h816M42 88h816M42 132h816M42 176h816" stroke="#ffffff"/>
+    <path d="M96 24v172M206 24v172M316 24v172M426 24v172M536 24v172M646 24v172M756 24v172" stroke="#ffffff"/>
+  </g>
+  <path d="M70 152C134 72 198 70 264 132C330 194 410 44 492 104C574 164 646 168 716 92C760 44 796 44 830 68" stroke="url(#omen)" stroke-width="4" stroke-linecap="round"/>
+  <path d="M70 152C134 72 198 70 264 132C330 194 410 44 492 104C574 164 646 168 716 92C760 44 796 44 830 68" stroke="#ffffff" stroke-opacity="0.16" stroke-width="14" stroke-linecap="round"/>
+  <g>
+    <circle cx="70" cy="152" r="14" fill="#06141a" stroke="#00eaff" stroke-width="4"/>
+    <circle cx="264" cy="132" r="14" fill="#071407" stroke="#9cff78" stroke-width="4"/>
+    <circle cx="492" cy="104" r="14" fill="#171206" stroke="#ffd65c" stroke-width="4"/>
+    <circle cx="830" cy="68" r="14" fill="#18070b" stroke="#ff5d74" stroke-width="4"/>
+  </g>
+  <g opacity="0.66">
+    <path d="M58 196h166v4H58zM674 28h168v4H674z" fill="#00eaff"/>
+    <path d="M58 206h88v4H58zM754 38h88v4H754z" fill="#ff5d74"/>
+    <text x="450" y="204" fill="#ffffff" fill-opacity="0.45" font-family="monospace" font-size="12" font-weight="700" text-anchor="middle">WORLD OMENS</text>
+  </g>
+</svg>

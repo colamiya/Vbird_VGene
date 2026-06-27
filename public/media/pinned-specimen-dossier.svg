@@ -1,0 +1,32 @@
+<svg width="960" height="520" viewBox="0 0 960 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="960" height="520" fill="#020407"/>
+  <g opacity="0.22">
+    <rect x="78" y="70" width="804" height="380" stroke="#42F5FF" stroke-width="1"/>
+    <rect x="118" y="110" width="724" height="300" stroke="#FF3C6A" stroke-width="1"/>
+    <path d="M156 260H804" stroke="#42F5FF" stroke-width="1"/>
+    <path d="M480 124V396" stroke="#42F5FF" stroke-width="1"/>
+  </g>
+  <g opacity="0.28">
+    <circle cx="480" cy="260" r="92" stroke="#42F5FF" stroke-width="2"/>
+    <circle cx="480" cy="260" r="54" stroke="#B6FF5A" stroke-width="1"/>
+    <circle cx="480" cy="260" r="8" fill="#42F5FF"/>
+    <path d="M480 168L502 238L576 238L516 281L538 352L480 309L422 352L444 281L384 238L458 238L480 168Z" stroke="#FF3C6A" stroke-width="1.4"/>
+  </g>
+  <g opacity="0.18">
+    <path d="M156 152C226 194 296 215 366 215C436 215 506 152 576 152C646 152 716 194 804 215" stroke="#42F5FF" stroke-width="2"/>
+    <path d="M156 364C250 316 318 312 390 340C486 376 552 332 624 306C696 280 746 306 804 336" stroke="#B6FF5A" stroke-width="2"/>
+  </g>
+  <g opacity="0.35">
+    <rect x="142" y="136" width="72" height="1" fill="#42F5FF"/>
+    <rect x="142" y="154" width="112" height="1" fill="#42F5FF"/>
+    <rect x="706" y="136" width="112" height="1" fill="#FF3C6A"/>
+    <rect x="746" y="154" width="72" height="1" fill="#FF3C6A"/>
+    <rect x="142" y="384" width="132" height="1" fill="#B6FF5A"/>
+    <rect x="686" y="384" width="132" height="1" fill="#B6FF5A"/>
+  </g>
+  <g opacity="0.24" font-family="monospace" font-size="15" letter-spacing="4" fill="#42F5FF">
+    <text x="78" y="42">PINNED SPECIMEN DOSSIER</text>
+    <text x="640" y="478">LINEAGE TRACE</text>
+    <text x="78" y="478">LIVE SAMPLE</text>
+  </g>
+</svg>

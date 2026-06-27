@@ -1,0 +1,46 @@
+<svg width="900" height="420" viewBox="0 0 900 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="legacy-bg" x1="78" y1="48" x2="828" y2="366" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22C55E" stop-opacity="0.18"/>
+      <stop offset="0.42" stop-color="#38BDF8" stop-opacity="0.16"/>
+      <stop offset="0.72" stop-color="#FACC15" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#A855F7" stop-opacity="0.2"/>
+    </linearGradient>
+    <pattern id="legacy-grid" width="44" height="44" patternUnits="userSpaceOnUse">
+      <path d="M44 0H0V44" stroke="#F8FAFC" stroke-opacity="0.05"/>
+      <path d="M22 0V44M0 22H44" stroke="#F8FAFC" stroke-opacity="0.022"/>
+    </pattern>
+    <filter id="legacy-glow" x="-35%" y="-35%" width="170%" height="170%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.2 0 0 0 0 0.7 0 0 0 0 1 0 0 0 0.42 0"/>
+      <feBlend in2="SourceGraphic" mode="screen"/>
+    </filter>
+  </defs>
+  <rect width="900" height="420" fill="#020617"/>
+  <rect width="900" height="420" fill="url(#legacy-bg)"/>
+  <rect width="900" height="420" fill="url(#legacy-grid)"/>
+  <path d="M72 68H330V352H72V68Z" stroke="#F8FAFC" stroke-opacity="0.15"/>
+  <path d="M112 108H290V312H112V108Z" stroke="#38BDF8" stroke-opacity="0.35"/>
+  <path d="M142 142H260M142 174H232M142 206H270M142 270H242" stroke="#F8FAFC" stroke-opacity="0.32" stroke-width="3" stroke-linecap="round"/>
+  <path d="M278 108V312" stroke="#F8FAFC" stroke-opacity="0.12"/>
+  <path d="M112 250H290" stroke="#FACC15" stroke-opacity="0.28"/>
+  <path d="M430 112C510 62 610 62 690 112C770 162 770 258 690 308C610 358 510 358 430 308C350 258 350 162 430 112Z" stroke="#F8FAFC" stroke-opacity="0.12"/>
+  <path d="M450 156C516 114 604 114 670 156C736 198 736 222 670 264C604 306 516 306 450 264C384 222 384 198 450 156Z" stroke="#38BDF8" stroke-opacity="0.38" filter="url(#legacy-glow)"/>
+  <path d="M560 118V302M404 210H716M442 150L678 270M442 270L678 150" stroke="#F8FAFC" stroke-opacity="0.1"/>
+  <circle cx="560" cy="210" r="16" fill="#F8FAFC" fill-opacity="0.18" stroke="#FACC15" stroke-opacity="0.45"/>
+  <circle cx="450" cy="156" r="5" fill="#22C55E" fill-opacity="0.8"/>
+  <circle cx="670" cy="156" r="5" fill="#38BDF8" fill-opacity="0.8"/>
+  <circle cx="450" cy="264" r="5" fill="#FACC15" fill-opacity="0.8"/>
+  <circle cx="670" cy="264" r="5" fill="#A855F7" fill-opacity="0.8"/>
+  <path d="M748 110H828M748 154H800M748 242H832M748 286H792" stroke="#F8FAFC" stroke-opacity="0.18" stroke-width="3" stroke-linecap="round"/>
+  <path d="M726 72L760 38H822L856 72" stroke="#38BDF8" stroke-opacity="0.24"/>
+  <path d="M726 348L760 382H822L856 348" stroke="#A855F7" stroke-opacity="0.24"/>
+  <g fill="#F8FAFC">
+    <circle cx="72" cy="68" r="3" fill-opacity="0.48"/>
+    <circle cx="330" cy="68" r="3" fill-opacity="0.48"/>
+    <circle cx="72" cy="352" r="3" fill-opacity="0.48"/>
+    <circle cx="330" cy="352" r="3" fill-opacity="0.48"/>
+    <circle cx="748" cy="110" r="3" fill-opacity="0.42"/>
+    <circle cx="828" cy="110" r="3" fill-opacity="0.42"/>
+  </g>
+</svg>

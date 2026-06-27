@@ -1,0 +1,39 @@
+<svg width="720" height="360" viewBox="0 0 720 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="720" height="360" fill="#020307"/>
+  <g opacity="0.28">
+    <path d="M74 54h572v252H74z" stroke="#4DEBFF" stroke-width="2"/>
+    <path d="M106 86h508v188H106z" stroke="#B56DFF" stroke-width="1"/>
+    <path d="M106 133h508M106 180h508M106 227h508" stroke="#4DEBFF" stroke-width="1" stroke-dasharray="7 12"/>
+    <path d="M233 86v188M360 86v188M487 86v188" stroke="#4DEBFF" stroke-width="1" stroke-dasharray="7 12"/>
+  </g>
+  <g opacity="0.62">
+    <path d="M144 120h50v50h-50z" fill="#4DEBFF" fill-opacity="0.16" stroke="#4DEBFF"/>
+    <path d="M270 120h50v50h-50z" fill="#F9D65C" fill-opacity="0.18" stroke="#F9D65C"/>
+    <path d="M398 120h50v50h-50z" fill="#B56DFF" fill-opacity="0.18" stroke="#B56DFF"/>
+    <path d="M526 120h50v50h-50z" fill="#FFFFFF" fill-opacity="0.08" stroke="#FFFFFF"/>
+    <path d="M144 204h50v50h-50z" fill="#B56DFF" fill-opacity="0.18" stroke="#B56DFF"/>
+    <path d="M270 204h50v50h-50z" fill="#4DEBFF" fill-opacity="0.16" stroke="#4DEBFF"/>
+    <path d="M398 204h50v50h-50z" fill="#FFFFFF" fill-opacity="0.08" stroke="#FFFFFF"/>
+    <path d="M526 204h50v50h-50z" fill="#F9D65C" fill-opacity="0.18" stroke="#F9D65C"/>
+  </g>
+  <g opacity="0.7" stroke="#FFFFFF">
+    <path d="M158 145h22M169 134v22"/>
+    <path d="M284 145h22"/>
+    <path d="M412 134l22 22M434 134l-22 22"/>
+    <circle cx="551" cy="145" r="12"/>
+    <path d="M158 229h22M169 218v22"/>
+    <path d="M284 218l22 22M306 218l-22 22"/>
+    <circle cx="423" cy="229" r="12"/>
+    <path d="M540 229h22"/>
+  </g>
+  <g opacity="0.45" stroke="#F9D65C">
+    <path d="M74 320c52-26 104-26 156 0s104 26 156 0 104-26 156 0 104 26 156 0"/>
+    <path d="M74 336c52-26 104-26 156 0s104 26 156 0 104-26 156 0 104 26 156 0"/>
+  </g>
+  <g opacity="0.65">
+    <path d="M96 68h54v10H96z" fill="#4DEBFF" fill-opacity="0.28"/>
+    <path d="M570 282h54v10h-54z" fill="#B56DFF" fill-opacity="0.32"/>
+    <path d="M634 78h22v22h-22z" stroke="#F9D65C"/>
+    <path d="M64 260h22v22H64z" stroke="#4DEBFF"/>
+  </g>
+</svg>

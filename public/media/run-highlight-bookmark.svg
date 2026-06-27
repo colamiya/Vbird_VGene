@@ -1,0 +1,17 @@
+<svg width="960" height="360" viewBox="0 0 960 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="960" height="360" fill="#020607"/>
+  <path d="M90 36H870V324H90V36Z" stroke="#00EAFF" stroke-opacity="0.16" stroke-width="2"/>
+  <path d="M164 36V142L204 110L244 142V36" fill="#BD00FF" fill-opacity="0.16" stroke="#BD00FF" stroke-opacity="0.5" stroke-width="3"/>
+  <path d="M108 270H852" stroke="#00EAFF" stroke-opacity="0.22" stroke-width="2"/>
+  <path d="M108 96H852" stroke="#FFFFFF" stroke-opacity="0.08"/>
+  <path d="M108 154H852" stroke="#FFFFFF" stroke-opacity="0.08"/>
+  <path d="M108 212H852" stroke="#FFFFFF" stroke-opacity="0.08"/>
+  <g opacity="0.24">
+    <circle cx="698" cy="150" r="56" stroke="#00EAFF" stroke-width="3"/>
+    <circle cx="698" cy="150" r="20" stroke="#00EAFF" stroke-width="2"/>
+    <path d="M698 94V126M698 174V206M642 150H674M722 150H754" stroke="#00EAFF" stroke-width="3"/>
+  </g>
+  <path d="M314 114H548M314 150H612M314 186H516" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="8"/>
+  <text x="108" y="318" fill="#00EAFF" fill-opacity="0.55" font-family="Consolas, monospace" font-size="16" letter-spacing="4">RUN HIGHLIGHT BOOKMARKS</text>
+  <text x="658" y="318" fill="#FFFFFF" fill-opacity="0.28" font-family="Consolas, monospace" font-size="12" letter-spacing="3">REAL MOMENTS ONLY</text>
+</svg>

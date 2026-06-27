@@ -1,0 +1,37 @@
+<svg width="720" height="360" viewBox="0 0 720 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="720" height="360" fill="#020307"/>
+  <g opacity="0.28">
+    <path d="M70 72h580v216H70z" stroke="#B56DFF" stroke-width="2"/>
+    <path d="M94 96h532v168H94z" stroke="#4DEBFF" stroke-width="1"/>
+    <path d="M94 140h532M94 220h532" stroke="#4DEBFF" stroke-width="1" stroke-dasharray="10 12"/>
+  </g>
+  <g opacity="0.58">
+    <path d="M118 116h136v128H118z" stroke="#4DEBFF" stroke-width="2"/>
+    <path d="M292 116h136v128H292z" stroke="#F9D65C" stroke-width="2"/>
+    <path d="M466 116h136v128H466z" stroke="#B56DFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.5" stroke="#FFFFFF">
+    <path d="M132 132h28M132 152h18M132 172h48M132 192h34"/>
+    <path d="M306 132h36M306 152h52M306 172h22M306 192h60"/>
+    <path d="M480 132h26M480 152h58M480 172h40M480 192h70"/>
+  </g>
+  <g opacity="0.72">
+    <circle cx="220" cy="216" r="12" fill="#4DEBFF" fill-opacity="0.24" stroke="#4DEBFF"/>
+    <path d="M352 208l28 16-28 16v-32Z" fill="#F9D65C" fill-opacity="0.28" stroke="#F9D65C"/>
+    <path d="M516 206h36v28h-36z" fill="#B56DFF" fill-opacity="0.22" stroke="#B56DFF"/>
+  </g>
+  <g opacity="0.42" stroke="#4DEBFF">
+    <path d="M252 180h40"/>
+    <path d="M428 180h38"/>
+    <path d="M272 166l20 14-20 14"/>
+    <path d="M446 166l20 14-20 14"/>
+  </g>
+  <g opacity="0.36">
+    <path d="M74 56h36v10H74zM126 56h36v10h-36zM178 56h36v10h-36zM230 56h36v10h-36zM282 56h36v10h-36zM334 56h36v10h-36zM386 56h36v10h-36zM438 56h36v10h-36zM490 56h36v10h-36zM542 56h36v10h-36zM594 56h36v10h-36z" fill="#4DEBFF"/>
+    <path d="M74 294h36v10H74zM126 294h36v10h-36zM178 294h36v10h-36zM230 294h36v10h-36zM282 294h36v10h-36zM334 294h36v10h-36zM386 294h36v10h-36zM438 294h36v10h-36zM490 294h36v10h-36zM542 294h36v10h-36zM594 294h36v10h-36z" fill="#B56DFF"/>
+  </g>
+  <g opacity="0.55" stroke="#F9D65C">
+    <path d="M74 322c52-24 104-24 156 0s104 24 156 0 104-24 156 0 104 24 156 0"/>
+    <path d="M74 338c52-24 104-24 156 0s104 24 156 0 104-24 156 0 104 24 156 0"/>
+  </g>
+</svg>

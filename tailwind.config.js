@@ -12,8 +12,8 @@ export default {
         'deep-space': '#050505',
       },
       fontFamily: {
-        mono: ['"JetBrains Mono"', 'monospace'],
-        display: ['"Space Grotesk"', 'sans-serif'],
+        mono: ['"Cascadia Code"', '"JetBrains Mono"', '"SFMono-Regular"', 'Consolas', 'monospace'],
+        display: ['"Segoe UI"', '"Microsoft YaHei"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-conic': 'conic-gradient(var(--tw-gradient-stops))',

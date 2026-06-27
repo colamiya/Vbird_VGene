@@ -1,0 +1,44 @@
+<svg width="900" height="420" viewBox="0 0 900 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="poster-bg" x1="52" y1="42" x2="846" y2="378" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#38BDF8" stop-opacity="0.22"/>
+      <stop offset="0.36" stop-color="#22C55E" stop-opacity="0.14"/>
+      <stop offset="0.7" stop-color="#FACC15" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#A855F7" stop-opacity="0.2"/>
+    </linearGradient>
+    <radialGradient id="poster-core" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(254 214) rotate(90) scale(154 110)">
+      <stop offset="0" stop-color="#F8FAFC" stop-opacity="0.32"/>
+      <stop offset="0.54" stop-color="#38BDF8" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#020617" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="poster-grid" width="38" height="38" patternUnits="userSpaceOnUse">
+      <path d="M38 0H0V38" stroke="#F8FAFC" stroke-opacity="0.055"/>
+      <path d="M19 0V38M0 19H38" stroke="#F8FAFC" stroke-opacity="0.025"/>
+    </pattern>
+    <filter id="poster-glow" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.2 0 0 0 0 0.7 0 0 0 0 1 0 0 0 0.45 0"/>
+      <feBlend in2="SourceGraphic" mode="screen"/>
+    </filter>
+  </defs>
+  <rect width="900" height="420" fill="#020617"/>
+  <rect width="900" height="420" fill="url(#poster-bg)"/>
+  <rect width="900" height="420" fill="url(#poster-grid)"/>
+  <rect width="900" height="420" fill="url(#poster-core)"/>
+  <path d="M74 54H340V366H74V54Z" stroke="#F8FAFC" stroke-opacity="0.16"/>
+  <path d="M106 86H308V334H106V86Z" stroke="#38BDF8" stroke-opacity="0.44" filter="url(#poster-glow)"/>
+  <path d="M132 126H282M132 158H244M132 190H270M132 286H238" stroke="#F8FAFC" stroke-opacity="0.34" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="256" cy="260" r="34" stroke="#FACC15" stroke-opacity="0.42" stroke-width="3"/>
+  <path d="M414 104H810M414 154H752M414 204H840M414 286H760" stroke="#F8FAFC" stroke-opacity="0.13" stroke-width="2" stroke-linecap="round"/>
+  <path d="M414 244H568M594 244H712M738 244H820" stroke="#38BDF8" stroke-opacity="0.42" stroke-width="4" stroke-linecap="round"/>
+  <path d="M388 70L424 34H820L856 70" stroke="#38BDF8" stroke-opacity="0.28"/>
+  <path d="M388 350L424 386H820L856 350" stroke="#A855F7" stroke-opacity="0.28"/>
+  <g fill="#F8FAFC">
+    <circle cx="106" cy="86" r="3" fill-opacity="0.5"/>
+    <circle cx="308" cy="86" r="3" fill-opacity="0.5"/>
+    <circle cx="106" cy="334" r="3" fill-opacity="0.5"/>
+    <circle cx="308" cy="334" r="3" fill-opacity="0.5"/>
+    <circle cx="414" cy="244" r="3" fill-opacity="0.5"/>
+    <circle cx="820" cy="244" r="3" fill-opacity="0.5"/>
+  </g>
+</svg>

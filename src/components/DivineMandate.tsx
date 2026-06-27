@@ -1,16 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Terminal, Send, Cpu, Shield, Zap, Activity, Code } from 'lucide-react';
+import { invoke } from '@tauri-apps/api/core';
+import { Terminal, Send, Cpu } from 'lucide-react';
+import type { AppConfig } from '../types/world';
+
+const MAX_TERMINAL_LOGS = 200;
 
 interface DivineMandateProps {
-  onMandateIssued: (config: any) => void;
+  ollamaUrl: string;
+  modelName: string;
+  onMandateIssued: (config: Partial<AppConfig> & { objective?: string; memoryLimit?: string }) => void;
 }
 
-const DivineMandate: React.FC<DivineMandateProps> = ({ onMandateIssued }) => {
+const DivineMandate: React.FC<DivineMandateProps> = ({ ollamaUrl, modelName, onMandateIssued }) => {
   const [input, setInput] = useState('');
   const [logs, setLogs] = useState<string[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [typingIndex, setTypingIndex] = useState(0);
-  const welcomeText = "正在建立神谕连接... // 接入神经元网络... // 等待指令...";
+  const welcomeText = "正在建立神谕连接… // 接入神经元网络… // 等待指令…";
   const logEndRef = useRef<HTMLDivElement>(null);
 
   // 打字机效果
@@ -25,7 +31,7 @@ const DivineMandate: React.FC<DivineMandateProps> = ({ onMandateIssued }) => {
 
   // 自动滚动日志
   useEffect(() => {
-    logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    logEndRef.current?.scrollIntoView({ behavior: 'auto' });
   }, [logs]);
 
   const handleCommand = async () => {
@@ -34,59 +40,30 @@ const DivineMandate: React.FC<DivineMandateProps> = ({ onMandateIssued }) => {
     setIsProcessing(true);
     const userCmd = input;
     setInput('');
-    
-    // 模拟系统解析过程
+
+    // 解析过程
     addLog(`> ${userCmd}`);
     await wait(500);
-    addLog(`[SYSTEM] 正在建立神谕连接 (Ollama)...`);
-    
+    addLog(`[SYSTEM] 正在建立神谕连接 (Ollama)…`);
+
     try {
-      const response = await fetch('http://localhost:11434/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'qwen2.5-coder', // 默认使用编码增强模型
-          prompt: `Task: Translate the following natural language command into a VGene environment configuration JSON.
-          Command: "${userCmd}"
-          
-          Constraints:
-          1. Output ONLY the JSON object.
-          2. No markdown, no explanations.
-          3. JSON schema: 
-          {
-            "maxEntities": number (10-1000),
-            "mutationRate": number (0.01-0.5),
-            "entropyFactor": number (0.0-1.0),
-            "winningRule": "SURVIVAL" | "PREDATION" | "CODE_SIZE",
-            "memoryLimit": string (e.g. "64KB", "1MB"),
-            "objective": string (short description)
-          }`,
-          stream: false
-        })
+      const config = await invoke<Partial<AppConfig> & { objective?: string; memoryLimit?: string }>('generate_divine_mandate', {
+        ollamaUrl,
+        modelName,
+        command: userCmd,
       });
 
-      if (!response.ok) throw new Error('Ollama connection failed');
-      
-      const data = await response.json();
-      const configText = data.response;
-      
-      // 提取 JSON
-      const jsonMatch = configText.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error('Invalid AI response format');
-      
-      const config = JSON.parse(jsonMatch[0]);
-      
       addLog(`[OK] 神谕解析成功。`);
-      addLog(`[CONFIG] 进化目标: ${config.objective}`);
-      addLog(`[CONFIG] 胜出规则: ${config.winningRule}`);
-      
+      addLog(`[CONFIG] 进化目标: ${config.objective ?? '未命名目标'}`);
+      addLog(`[CONFIG] 胜出规则: ${config.winningRule ?? 'SURVIVAL'}`);
+
       await wait(500);
       onMandateIssued(config);
     } catch (error) {
-      addLog(`[ERROR] 神谕中断: ${error instanceof Error ? error.message : '未知错误'}`);
-      addLog(`[FALLBACK] 启动本地启发式解析...`);
+      addLog(`[ERROR] 神谕中断: ${error instanceof Error ? error.message : String(error)}`);
+      addLog(`[FALLBACK] 启动本地启发式解析…`);
       await wait(1000);
-      const fallbackConfig = generateMockConfig(userCmd);
+      const fallbackConfig = generateHeuristicConfig(userCmd);
       onMandateIssued(fallbackConfig);
     } finally {
       setIsProcessing(false);
@@ -94,21 +71,22 @@ const DivineMandate: React.FC<DivineMandateProps> = ({ onMandateIssued }) => {
   };
 
   const addLog = (text: string) => {
-    setLogs(prev => [...prev, text]);
+    setLogs(prev => [...prev, text].slice(-MAX_TERMINAL_LOGS));
   };
 
   const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-  const generateMockConfig = (cmd: string) => {
-    // 简单的模拟逻辑
+  const generateHeuristicConfig = (cmd: string): Partial<AppConfig> & { objective: string; memoryLimit: string } => {
+    // 本地启发式只用于 Ollama 不可用时给出可继续编辑的配置建议。
     const isAggressive = cmd.includes('攻击') || cmd.includes('杀') || cmd.includes('强');
     const isEfficient = cmd.includes('快') || cmd.includes('效率') || cmd.includes('短');
-    
+
     return {
       maxEntities: isAggressive ? 200 : 500,
       mutationRate: isAggressive ? 0.2 : 0.05,
       entropyFactor: isEfficient ? 0.2 : 0.1,
       winningRule: isAggressive ? 'PREDATION' : (isEfficient ? 'CODE_SIZE' : 'SURVIVAL'),
+      envType: isAggressive ? 'SPACE' : (isEfficient ? 'DEEP_SEA' : 'EARTH'),
       memoryLimit: isEfficient ? '64KB' : '1MB',
       objective: isAggressive ? '最大化击杀' : '最小化能耗'
     };
@@ -130,7 +108,7 @@ const DivineMandate: React.FC<DivineMandateProps> = ({ onMandateIssued }) => {
       </div>
 
       {/* 日志显示区 */}
-      <div className="flex-1 p-4 overflow-y-auto custom-scrollbar space-y-1 text-green-500/80">
+      <div aria-live="polite" className="flex-1 p-4 overflow-y-auto custom-scrollbar space-y-1 text-green-500/80">
         <div className="opacity-60 mb-4 text-[10px] tracking-widest">
           {welcomeText.slice(0, typingIndex)}
           <span className="animate-pulse">_</span>
@@ -149,7 +127,7 @@ const DivineMandate: React.FC<DivineMandateProps> = ({ onMandateIssued }) => {
         <div className="px-4 py-2 bg-neon-blue/5 border-t border-neon-blue/10 flex items-center gap-4 text-[10px] text-neon-blue">
           <div className="flex items-center gap-2">
             <Cpu size={12} className="animate-spin" />
-            <span>编译逻辑中...</span>
+            <span>编译逻辑中…</span>
           </div>
           <div className="h-1 flex-1 bg-neon-blue/20 rounded-full overflow-hidden">
             <div className="h-full bg-neon-blue w-2/3 animate-[shimmer_1s_infinite]" />
@@ -162,19 +140,23 @@ const DivineMandate: React.FC<DivineMandateProps> = ({ onMandateIssued }) => {
         <div className="flex items-center gap-2">
           <span className="text-neon-blue text-lg">›</span>
           <input
+            aria-label="自然语言神谕"
+            name="divine_mandate"
             type="text"
+            autoComplete="off"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !isProcessing && handleCommand()}
-            placeholder={isProcessing ? "系统忙..." : "输入自然语言神谕 (例如: 创造一个极速的刺客)..."}
+            placeholder={isProcessing ? "系统忙…" : "输入自然语言神谕 (例如: 创造一个极速的刺客)…"}
             disabled={isProcessing}
-            className="flex-1 bg-transparent border-none outline-none text-white/90 placeholder-white/20 font-mono text-xs"
-            autoFocus
+            className="interactive-focus flex-1 rounded-sm border border-transparent bg-transparent px-2 py-1 text-white/90 placeholder-white/20 font-mono text-xs"
           />
-          <button 
+          <button
+            type="button"
+            aria-label="发送神谕"
             onClick={handleCommand}
             disabled={isProcessing || !input.trim()}
-            className="text-neon-blue hover:text-white disabled:opacity-30 transition-colors"
+            className="interactive-focus text-neon-blue hover:text-white disabled:opacity-30 transition-colors"
           >
             <Send size={16} />
           </button>

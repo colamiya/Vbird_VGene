@@ -1,0 +1,40 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="clips-bg" x1="120" y1="64" x2="1480" y2="836" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#020617"/>
+      <stop offset="0.36" stop-color="#111827"/>
+      <stop offset="0.68" stop-color="#0F3A3A"/>
+      <stop offset="1" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="clips-line" x1="270" y1="230" x2="1320" y2="682" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8"/>
+      <stop offset="0.48" stop-color="#34D399"/>
+      <stop offset="1" stop-color="#FB7185"/>
+    </linearGradient>
+    <pattern id="clips-grid" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M80 0H0V80" stroke="#F8FAFC" stroke-opacity="0.05"/>
+      <path d="M40 0V80M0 40H80" stroke="#F8FAFC" stroke-opacity="0.022"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#clips-bg)"/>
+  <rect width="1600" height="900" fill="url(#clips-grid)"/>
+  <path d="M190 154H1410V746H190V154Z" stroke="#F8FAFC" stroke-opacity="0.14" stroke-width="2"/>
+  <path d="M244 206H1356V694H244V206Z" stroke="url(#clips-line)" stroke-opacity="0.52" stroke-width="2"/>
+  <g opacity="0.55">
+    <rect x="350" y="290" width="260" height="326" rx="18" fill="#020617" fill-opacity="0.46" stroke="#38BDF8" stroke-opacity="0.42"/>
+    <rect x="670" y="250" width="260" height="366" rx="18" fill="#020617" fill-opacity="0.46" stroke="#34D399" stroke-opacity="0.42"/>
+    <rect x="990" y="330" width="260" height="286" rx="18" fill="#020617" fill-opacity="0.46" stroke="#FB7185" stroke-opacity="0.42"/>
+    <path d="M390 344H570M390 398H540M390 506H558M710 304H890M710 372H858M710 500H884M1030 384H1210M1030 454H1180M1030 548H1198" stroke="#F8FAFC" stroke-opacity="0.18" stroke-width="8" stroke-linecap="round"/>
+    <path d="M430 452L484 420V484L430 452Z" fill="#38BDF8" fill-opacity="0.55"/>
+    <path d="M750 436L812 400V472L750 436Z" fill="#34D399" fill-opacity="0.55"/>
+    <path d="M1070 502L1124 470V534L1070 502Z" fill="#FB7185" fill-opacity="0.55"/>
+  </g>
+  <path d="M480 624C612 700 748 672 842 594C958 498 1082 520 1228 626" stroke="url(#clips-line)" stroke-opacity="0.42" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="480" cy="624" r="8" fill="#38BDF8"/>
+  <circle cx="842" cy="594" r="8" fill="#34D399"/>
+  <circle cx="1228" cy="626" r="8" fill="#FB7185"/>
+  <path d="M304 244H526" stroke="#38BDF8" stroke-opacity="0.55" stroke-width="3"/>
+  <path d="M1074 668H1296" stroke="#FB7185" stroke-opacity="0.55" stroke-width="3"/>
+  <text x="304" y="274" fill="#E2E8F0" fill-opacity="0.22" font-family="Arial, sans-serif" font-size="34" font-weight="900" letter-spacing="8">SOCIAL CLIPS</text>
+  <text x="1074" y="644" fill="#E2E8F0" fill-opacity="0.18" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="6">15S / 30S / 60S STORYBOARD</text>
+</svg>

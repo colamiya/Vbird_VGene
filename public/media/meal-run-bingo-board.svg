@@ -1,0 +1,37 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bingo-bg" x1="128" y1="88" x2="1482" y2="820" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#020617"/>
+      <stop offset="0.32" stop-color="#0E2F36"/>
+      <stop offset="0.67" stop-color="#2E2446"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="bingo-line" x1="294" y1="224" x2="1306" y2="676" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8"/>
+      <stop offset="0.34" stop-color="#34D399"/>
+      <stop offset="0.68" stop-color="#FACC15"/>
+      <stop offset="1" stop-color="#FB7185"/>
+    </linearGradient>
+    <pattern id="bingo-grid" width="72" height="72" patternUnits="userSpaceOnUse">
+      <path d="M72 0H0V72" stroke="#F8FAFC" stroke-opacity="0.05"/>
+      <path d="M36 0V72M0 36H72" stroke="#F8FAFC" stroke-opacity="0.022"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bingo-bg)"/>
+  <rect width="1600" height="900" fill="url(#bingo-grid)"/>
+  <path d="M198 146H1402V754H198V146Z" stroke="#F8FAFC" stroke-opacity="0.13" stroke-width="2"/>
+  <path d="M320 230H1280V690H320V230Z" stroke="url(#bingo-line)" stroke-opacity="0.48" stroke-width="3"/>
+  <g opacity="0.7">
+    <path d="M640 230V690M960 230V690M320 383H1280M320 537H1280" stroke="#F8FAFC" stroke-opacity="0.16" stroke-width="3"/>
+    <path d="M386 306L420 340L496 274M708 306L742 340L818 274M1030 306L1064 340L1140 274" stroke="#34D399" stroke-opacity="0.7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M402 462H538M722 462H858M1042 462H1178M402 616H538M722 616H858M1042 616H1178" stroke="#F8FAFC" stroke-opacity="0.13" stroke-width="10" stroke-linecap="round"/>
+  </g>
+  <path d="M294 206H590" stroke="#38BDF8" stroke-opacity="0.58" stroke-width="3"/>
+  <path d="M1010 718H1306" stroke="#FACC15" stroke-opacity="0.58" stroke-width="3"/>
+  <circle cx="320" cy="230" r="9" fill="#38BDF8"/>
+  <circle cx="1280" cy="230" r="9" fill="#34D399"/>
+  <circle cx="1280" cy="690" r="9" fill="#FACC15"/>
+  <circle cx="320" cy="690" r="9" fill="#FB7185"/>
+  <text x="294" y="192" fill="#E2E8F0" fill-opacity="0.23" font-family="Arial, sans-serif" font-size="34" font-weight="900" letter-spacing="8">MEAL BINGO</text>
+  <text x="1010" y="754" fill="#E2E8F0" fill-opacity="0.18" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="6">STATS / EVENTS / COLLECTION / REPLAY</text>
+</svg>

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" role="img" aria-label="Meal run menu signal board">
+  <defs>
+    <linearGradient id="menu-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#051217"/>
+      <stop offset="0.5" stop-color="#15110d"/>
+      <stop offset="1" stop-color="#120817"/>
+    </linearGradient>
+    <linearGradient id="menu-line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2ee6a6" stop-opacity="0"/>
+      <stop offset="0.45" stop-color="#ffd166" stop-opacity="0.72"/>
+      <stop offset="1" stop-color="#79dcff" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="menu-grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#ffffff" stroke-opacity="0.045" stroke-width="1"/>
+      <path d="M12 0V48M24 0V48M36 0V48M0 12H48M0 24H48M0 36H48" fill="none" stroke="#ffffff" stroke-opacity="0.018" stroke-width="1"/>
+    </pattern>
+    <filter id="menu-glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="420" fill="url(#menu-bg)"/>
+  <rect width="1200" height="420" fill="url(#menu-grid)"/>
+  <path d="M0 76C168 104 263 14 421 55c137 36 210 148 354 113 124-30 213-147 425-96" fill="none" stroke="url(#menu-line)" stroke-width="3" opacity="0.85" filter="url(#menu-glow)"/>
+  <path d="M0 326c137-46 260-37 368-7 132 36 245 67 398-4 166-78 286-49 434 9" fill="none" stroke="#79dcff" stroke-opacity="0.22" stroke-width="2"/>
+  <g opacity="0.86">
+    <g transform="translate(126 130)">
+      <circle cx="70" cy="70" r="68" fill="none" stroke="#2ee6a6" stroke-opacity="0.34" stroke-width="3"/>
+      <circle cx="70" cy="70" r="41" fill="none" stroke="#ffd166" stroke-opacity="0.3" stroke-width="2"/>
+      <path d="M70 2v28M70 110v28M2 70h28M110 70h28" stroke="#ffffff" stroke-opacity="0.2" stroke-width="2"/>
+      <path d="M45 75c14 20 42 19 55-1M43 58c11-20 46-25 58 0" fill="none" stroke="#2ee6a6" stroke-opacity="0.45" stroke-width="3"/>
+    </g>
+    <g transform="translate(504 112)">
+      <rect x="0" y="0" width="190" height="156" rx="0" fill="#000000" fill-opacity="0.22" stroke="#ffd166" stroke-opacity="0.28"/>
+      <path d="M24 42h142M24 78h118M24 114h142" stroke="#ffd166" stroke-opacity="0.3" stroke-width="2"/>
+      <path d="M24 42h52M24 78h88M24 114h34" stroke="#79dcff" stroke-opacity="0.55" stroke-width="4"/>
+      <text x="24" y="28" fill="#ffffff" fill-opacity="0.32" font-family="monospace" font-size="14">8-12 / 15-20 / 30+</text>
+    </g>
+    <g transform="translate(894 122)">
+      <path d="M0 42h178M0 86h178M0 130h178" stroke="#ffffff" stroke-opacity="0.12" stroke-width="2"/>
+      <path d="M16 42h26M74 42h26M132 42h26M16 86h26M74 86h26M132 86h26M16 130h26M74 130h26M132 130h26" stroke="#f15bb5" stroke-opacity="0.45" stroke-width="6" stroke-linecap="square"/>
+      <path d="M0 0h178v172H0z" fill="none" stroke="#79dcff" stroke-opacity="0.24"/>
+      <text x="16" y="24" fill="#ffffff" fill-opacity="0.3" font-family="monospace" font-size="15">1X 2X 4X 8X</text>
+    </g>
+  </g>
+  <g fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="1">
+    <path d="M80 376H360M420 376h360M840 376h280"/>
+    <path d="M86 374v-14M132 374v-8M178 374v-8M224 374v-14M270 374v-8M316 374v-8M430 374v-14M486 374v-8M542 374v-8M598 374v-14M654 374v-8M710 374v-8M850 374v-14M904 374v-8M958 374v-8M1012 374v-14M1066 374v-8"/>
+  </g>
+  <rect x="18" y="18" width="1164" height="384" fill="none" stroke="#ffffff" stroke-opacity="0.08"/>
+</svg>

@@ -1,0 +1,41 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="causal-bg" x1="124" y1="74" x2="1474" y2="816" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#020617"/>
+      <stop offset="0.36" stop-color="#102A35"/>
+      <stop offset="0.7" stop-color="#262250"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="causal-line" x1="270" y1="530" x2="1338" y2="330" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8"/>
+      <stop offset="0.38" stop-color="#34D399"/>
+      <stop offset="0.7" stop-color="#FACC15"/>
+      <stop offset="1" stop-color="#FB7185"/>
+    </linearGradient>
+    <pattern id="causal-grid" width="86" height="86" patternUnits="userSpaceOnUse">
+      <path d="M86 0H0V86" stroke="#F8FAFC" stroke-opacity="0.05"/>
+      <path d="M43 0V86M0 43H86" stroke="#F8FAFC" stroke-opacity="0.022"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#causal-bg)"/>
+  <rect width="1600" height="900" fill="url(#causal-grid)"/>
+  <path d="M210 160H1390V740H210V160Z" stroke="#F8FAFC" stroke-opacity="0.12" stroke-width="2"/>
+  <path d="M302 266H1298V628H302V266Z" stroke="#38BDF8" stroke-opacity="0.15" stroke-width="2"/>
+  <path d="M318 538C450 470 534 502 652 438C748 386 810 310 930 340C1032 366 1080 470 1230 408" stroke="url(#causal-line)" stroke-opacity="0.72" stroke-width="8" stroke-linecap="round"/>
+  <path d="M1230 408L1178 388M1230 408L1194 452" stroke="#FB7185" stroke-opacity="0.72" stroke-width="8" stroke-linecap="round"/>
+  <g opacity="0.75">
+    <circle cx="318" cy="538" r="34" fill="#020617" fill-opacity="0.5" stroke="#38BDF8" stroke-opacity="0.72" stroke-width="4"/>
+    <circle cx="652" cy="438" r="34" fill="#020617" fill-opacity="0.5" stroke="#34D399" stroke-opacity="0.72" stroke-width="4"/>
+    <circle cx="930" cy="340" r="34" fill="#020617" fill-opacity="0.5" stroke="#FACC15" stroke-opacity="0.72" stroke-width="4"/>
+    <circle cx="1230" cy="408" r="34" fill="#020617" fill-opacity="0.5" stroke="#FB7185" stroke-opacity="0.72" stroke-width="4"/>
+  </g>
+  <g opacity="0.42">
+    <path d="M388 610H604M388 652H542M388 694H668" stroke="#F8FAFC" stroke-opacity="0.2" stroke-width="9" stroke-linecap="round"/>
+    <path d="M918 548H1224M918 590H1128M918 632H1188" stroke="#F8FAFC" stroke-opacity="0.17" stroke-width="9" stroke-linecap="round"/>
+    <path d="M530 300H716M530 342H654M530 384H760" stroke="#F8FAFC" stroke-opacity="0.14" stroke-width="9" stroke-linecap="round"/>
+  </g>
+  <path d="M308 224H640" stroke="#38BDF8" stroke-opacity="0.58" stroke-width="3"/>
+  <path d="M956 676H1298" stroke="#FACC15" stroke-opacity="0.58" stroke-width="3"/>
+  <text x="308" y="206" fill="#E2E8F0" fill-opacity="0.23" font-family="Arial, sans-serif" font-size="34" font-weight="900" letter-spacing="8">CAUSAL CHAIN</text>
+  <text x="956" y="716" fill="#E2E8F0" fill-opacity="0.18" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="6">REAL EVENTS / HISTORICAL TRACE</text>
+</svg>

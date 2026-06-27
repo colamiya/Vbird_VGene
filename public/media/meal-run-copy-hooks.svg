@@ -1,0 +1,38 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="hooks-bg" x1="160" y1="90" x2="1440" y2="810" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#020617"/>
+      <stop offset="0.42" stop-color="#111827"/>
+      <stop offset="0.74" stop-color="#1E1B4B"/>
+      <stop offset="1" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="hooks-accent" x1="314" y1="252" x2="1280" y2="650" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8"/>
+      <stop offset="0.5" stop-color="#C084FC"/>
+      <stop offset="1" stop-color="#FACC15"/>
+    </linearGradient>
+    <pattern id="hooks-grid" width="72" height="72" patternUnits="userSpaceOnUse">
+      <path d="M72 0H0V72" stroke="#F8FAFC" stroke-opacity="0.05"/>
+      <path d="M36 0V72M0 36H72" stroke="#F8FAFC" stroke-opacity="0.022"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#hooks-bg)"/>
+  <rect width="1600" height="900" fill="url(#hooks-grid)"/>
+  <path d="M210 166H1390V734H210V166Z" stroke="#F8FAFC" stroke-opacity="0.13" stroke-width="2"/>
+  <path d="M262 216H1338V684H262V216Z" stroke="url(#hooks-accent)" stroke-opacity="0.5" stroke-width="2"/>
+  <g opacity="0.58">
+    <path d="M370 346H690V430H370V346Z" fill="#020617" fill-opacity="0.46" stroke="#38BDF8" stroke-opacity="0.5"/>
+    <path d="M640 286H970V370H640V286Z" fill="#020617" fill-opacity="0.46" stroke="#C084FC" stroke-opacity="0.5"/>
+    <path d="M910 464H1230V548H910V464Z" fill="#020617" fill-opacity="0.46" stroke="#FACC15" stroke-opacity="0.5"/>
+    <path d="M430 536H790V610H430V536Z" fill="#020617" fill-opacity="0.38" stroke="#34D399" stroke-opacity="0.42"/>
+  </g>
+  <path d="M448 388H612M702 328H900M980 506H1168M506 578H714" stroke="#F8FAFC" stroke-opacity="0.32" stroke-width="5" stroke-linecap="round"/>
+  <path d="M336 250H524" stroke="#38BDF8" stroke-opacity="0.55" stroke-width="3"/>
+  <path d="M1078 646H1264" stroke="#FACC15" stroke-opacity="0.55" stroke-width="3"/>
+  <path d="M586 430C660 490 776 478 848 406C920 334 1026 358 1102 464" stroke="url(#hooks-accent)" stroke-opacity="0.44" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="586" cy="430" r="8" fill="#38BDF8"/>
+  <circle cx="848" cy="406" r="8" fill="#C084FC"/>
+  <circle cx="1102" cy="464" r="8" fill="#FACC15"/>
+  <text x="336" y="280" fill="#E2E8F0" fill-opacity="0.22" font-family="Arial, sans-serif" font-size="34" font-weight="900" letter-spacing="8">COPY HOOKS</text>
+  <text x="1078" y="622" fill="#E2E8F0" fill-opacity="0.18" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="6">WECHAT / VIDEO / ARCHIVE</text>
+</svg>

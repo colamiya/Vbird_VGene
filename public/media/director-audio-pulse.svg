@@ -1,0 +1,19 @@
+<svg width="720" height="160" viewBox="0 0 720 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="720" height="160" fill="#020607"/>
+  <path d="M36 80H98L124 44L156 116L190 24L226 136L260 62L294 80H684" stroke="#00EAFF" stroke-opacity="0.42" stroke-width="4"/>
+  <path d="M36 112H88L112 92L142 124L180 72L218 132L252 104L294 112H684" stroke="#BD00FF" stroke-opacity="0.32" stroke-width="3"/>
+  <g opacity="0.16">
+    <path d="M0 40H720" stroke="#FFFFFF"/>
+    <path d="M0 80H720" stroke="#FFFFFF"/>
+    <path d="M0 120H720" stroke="#FFFFFF"/>
+  </g>
+  <g opacity="0.18">
+    <path d="M120 0V160" stroke="#FFFFFF"/>
+    <path d="M240 0V160" stroke="#FFFFFF"/>
+    <path d="M360 0V160" stroke="#FFFFFF"/>
+    <path d="M480 0V160" stroke="#FFFFFF"/>
+    <path d="M600 0V160" stroke="#FFFFFF"/>
+  </g>
+  <text x="30" y="32" fill="#00EAFF" fill-opacity="0.58" font-family="Consolas, monospace" font-size="14" letter-spacing="4">DIRECTOR AUDIO PULSE</text>
+  <text x="530" y="136" fill="#FFFFFF" fill-opacity="0.28" font-family="Consolas, monospace" font-size="12" letter-spacing="3">SFX / CUE</text>
+</svg>

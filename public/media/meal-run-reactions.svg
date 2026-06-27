@@ -1,0 +1,40 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="react-bg" x1="130" y1="80" x2="1470" y2="820" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#020617"/>
+      <stop offset="0.4" stop-color="#102A43"/>
+      <stop offset="0.72" stop-color="#3B1D3F"/>
+      <stop offset="1" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="react-line" x1="288" y1="232" x2="1312" y2="688" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8"/>
+      <stop offset="0.36" stop-color="#34D399"/>
+      <stop offset="0.72" stop-color="#FACC15"/>
+      <stop offset="1" stop-color="#FB7185"/>
+    </linearGradient>
+    <pattern id="react-grid" width="68" height="68" patternUnits="userSpaceOnUse">
+      <path d="M68 0H0V68" stroke="#F8FAFC" stroke-opacity="0.05"/>
+      <path d="M34 0V68M0 34H68" stroke="#F8FAFC" stroke-opacity="0.022"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#react-bg)"/>
+  <rect width="1600" height="900" fill="url(#react-grid)"/>
+  <path d="M198 160H1402V740H198V160Z" stroke="#F8FAFC" stroke-opacity="0.14" stroke-width="2"/>
+  <path d="M252 214H1348V686H252V214Z" stroke="url(#react-line)" stroke-opacity="0.52" stroke-width="2"/>
+  <g opacity="0.58">
+    <path d="M366 302H652L696 352V446H366V302Z" fill="#020617" fill-opacity="0.42" stroke="#38BDF8" stroke-opacity="0.5"/>
+    <path d="M726 260H1050L1092 310V420H726V260Z" fill="#020617" fill-opacity="0.42" stroke="#34D399" stroke-opacity="0.5"/>
+    <path d="M932 482H1260L1304 532V634H932V482Z" fill="#020617" fill-opacity="0.42" stroke="#FACC15" stroke-opacity="0.5"/>
+    <path d="M410 538H738L780 588V650H410V538Z" fill="#020617" fill-opacity="0.34" stroke="#FB7185" stroke-opacity="0.42"/>
+    <path d="M410 356H620M410 400H584M770 316H1018M770 362H976M976 540H1230M976 584H1192M454 588H704" stroke="#F8FAFC" stroke-opacity="0.18" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <path d="M404 474C534 492 640 486 754 440C916 376 1008 452 1150 486C1224 504 1274 490 1320 464" stroke="url(#react-line)" stroke-opacity="0.42" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="404" cy="474" r="8" fill="#38BDF8"/>
+  <circle cx="754" cy="440" r="8" fill="#34D399"/>
+  <circle cx="1150" cy="486" r="8" fill="#FACC15"/>
+  <circle cx="1320" cy="464" r="8" fill="#FB7185"/>
+  <path d="M312 248H550" stroke="#38BDF8" stroke-opacity="0.55" stroke-width="3"/>
+  <path d="M1044 660H1288" stroke="#FACC15" stroke-opacity="0.55" stroke-width="3"/>
+  <text x="312" y="278" fill="#E2E8F0" fill-opacity="0.22" font-family="Arial, sans-serif" font-size="34" font-weight="900" letter-spacing="8">TABLE REACTIONS</text>
+  <text x="1044" y="636" fill="#E2E8F0" fill-opacity="0.18" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="6">BARRAGE / CHAT / REPLAY</text>
+</svg>

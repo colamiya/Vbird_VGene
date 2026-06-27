@@ -1,0 +1,10 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" fill="#020607"/>
+  <circle cx="256" cy="256" r="148" stroke="#00EAFF" stroke-opacity="0.2" stroke-width="6"/>
+  <circle cx="256" cy="256" r="72" stroke="#00EAFF" stroke-opacity="0.45" stroke-width="4"/>
+  <path d="M256 70V164M256 348V442M70 256H164M348 256H442" stroke="#00EAFF" stroke-opacity="0.8" stroke-width="8"/>
+  <path d="M128 128L188 188M384 128L324 188M128 384L188 324M384 384L324 324" stroke="#BD00FF" stroke-opacity="0.48" stroke-width="5"/>
+  <path d="M244 256H268M256 244V268" stroke="#FFFFFF" stroke-opacity="0.84" stroke-width="4"/>
+  <path d="M214 118H298M214 394H298M118 214V298M394 214V298" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="3"/>
+  <text x="118" y="476" fill="#00EAFF" fill-opacity="0.52" font-family="Consolas, monospace" font-size="22" letter-spacing="5">TARGET LOCK</text>
+</svg>

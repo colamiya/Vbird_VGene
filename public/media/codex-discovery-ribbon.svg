@@ -1,0 +1,45 @@
+<svg width="900" height="360" viewBox="0 0 900 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="codex-bg" x1="52" y1="40" x2="828" y2="328" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#14B8A6" stop-opacity="0.24"/>
+      <stop offset="0.42" stop-color="#38BDF8" stop-opacity="0.18"/>
+      <stop offset="0.72" stop-color="#FACC15" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#F43F5E" stop-opacity="0.2"/>
+    </linearGradient>
+    <radialGradient id="codex-core" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(460 180) rotate(90) scale(130 330)">
+      <stop offset="0" stop-color="#F8FAFC" stop-opacity="0.34"/>
+      <stop offset="0.55" stop-color="#38BDF8" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#020617" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="codex-glow" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.1 0 0 0 0 0.75 0 0 0 0 1 0 0 0 0.45 0"/>
+      <feBlend in2="SourceGraphic" mode="screen"/>
+    </filter>
+    <pattern id="codex-lines" width="42" height="42" patternUnits="userSpaceOnUse">
+      <path d="M0 41H42M41 0V42" stroke="#F8FAFC" stroke-opacity="0.055" stroke-width="1"/>
+      <path d="M7 7H35V35H7V7Z" stroke="#F8FAFC" stroke-opacity="0.025" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="900" height="360" fill="#020617"/>
+  <rect width="900" height="360" fill="url(#codex-bg)"/>
+  <rect width="900" height="360" fill="url(#codex-lines)"/>
+  <rect width="900" height="360" fill="url(#codex-core)"/>
+  <path d="M118 74H350L452 180L350 286H118L220 180L118 74Z" stroke="#38BDF8" stroke-opacity="0.42" stroke-width="2"/>
+  <path d="M782 74H550L448 180L550 286H782L680 180L782 74Z" stroke="#FACC15" stroke-opacity="0.34" stroke-width="2"/>
+  <path d="M450 70L554 134V226L450 290L346 226V134L450 70Z" stroke="#F8FAFC" stroke-opacity="0.18"/>
+  <path d="M450 104L518 148V212L450 256L382 212V148L450 104Z" stroke="#38BDF8" stroke-opacity="0.5" filter="url(#codex-glow)"/>
+  <path d="M420 146H480M420 170H480M420 194H480M420 218H464" stroke="#F8FAFC" stroke-opacity="0.5" stroke-width="3" stroke-linecap="round"/>
+  <path d="M280 118H342M248 152H334M236 186H320M266 220H342" stroke="#14B8A6" stroke-opacity="0.32" stroke-width="2" stroke-linecap="round"/>
+  <path d="M558 118H620M566 152H652M580 186H664M558 220H634" stroke="#FACC15" stroke-opacity="0.3" stroke-width="2" stroke-linecap="round"/>
+  <g fill="#F8FAFC">
+    <circle cx="220" cy="180" r="3" fill-opacity="0.55"/>
+    <circle cx="346" cy="134" r="3" fill-opacity="0.5"/>
+    <circle cx="554" cy="134" r="3" fill-opacity="0.5"/>
+    <circle cx="680" cy="180" r="3" fill-opacity="0.55"/>
+    <circle cx="450" cy="70" r="2.5" fill-opacity="0.45"/>
+    <circle cx="450" cy="290" r="2.5" fill-opacity="0.45"/>
+  </g>
+  <path d="M80 318H820" stroke="#F8FAFC" stroke-opacity="0.08"/>
+  <path d="M140 318H260M360 318H540M640 318H760" stroke="#38BDF8" stroke-opacity="0.28" stroke-width="2"/>
+</svg>

@@ -1,0 +1,45 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="faction-bg" x1="124" y1="72" x2="1478" y2="822" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#020617"/>
+      <stop offset="0.34" stop-color="#08313C"/>
+      <stop offset="0.68" stop-color="#20264D"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="faction-line" x1="286" y1="612" x2="1284" y2="294" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8"/>
+      <stop offset="0.34" stop-color="#34D399"/>
+      <stop offset="0.68" stop-color="#FACC15"/>
+      <stop offset="1" stop-color="#FB7185"/>
+    </linearGradient>
+    <radialGradient id="faction-pulse" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(812 450) rotate(90) scale(360 520)">
+      <stop stop-color="#38BDF8" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#38BDF8" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="faction-grid" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M80 0H0V80" stroke="#F8FAFC" stroke-opacity="0.05"/>
+      <path d="M40 0V80M0 40H80" stroke="#F8FAFC" stroke-opacity="0.022"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#faction-bg)"/>
+  <rect width="1600" height="900" fill="url(#faction-grid)"/>
+  <rect width="1600" height="900" fill="url(#faction-pulse)"/>
+  <path d="M210 154H1390V746H210V154Z" stroke="#F8FAFC" stroke-opacity="0.12" stroke-width="2"/>
+  <path d="M304 262H1296V638H304V262Z" stroke="#38BDF8" stroke-opacity="0.14" stroke-width="2"/>
+  <g opacity="0.7">
+    <circle cx="522" cy="482" r="84" fill="#020617" fill-opacity="0.45" stroke="#34D399" stroke-opacity="0.5" stroke-width="4"/>
+    <circle cx="810" cy="392" r="102" fill="#020617" fill-opacity="0.42" stroke="#38BDF8" stroke-opacity="0.46" stroke-width="4"/>
+    <circle cx="1088" cy="520" r="76" fill="#020617" fill-opacity="0.46" stroke="#FACC15" stroke-opacity="0.52" stroke-width="4"/>
+    <circle cx="1218" cy="350" r="58" fill="#020617" fill-opacity="0.5" stroke="#FB7185" stroke-opacity="0.5" stroke-width="4"/>
+  </g>
+  <path d="M522 482L810 392L1088 520L1218 350M522 482L1088 520M810 392L1218 350" stroke="url(#faction-line)" stroke-opacity="0.42" stroke-width="6" stroke-linecap="round"/>
+  <g opacity="0.42">
+    <path d="M386 650H654M386 692H566M386 734H710" stroke="#F8FAFC" stroke-opacity="0.18" stroke-width="9" stroke-linecap="round"/>
+    <path d="M910 640H1240M910 682H1136M910 724H1198" stroke="#F8FAFC" stroke-opacity="0.16" stroke-width="9" stroke-linecap="round"/>
+    <path d="M388 298H608M388 340H548M388 382H668" stroke="#F8FAFC" stroke-opacity="0.14" stroke-width="9" stroke-linecap="round"/>
+  </g>
+  <path d="M304 224H646" stroke="#38BDF8" stroke-opacity="0.58" stroke-width="3"/>
+  <path d="M958 676H1298" stroke="#FACC15" stroke-opacity="0.58" stroke-width="3"/>
+  <text x="304" y="206" fill="#E2E8F0" fill-opacity="0.23" font-family="Arial, sans-serif" font-size="34" font-weight="900" letter-spacing="8">FACTION LEDGER</text>
+  <text x="958" y="716" fill="#E2E8F0" fill-opacity="0.18" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="6">ENTITY SNAPSHOTS / SOCIAL SIGNALS</text>
+</svg>

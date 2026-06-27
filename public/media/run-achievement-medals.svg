@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360" fill="none">
+  <rect width="900" height="360" fill="#040407"/>
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#fff38a"/>
+      <stop offset="0.5" stop-color="#d9a73a"/>
+      <stop offset="1" stop-color="#7a4d12"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#80f8ff"/>
+      <stop offset="1" stop-color="#137d92"/>
+    </linearGradient>
+    <linearGradient id="violet" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#ff7cff"/>
+      <stop offset="1" stop-color="#5e2aff"/>
+    </linearGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#d9e4ef"/>
+      <stop offset="1" stop-color="#4b5b6d"/>
+    </linearGradient>
+  </defs>
+
+  <g opacity="0.26">
+    <path d="M60 54h780M60 126h780M60 198h780M60 270h780" stroke="#ffffff" stroke-width="1"/>
+    <path d="M98 24v312M214 24v312M330 24v312M446 24v312M562 24v312M678 24v312M794 24v312" stroke="#ffffff" stroke-width="1"/>
+  </g>
+
+  <g opacity="0.5">
+    <path d="M92 294h716" stroke="#80f8ff" stroke-width="2" stroke-dasharray="10 16"/>
+    <path d="M128 74h644" stroke="#ff7cff" stroke-width="2" stroke-dasharray="4 14"/>
+  </g>
+
+  <g transform="translate(138 94)">
+    <path d="M54 112l-28 96 58-32 58 32-28-96" fill="#101015" stroke="#d9a73a" stroke-width="3"/>
+    <circle cx="84" cy="86" r="62" fill="#101015" stroke="url(#gold)" stroke-width="8"/>
+    <circle cx="84" cy="86" r="42" fill="#050508" stroke="#fff38a" stroke-width="2" stroke-dasharray="6 8"/>
+    <path d="M84 48l11 25 27 3-20 18 6 27-24-14-24 14 6-27-20-18 27-3 11-25Z" fill="url(#gold)"/>
+    <text x="84" y="158" fill="#fff3a8" font-family="monospace" font-size="15" font-weight="700" text-anchor="middle">MYTHIC</text>
+  </g>
+
+  <g transform="translate(324 116)">
+    <path d="M45 92l-22 78 47-26 47 26-22-78" fill="#101015" stroke="#ff7cff" stroke-width="3"/>
+    <circle cx="70" cy="70" r="52" fill="#101015" stroke="url(#violet)" stroke-width="7"/>
+    <circle cx="70" cy="70" r="34" fill="#050508" stroke="#ffb1ff" stroke-width="2" stroke-dasharray="5 7"/>
+    <path d="M70 40l9 19 21 4-16 14 5 22-19-11-19 11 5-22-16-14 21-4 9-19Z" fill="url(#violet)"/>
+    <text x="70" y="136" fill="#ffb1ff" font-family="monospace" font-size="13" font-weight="700" text-anchor="middle">EPIC</text>
+  </g>
+
+  <g transform="translate(498 116)">
+    <path d="M45 92l-22 78 47-26 47 26-22-78" fill="#101015" stroke="#80f8ff" stroke-width="3"/>
+    <circle cx="70" cy="70" r="52" fill="#101015" stroke="url(#cyan)" stroke-width="7"/>
+    <circle cx="70" cy="70" r="34" fill="#050508" stroke="#b7fbff" stroke-width="2" stroke-dasharray="5 7"/>
+    <path d="M70 38l28 50H42l28-50Z" fill="url(#cyan)"/>
+    <path d="M58 78h24" stroke="#031318" stroke-width="6" stroke-linecap="round"/>
+    <text x="70" y="136" fill="#b7fbff" font-family="monospace" font-size="13" font-weight="700" text-anchor="middle">RARE</text>
+  </g>
+
+  <g transform="translate(672 126)">
+    <path d="M38 78l-18 62 38-22 38 22-18-62" fill="#101015" stroke="#d9e4ef" stroke-width="3"/>
+    <circle cx="58" cy="58" r="44" fill="#101015" stroke="url(#steel)" stroke-width="7"/>
+    <circle cx="58" cy="58" r="28" fill="#050508" stroke="#d9e4ef" stroke-width="2" stroke-dasharray="4 6"/>
+    <path d="M58 34l8 17 18 3-13 13 3 18-16-9-16 9 3-18-13-13 18-3 8-17Z" fill="url(#steel)"/>
+    <text x="58" y="118" fill="#d9e4ef" font-family="monospace" font-size="12" font-weight="700" text-anchor="middle">COMMON</text>
+  </g>
+
+  <g opacity="0.62">
+    <path d="M92 58h76v18H92zM92 82h124v8H92z" fill="#80f8ff"/>
+    <path d="M620 260h188v18H620zM690 284h118v8H690z" fill="#fff38a"/>
+    <path d="M60 306h72v4H60zM768 52h72v4h-72z" fill="#ff7cff"/>
+  </g>
+</svg>

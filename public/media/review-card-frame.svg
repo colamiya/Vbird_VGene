@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">V-GENE Review Card Frame</title>
+  <desc id="desc">A share-card frame for V-GENE meal run summaries with data rails and holographic corner marks.</desc>
+  <defs>
+    <linearGradient id="frame" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#00eaff" stop-opacity="0.8"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#bd00ff" stop-opacity="0.72"/>
+    </linearGradient>
+    <pattern id="microgrid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M30 0H0v30" fill="none" stroke="#ffffff" stroke-opacity="0.055"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="675" fill="#020305"/>
+  <rect width="1200" height="675" fill="url(#microgrid)"/>
+  <rect x="42" y="42" width="1116" height="591" fill="none" stroke="url(#frame)" stroke-width="3"/>
+  <path d="M82 96h180M82 124h104M938 550h180M1014 578h104" stroke="#ffffff" stroke-opacity="0.38" stroke-width="2"/>
+  <path d="M42 42h156M42 42v156M1158 633h-156M1158 633v-156" stroke="#00eaff" stroke-opacity="0.72" stroke-width="6"/>
+  <path d="M1158 42h-156M1158 42v156M42 633h156M42 633v-156" stroke="#bd00ff" stroke-opacity="0.62" stroke-width="4"/>
+  <path d="M128 440 C260 370 350 512 482 430 C628 338 722 512 886 410 C1002 338 1060 386 1120 350" fill="none" stroke="#00eaff" stroke-opacity="0.24" stroke-width="2"/>
+  <path d="M120 510 C288 560 388 462 552 526 C720 592 824 438 1068 512" fill="none" stroke="#2cf58a" stroke-opacity="0.2" stroke-width="1.5"/>
+  <circle cx="208" cy="452" r="5" fill="#00eaff" fill-opacity="0.9"/>
+  <circle cx="482" cy="430" r="6" fill="#ffffff" fill-opacity="0.85"/>
+  <circle cx="886" cy="410" r="5" fill="#bd00ff" fill-opacity="0.9"/>
+</svg>

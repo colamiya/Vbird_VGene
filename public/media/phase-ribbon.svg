@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="180" viewBox="0 0 1200 180" role="img" aria-labelledby="title desc">
+  <title id="title">V-GENE Run Phase Ribbon</title>
+  <desc id="desc">A compact heads-up ribbon showing layered epoch marks and simulation tick traces.</desc>
+  <defs>
+    <pattern id="ticks" width="40" height="180" patternUnits="userSpaceOnUse">
+      <path d="M0 92h22M0 118h14M0 66h14" stroke="#ffffff" stroke-opacity="0.08"/>
+    </pattern>
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#00eaff" stop-opacity="0"/>
+      <stop offset="0.18" stop-color="#00eaff" stop-opacity="0.38"/>
+      <stop offset="0.52" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="0.82" stop-color="#bd00ff" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#bd00ff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="180" fill="none"/>
+  <rect y="42" width="1200" height="96" fill="url(#ticks)"/>
+  <path d="M0 92 C142 52 248 132 386 84 C544 28 656 152 816 92 C966 36 1058 102 1200 72" fill="none" stroke="url(#edge)" stroke-width="2"/>
+  <path d="M0 116 C184 146 306 76 454 112 C600 148 740 58 894 116 C1016 162 1108 112 1200 128" fill="none" stroke="#2cf58a" stroke-opacity="0.2" stroke-width="1.5"/>
+  <g opacity="0.75">
+    <path d="M120 40v96M344 40v96M586 40v96M846 40v96M1068 40v96" stroke="#ffffff" stroke-opacity="0.12"/>
+    <circle cx="120" cy="92" r="4" fill="#00eaff"/>
+    <circle cx="344" cy="92" r="4" fill="#2cf58a"/>
+    <circle cx="586" cy="92" r="4" fill="#ffffff"/>
+    <circle cx="846" cy="92" r="4" fill="#ff426f"/>
+    <circle cx="1068" cy="92" r="4" fill="#bd00ff"/>
+  </g>
+</svg>

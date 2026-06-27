@@ -1,8 +1,12 @@
 # 前端依赖和构建产物
 /node_modules
-package-lock.json
-Cargo.lock
-yarn.lock
+/dist
 
 # Rust 后端依赖和构建产物
 src-tauri/target/
+
+# 运行时状态与日志
+run.log
+settings.json
+src-tauri/run.log
+src-tauri/settings.json

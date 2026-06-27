@@ -1,0 +1,32 @@
+<svg width="460" height="220" viewBox="0 0 460 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="seal-line" x1="78" y1="42" x2="382" y2="178" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#38BDF8" stop-opacity="0.7"/>
+      <stop offset="0.52" stop-color="#FACC15" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#A855F7" stop-opacity="0.72"/>
+    </linearGradient>
+    <pattern id="seal-grid" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path d="M28 0H0V28" stroke="#F8FAFC" stroke-opacity="0.05"/>
+    </pattern>
+    <filter id="seal-glow" x="-35%" y="-35%" width="170%" height="170%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="3.5" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.25 0 0 0 0 0.75 0 0 0 0 1 0 0 0 0.42 0"/>
+      <feBlend in2="SourceGraphic" mode="screen"/>
+    </filter>
+  </defs>
+  <rect width="460" height="220" fill="#020617"/>
+  <rect width="460" height="220" fill="url(#seal-grid)"/>
+  <path d="M44 40H416V180H44V40Z" stroke="#F8FAFC" stroke-opacity="0.12"/>
+  <path d="M84 110C128 54 196 54 230 110C264 166 332 166 376 110" stroke="url(#seal-line)" stroke-width="4" stroke-linecap="round" filter="url(#seal-glow)"/>
+  <path d="M102 110H358" stroke="#F8FAFC" stroke-opacity="0.1" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="230" cy="110" r="44" stroke="#F8FAFC" stroke-opacity="0.16" stroke-width="2"/>
+  <circle cx="230" cy="110" r="24" stroke="#FACC15" stroke-opacity="0.45" stroke-width="3"/>
+  <path d="M230 78V142M198 110H262" stroke="#F8FAFC" stroke-opacity="0.28" stroke-width="3" stroke-linecap="round"/>
+  <path d="M72 68H148M312 68H388M72 152H148M312 152H388" stroke="#F8FAFC" stroke-opacity="0.18" stroke-width="2" stroke-linecap="round"/>
+  <g fill="#F8FAFC">
+    <circle cx="44" cy="40" r="3" fill-opacity="0.42"/>
+    <circle cx="416" cy="40" r="3" fill-opacity="0.42"/>
+    <circle cx="44" cy="180" r="3" fill-opacity="0.42"/>
+    <circle cx="416" cy="180" r="3" fill-opacity="0.42"/>
+  </g>
+</svg>

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 520" role="img" aria-label="Run start forecast instrument">
+  <defs>
+    <linearGradient id="forecast-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#061416"/>
+      <stop offset="0.48" stop-color="#171006"/>
+      <stop offset="1" stop-color="#170914"/>
+    </linearGradient>
+    <linearGradient id="forecast-scan" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#56f4b4" stop-opacity="0"/>
+      <stop offset="0.48" stop-color="#56f4b4" stop-opacity="0.62"/>
+      <stop offset="1" stop-color="#ffcf5c" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="forecast-grid" width="56" height="56" patternUnits="userSpaceOnUse">
+      <path d="M56 0H0V56" fill="none" stroke="#ffffff" stroke-opacity="0.045"/>
+      <path d="M14 0V56M28 0V56M42 0V56M0 14H56M0 28H56M0 42H56" fill="none" stroke="#ffffff" stroke-opacity="0.018"/>
+    </pattern>
+    <filter id="forecast-glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="1400" height="520" fill="url(#forecast-bg)"/>
+  <rect width="1400" height="520" fill="url(#forecast-grid)"/>
+  <path d="M0 95c168 38 290-44 438-2 154 44 227 139 408 84 174-52 302-105 554-39" fill="none" stroke="url(#forecast-scan)" stroke-width="4" filter="url(#forecast-glow)"/>
+  <path d="M0 410c210-58 314-36 447 4 152 46 287 52 456-22 159-70 302-51 497-4" fill="none" stroke="#7bdff2" stroke-opacity="0.23" stroke-width="2"/>
+  <g transform="translate(118 112)" opacity="0.92">
+    <circle cx="150" cy="150" r="136" fill="#000000" fill-opacity="0.18" stroke="#7bdff2" stroke-opacity="0.22" stroke-width="2"/>
+    <circle cx="150" cy="150" r="92" fill="none" stroke="#ffffff" stroke-opacity="0.12"/>
+    <circle cx="150" cy="150" r="46" fill="none" stroke="#ffffff" stroke-opacity="0.11"/>
+    <path d="M150 14v272M14 150h272M54 54l192 192M246 54 54 246" stroke="#ffffff" stroke-opacity="0.08"/>
+    <path d="M150 150 267 116" stroke="#56f4b4" stroke-opacity="0.64" stroke-width="4" stroke-linecap="square" filter="url(#forecast-glow)"/>
+    <path d="M91 187c28 35 92 46 137 8 28-24 34-61 30-91" fill="none" stroke="#ffcf5c" stroke-opacity="0.5" stroke-width="4"/>
+    <circle cx="228" cy="195" r="7" fill="#ffcf5c" fill-opacity="0.74"/>
+    <circle cx="91" cy="187" r="5" fill="#56f4b4" fill-opacity="0.75"/>
+  </g>
+  <g transform="translate(490 122)" opacity="0.82">
+    <rect x="0" y="0" width="348" height="214" fill="#000000" fill-opacity="0.2" stroke="#ffffff" stroke-opacity="0.1"/>
+    <path d="M32 52h278M32 96h230M32 140h278M32 184h186" stroke="#ffffff" stroke-opacity="0.12" stroke-width="2"/>
+    <path d="M32 52h118M32 96h188M32 140h76M32 184h146" stroke="#56f4b4" stroke-opacity="0.5" stroke-width="6"/>
+    <path d="M258 52h52M216 96h46M252 140h58M190 184h28" stroke="#ff4d6d" stroke-opacity="0.48" stroke-width="6"/>
+    <text x="32" y="28" fill="#ffffff" fill-opacity="0.32" font-family="monospace" font-size="16">PRE-RUN SIGNALS</text>
+  </g>
+  <g transform="translate(926 94)" opacity="0.88">
+    <path d="M0 262H338" stroke="#ffffff" stroke-opacity="0.16" stroke-width="2"/>
+    <path d="M28 262V50M104 262V94M180 262V28M256 262V122M332 262V74" stroke="#ffffff" stroke-opacity="0.09" stroke-width="18"/>
+    <path d="M28 262V88M104 262V128M180 262V66M256 262V158M332 262V110" stroke="#ffcf5c" stroke-opacity="0.45" stroke-width="18"/>
+    <path d="M28 88 104 128 180 66 256 158 332 110" fill="none" stroke="#7bdff2" stroke-opacity="0.62" stroke-width="3" filter="url(#forecast-glow)"/>
+    <text x="0" y="24" fill="#ffffff" fill-opacity="0.32" font-family="monospace" font-size="15">GENESIS / BURST / CRISIS</text>
+  </g>
+  <g opacity="0.17" stroke="#ffffff">
+    <path d="M40 40h1320v440H40z" fill="none"/>
+    <path d="M64 456h210M324 456h210M584 456h210M844 456h210M1104 456h210"/>
+    <path d="M70 454v-18M118 454v-10M166 454v-10M214 454v-18M262 454v-10M330 454v-18M378 454v-10M426 454v-10M474 454v-18M522 454v-10"/>
+  </g>
+</svg>

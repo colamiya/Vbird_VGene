@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 340" fill="none">
+  <rect width="900" height="340" fill="#03070a"/>
+  <defs>
+    <linearGradient id="scan" x1="60" y1="80" x2="840" y2="260" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00eaff"/>
+      <stop offset="0.5" stop-color="#9cff78"/>
+      <stop offset="1" stop-color="#ffd65c"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#10232b"/>
+      <stop offset="1" stop-color="#05080a"/>
+    </linearGradient>
+  </defs>
+
+  <g opacity="0.16">
+    <path d="M44 56h812M44 112h812M44 168h812M44 224h812M44 280h812" stroke="#ffffff"/>
+    <path d="M92 28v284M202 28v284M312 28v284M422 28v284M532 28v284M642 28v284M752 28v284" stroke="#ffffff"/>
+  </g>
+
+  <path d="M82 250L204 92l148 74 132-42 120 122 214-164" stroke="url(#scan)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M82 250L204 92l148 74 132-42 120 122 214-164" stroke="#ffffff" stroke-opacity="0.16" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g>
+    <rect x="78" y="216" width="112" height="58" fill="url(#panel)" stroke="#00eaff" stroke-opacity="0.55"/>
+    <circle cx="82" cy="250" r="18" fill="#06141a" stroke="#00eaff" stroke-width="4"/>
+    <path d="M74 250l6 6 12-14" stroke="#c9fbff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M106 242h58M106 258h38" stroke="#00eaff" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <g>
+    <rect x="176" y="58" width="118" height="58" fill="url(#panel)" stroke="#9cff78" stroke-opacity="0.55"/>
+    <circle cx="204" cy="92" r="18" fill="#071407" stroke="#9cff78" stroke-width="4"/>
+    <path d="M196 92h16M204 84v16" stroke="#ddffc9" stroke-width="4" stroke-linecap="round"/>
+    <path d="M226 84h46M226 100h30" stroke="#9cff78" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <g>
+    <rect x="438" y="88" width="126" height="58" fill="url(#panel)" stroke="#ffd65c" stroke-opacity="0.55"/>
+    <circle cx="484" cy="124" r="18" fill="#171206" stroke="#ffd65c" stroke-width="4"/>
+    <path d="M484 112l4 8 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1 4-8Z" fill="#fff3a8"/>
+    <path d="M506 116h36M506 132h48" stroke="#ffd65c" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <g>
+    <rect x="620" y="214" width="130" height="58" fill="url(#panel)" stroke="#ff5d74" stroke-opacity="0.55"/>
+    <circle cx="604" cy="246" r="18" fill="#18070b" stroke="#ff5d74" stroke-width="4"/>
+    <path d="M596 238l16 16M612 238l-16 16" stroke="#ffd2d8" stroke-width="4" stroke-linecap="round"/>
+    <path d="M642 240h82M642 256h50" stroke="#ff5d74" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <g opacity="0.65">
+    <path d="M58 304h190v4H58zM654 36h188v4H654z" fill="#00eaff"/>
+    <path d="M58 314h104v4H58zM736 46h106v4H736z" fill="#ffd65c"/>
+    <text x="450" y="312" fill="#ffffff" fill-opacity="0.45" font-family="monospace" font-size="13" font-weight="700" text-anchor="middle">OBSERVATION OBJECTIVES</text>
+  </g>
+</svg>
