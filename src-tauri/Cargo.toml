@@ -31,7 +31,7 @@ anyhow = "1.0"
 wat = "1.0"
 dashmap = "6.1.0"
 sha2 = "0.10"
-zstd = "0.13"
+zstd = "0.14"
 nvml-wrapper = "0.10.0"
 chrono = "0.4"
 cudarc = { version = "0.19.8", optional = true, default-features = false, features = ["std", "driver", "fallback-dynamic-loading"] }
