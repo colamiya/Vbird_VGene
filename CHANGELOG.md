@@ -5,7 +5,7 @@
 - 需求点：限制本地 Ollama 节点返回的无界响应体，并在 WAT 解析和 Wasmtime 编译前限制源码及二进制大小，降低本地拒绝服务风险。
 - 路径：`src-tauri/src/ollama_http.rs`、`src-tauri/src/ai_commands.rs`、`src-tauri/src/evolution/{mutation,simulation_engine,wasm_runtime}.rs`、仓库治理文档。
 - 关键位置：Ollama JSON 统一以分块方式读取，硬限制为 256 KiB；WAT 源码限制为 128 KiB、解析后的 Wasm 限制为 512 KiB，并覆盖执行、验证、评分和突变准入路径。
-- 治理：补充 MIT License、私密漏洞报告指引、代码所有者、Dependabot 与第三方依赖说明；移除误提交的运行日志并修正作者元数据；将 Wasmtime 升级到 43.0.2，并刷新 Tauri/Rust 锁定依赖以覆盖已公开安全公告。
+- 治理：补充 MIT License、私密漏洞报告指引、代码所有者与第三方依赖说明，并启用 Dependabot 安全更新；移除误提交的运行日志并修正作者元数据；将 Wasmtime 升级到 43.0.2，并刷新 Tauri/Rust 锁定依赖以覆盖已公开安全公告。
 - 验证：前端 `npm audit` 无已知漏洞且 `npm run build` 通过；Rust 格式、`cargo check --locked` 和完整单测已在临时工具链中复核。
 
 ## 2026-06-27 Git 同步前收口验证
