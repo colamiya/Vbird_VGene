@@ -1,5 +1,10 @@
 # CHANGELOG.md
 
+## 2026-09-29 Windows 发行边界收口
+
+- 将 Tauri 默认 bundle targets 从当前平台全部格式的 `all` 收紧为 Windows `nsis` 与 `msi`，与现有 PowerShell 工具链、已验证产物和 README 交付口径保持一致；该配置不作为平台编译禁令。
+- 明确 macOS/Linux 仅可用于源码研究，未完成平台依赖审计和构建验证前不属于受支持发行目标。
+
 ## 2026-09-29 公开仓库安全与合规基线
 
 - 需求点：限制本地 Ollama 节点返回的无界响应体，并在 WAT 解析和 Wasmtime 编译前限制源码及二进制大小，降低本地拒绝服务风险。

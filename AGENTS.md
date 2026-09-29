@@ -19,6 +19,7 @@
 ## 项目事实
 
 - 项目类型：Tauri v2 桌面应用，前端 React + Vite + Three.js，后端 Rust + Wasmtime。
+- 受支持的公开发行平台：Windows 10/11；`tauri.conf.json` 的默认 bundle targets 为 `nsis` 与 `msi`。这不是平台编译禁令；不得在未完成平台依赖审计和构建验证前宣称支持 macOS/Linux 发行。
 - 前端入口：`src/main.tsx`、`src/App.tsx`。
 - 主要 3D 视图：`src/components/Arena.tsx`。
 - 设置与阶段流转：`src/components/GenesisGate.tsx`、`src/components/MotherMachine.tsx`、`src/components/SettingsModal.tsx`。
@@ -62,6 +63,7 @@
 - 音频必须统一走 `src/utils/audio/`；禁止在组件或旧门面文件里新增第二套 `AudioContext`、散落式 BGM/SFX 合成逻辑。
 - 前端 `LocalMock` 只表示 UI 沙盒，不能进入 Rust 仿真；真实本地后端模式使用前端 `Local` 与后端 `MutationMode::Local`。
 - Phase 1 任务 DNA 经突变、splicer 或 fallback 后，写回种群前必须按当前 `task_id` 调用 `validate_and_test_for_task`，并通过语义准入：子代必须有可执行字节码变化，且 `ScoreBreakdown.final_score + epsilon >= parent.final_score`；不得让只导出 `calculate_fitness`、helper-only 字节差异或低分子代污染任务种群。
+- 官方安装包仅发布 Windows NSIS/MSI；Cargo.lock 中仅供 Linux GTK 后端使用的依赖不得被解释为受支持发行物的一部分。
 
 ## 常用命令
 
