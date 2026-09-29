@@ -6,6 +6,7 @@ mod benchmark_commands;
 mod compute_commands;
 mod evolution;
 mod lifecycle_commands;
+mod ollama_http;
 mod runtime_files;
 mod settings_commands;
 mod state;

@@ -1,3 +1,4 @@
+use crate::ollama_http::read_json_limited;
 use reqwest::Client;
 use serde::Deserialize;
 use serde_json::{json, Value};
@@ -76,8 +77,7 @@ pub async fn check_ollama_models(ollama_url: String) -> Result<Vec<String>, Stri
         return Err(format!("Ollama 节点返回异常状态：{}", response.status()));
     }
 
-    let tags = response
-        .json::<OllamaTagsResponse>()
+    let tags = read_json_limited::<OllamaTagsResponse>(response)
         .await
         .map_err(|e| format!("Ollama 模型列表解析失败：{}", e))?;
 
@@ -143,8 +143,7 @@ pub async fn generate_divine_mandate(
         return Err(format!("Ollama 神谕返回异常状态：{}", response.status()));
     }
 
-    let payload = response
-        .json::<Value>()
+    let payload = read_json_limited::<Value>(response)
         .await
         .map_err(|e| format!("Ollama 神谕响应解析失败：{}", e))?;
     let response_text = payload

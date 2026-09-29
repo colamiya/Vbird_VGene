@@ -287,7 +287,7 @@ npm run tauri dev
 
 ## 已知文档-代码偏差
 
-- README 上文提到 `16MB` 内存隔离，但当前代码在 `wasm_runtime.rs` 中限制为 `1MB`。
+- Wasmtime 实例内存限制为 `1 MiB`；WAT 源码和编译后二进制还分别设置了独立的输入大小上限。
 - README 上文提到自定义协议 `vgene://`，当前代码实际通过 Tauri `invoke('get_world_binary')` 传输二进制数组。
 - Phase 1 已将 `get_world_binary` 调整为返回未压缩 raw binary；zstd 压缩需等协议加入 codec header 后再恢复。
 - README 上文提到 OffscreenCanvas，当前 `Arena.tsx` 仍使用普通 `Canvas`。
@@ -300,3 +300,9 @@ npm run tauri dev
 **“在 VGene 中，没有任何一行代码是永恒的。唯有进化本身，才是唯一的真理。”**
 
 ---
+
+## 安全与许可证
+
+Ollama 响应和 WAT/Wasm 输入设有大小上限，Wasmtime 运行还使用 fuel 与内存限制。安全问题请按 [SECURITY.md](SECURITY.md) 私下报告。
+
+项目代码采用 [MIT License](LICENSE)。依赖、可选 CUDA 工具链与发布包的第三方许可边界见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。

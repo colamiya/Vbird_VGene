@@ -11,6 +11,16 @@ const VALIDATION_FUEL_LIMIT: u64 = 200;
 const TASK_FUEL_LIMIT: u64 = 100_000;
 const TASK_SIZE_BUDGET_BYTES: usize = 32 * 1024;
 const MEMORY_SNAPSHOT_BYTES: usize = 256;
+pub(crate) const MAX_WAT_SOURCE_BYTES: usize = 128 * 1024;
+const MAX_WASM_BINARY_BYTES: usize = 512 * 1024;
+
+pub(crate) fn parse_wat_bounded(dna: &str) -> Option<Vec<u8>> {
+    if dna.len() > MAX_WAT_SOURCE_BYTES {
+        return None;
+    }
+    let wasm = wat::parse_str(dna).ok()?;
+    (wasm.len() <= MAX_WASM_BINARY_BYTES).then_some(wasm)
+}
 
 const SORT_LONG_INPUT: [i32; 24] = [
     12, -7, 0, 12, -7, 5, -20, 5, 99, -1, 0, 42, -100, 8, 8, -3, 17, -20, 64, 11, -2, 33, -100, 7,
@@ -96,6 +106,9 @@ impl WasmEngine {
     }
 
     fn compile_or_get_module(&self, dna: &str) -> Option<(Module, usize)> {
+        if dna.len() > MAX_WAT_SOURCE_BYTES {
+            return None;
+        }
         let dna_hash = Self::get_dna_hash(dna);
         if let Some(module) = self.module_cache.get(&dna_hash) {
             return Some((module.clone(), dna.len()));
@@ -106,7 +119,7 @@ impl WasmEngine {
             self.module_cache.clear();
         }
 
-        let wasm_binary = wat::parse_str(dna).ok()?;
+        let wasm_binary = parse_wat_bounded(dna)?;
         let wasm_size = wasm_binary.len();
         let module = Module::new(&self.engine, &wasm_binary).ok()?;
         self.module_cache.insert(dna_hash, module.clone());
@@ -223,9 +236,9 @@ impl WasmEngine {
 
     pub fn validate_and_test(&self, dna: &str) -> bool {
         // 1. 语法检查
-        let wasm_binary = match wat::parse_str(dna) {
-            Ok(b) => b,
-            Err(_) => return false,
+        let wasm_binary = match parse_wat_bounded(dna) {
+            Some(binary) => binary,
+            None => return false,
         };
 
         // 2. 编译检查
@@ -861,7 +874,7 @@ fn failed_task_score(total_cases: usize) -> ScoreBreakdown {
 
 #[cfg(test)]
 mod tests {
-    use super::WasmEngine;
+    use super::{parse_wat_bounded, WasmEngine, MAX_WAT_SOURCE_BYTES};
     use crate::evolution::benchmark::{baseline_dna_for_task, BenchmarkTaskId};
 
     #[test]
@@ -874,6 +887,12 @@ mod tests {
 )"#;
 
         assert!(engine.validate_and_test_for_task(dna, BenchmarkTaskId::Freeform));
+    }
+
+    #[test]
+    fn wat_parser_rejects_oversized_source_before_compilation() {
+        assert!(parse_wat_bounded("(module)").is_some());
+        assert!(parse_wat_bounded(&" ".repeat(MAX_WAT_SOURCE_BYTES + 1)).is_none());
     }
 
     #[test]

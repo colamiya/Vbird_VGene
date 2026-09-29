@@ -1,5 +1,7 @@
 use crate::evolution::benchmark::{baseline_dna_for_task, BenchmarkTaskId, PHASE1_PROMPT_CONTEXT};
 use crate::evolution::entity::Entity;
+use crate::evolution::wasm_runtime::parse_wat_bounded;
+use crate::ollama_http::read_json_limited;
 use rand::Rng;
 use reqwest::Client;
 use serde_json::json;
@@ -151,7 +153,7 @@ impl MutationEngine {
 
             match timeout(Duration::from_secs(12), request.send()).await {
                 Ok(Ok(res)) => {
-                    if let Ok(json) = res.json::<serde_json::Value>().await {
+                    if let Ok(json) = read_json_limited::<serde_json::Value>(res).await {
                         if let Some(response_text) = json["response"].as_str() {
                             let cleaned = self.extract_wat(response_text);
                             if !cleaned.is_empty() {
@@ -285,7 +287,7 @@ fn mutate_task_fitness_const(dna: &str, parent: &Entity, nonce: u32) -> Option<S
     mutated.push_str(&next.to_string());
     mutated.push_str(&dna[literal_end..]);
 
-    if wat::parse_str(&mutated).is_err() {
+    if parse_wat_bounded(&mutated).is_none() {
         return None;
     }
     Some(mutated)

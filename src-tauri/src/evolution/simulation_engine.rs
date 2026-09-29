@@ -4,7 +4,7 @@ use crate::evolution::{
     dna_splicer::DnaSplicer,
     entity::Entity,
     gpu,
-    wasm_runtime::WasmEngine,
+    wasm_runtime::{parse_wat_bounded, WasmEngine},
 };
 use crate::runtime_files::write_run_log;
 use crate::state::{lock_app_state, AppState, LineageRecord};
@@ -72,7 +72,7 @@ fn should_continue(state: &AppState, run_epoch: u64) -> bool {
 }
 
 fn compiled_dna_bytes(dna: &str) -> Option<Vec<u8>> {
-    wat::parse_str(dna).ok()
+    parse_wat_bounded(dna)
 }
 
 fn has_executable_dna_change(parent_dna: &str, child_dna: &str) -> bool {
